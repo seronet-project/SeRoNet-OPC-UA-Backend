@@ -1,0 +1,3 @@
+[submodule "SmartSoftComponentDeveloperAPIcpp"]
+	path = SmartSoftComponentDeveloperAPIcpp
+	url = https://github.com/Servicerobotics-Ulm/SmartSoftComponentDeveloperAPIcpp.git
