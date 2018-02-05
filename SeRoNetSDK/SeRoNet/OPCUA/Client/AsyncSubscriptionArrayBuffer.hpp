@@ -59,7 +59,7 @@ namespace SeRoNet {
 
 			template<typename T_DATATYPE>
 			bool AsyncSubscriptionArrayBuffer<T_DATATYPE>::empty() {
-				return m_dataCounter != 0;
+				return m_dataCounter == 0;
 			}
 
 			template<typename T_DATATYPE>
