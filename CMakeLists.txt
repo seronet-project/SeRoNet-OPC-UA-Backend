@@ -1,38 +1,18 @@
-cmake_minimum_required (VERSION 3.0)
+cmake_minimum_required(VERSION 3.0)
 project(SeRoNetSDK)
 
-set (CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 17)
 
 
 find_package(open62541 REQUIRED)
 find_package(Open62541Cpp REQUIRED)
 
 
-set(PRJ_DIR ${PROJECT_SOURCE_DIR}/SeRoNetSDK)
-
 set(PRJ_FILES
-		${PRJ_DIR}/SeRoNet/OPCUA/Client/AsyncAnswer.hpp
-		${PRJ_DIR}/SeRoNet/OPCUA/Client/AsyncAnswerFactory.hpp
-		${PRJ_DIR}/SeRoNet/OPCUA/Client/AsyncAnswerMethod.hpp
-		${PRJ_DIR}/SeRoNet/OPCUA/Client/AsyncSubscription.hpp
-		${PRJ_DIR}/SeRoNet/OPCUA/Client/AsyncSubscriptionArrayBuffer.hpp
-		${PRJ_DIR}/SeRoNet/OPCUA/Client/AsyncSubscriptionOpcUa.hpp
-		${PRJ_DIR}/SeRoNet/OPCUA/Client/AsyncSubscriptionReader.hpp
-		${PRJ_DIR}/SeRoNet/OPCUA/Client/InstanceStorage.hpp
-        ${PRJ_DIR}/SeRoNet/OPCUA/Client/IBlocking.cpp
-		${PRJ_DIR}/SeRoNet/OPCUA/Client/UaClientWithMutex.hpp
-
-		${PRJ_DIR}/SeRoNet/Exceptions/BlockingDisabledException.hpp
-		${PRJ_DIR}/SeRoNet/Exceptions/SeRoNetSDKException.hpp
-
-		${PRJ_DIR}/SeRoNet/OPCUA/Server/PushServer.hpp
-		${PRJ_DIR}/SeRoNet/OPCUA/Server/QueryServer.hpp
-		${PRJ_DIR}/SeRoNet/OPCUA/Server/QueryServerHandler.hpp
-
-		${PRJ_DIR}/SeRoNet/CommunicationObjects/Description/ComplexType.cpp
+		SeRoNetSDK/SeRoNet/OPCUA/Client/IBlocking.cpp
+		SeRoNetSDK/SeRoNet/CommunicationObjects/Description/ComplexType.cpp
 		)
 
-# Header only Library
 add_library(SeRoNetSDK ${PRJ_FILES})
 set_target_properties(SeRoNetSDK PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(SeRoNetSDK PROPERTIES DEBUG_POSTFIX "d")
@@ -47,15 +27,15 @@ set_property(TARGET SeRoNetSDK PROPERTY SOVERSION 3)
 
 # export library (either static or shared depending on BUILD_SHARED_LIBS)
 install(TARGETS SeRoNetSDK
-	EXPORT SeRoNetSDKTargets
-	LIBRARY DESTINATION lib
-	ARCHIVE DESTINATION lib
-	RUNTIME DESTINATION bin
-	INCLUDES DESTINATION include/SeRoNetSDK
-	)
+		EXPORT SeRoNetSDKTargets
+		LIBRARY DESTINATION lib
+		ARCHIVE DESTINATION lib
+		RUNTIME DESTINATION bin
+		INCLUDES DESTINATION include/SeRoNetSDK
+		)
 
 install(DIRECTORY SeRoNetSDK/ DESTINATION include/SeRoNetSDK
-        FILES_MATCHING PATTERN *.hpp)
+		FILES_MATCHING PATTERN *.hpp)
 
 install(DIRECTORY SmartSoftComponentDeveloperAPIcpp/ DESTINATION include/SmartSoftComponentDeveloperAPIcpp/
 		FILES_MATCHING PATTERN *.h)
@@ -66,27 +46,27 @@ set(target_install_dest_name "${cmake_configfile_install}/SeRoNetSDKTargets.cmak
 
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
-  "${CMAKE_CURRENT_BINARY_DIR}/SeRoNetSDKConfigVersion.cmake"
-  VERSION ${SERONET_SDK_VERSION}
-  COMPATIBILITY AnyNewerVersion
+		"${CMAKE_CURRENT_BINARY_DIR}/SeRoNetSDKConfigVersion.cmake"
+		VERSION ${SERONET_SDK_VERSION}
+		COMPATIBILITY AnyNewerVersion
 )
 
 configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/SeRoNetSDKConfig.cmake.in"
-							  "${CMAKE_CURRENT_BINARY_DIR}/cmake/SeRoNetSDKConfig.cmake"
-							  INSTALL_DESTINATION "${cmake_configfile_install}"
-							  PATH_VARS target_install_dest_name)
+		"${CMAKE_CURRENT_BINARY_DIR}/cmake/SeRoNetSDKConfig.cmake"
+		INSTALL_DESTINATION "${cmake_configfile_install}"
+		PATH_VARS target_install_dest_name)
 
 install(EXPORT SeRoNetSDKTargets
 		FILE SeRoNetSDKTargets.cmake
 		DESTINATION "${cmake_configfile_install}")
 
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cmake/SeRoNetSDKConfig.cmake"
-			"${CMAKE_CURRENT_BINARY_DIR}/SeRoNetSDKConfigVersion.cmake"
+		"${CMAKE_CURRENT_BINARY_DIR}/SeRoNetSDKConfigVersion.cmake"
 		DESTINATION "${cmake_configfile_install}")
 
 
 # Modify default MSVC options of CMake
-if(MSVC)
+if (MSVC)
 	set(CompilerFlags
 			CMAKE_CXX_FLAGS
 			CMAKE_CXX_FLAGS_DEBUG
@@ -95,7 +75,7 @@ if(MSVC)
 			CMAKE_C_FLAGS_DEBUG
 			CMAKE_C_FLAGS_RELEASE
 			)
-	foreach(CompilerFlag ${CompilerFlags})
-	  string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
-	endforeach()
-endif(MSVC)
+	foreach (CompilerFlag ${CompilerFlags})
+		string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
+	endforeach ()
+endif (MSVC)
