@@ -7,6 +7,7 @@ set (CMAKE_CXX_STANDARD 17)
 find_package(open62541 REQUIRED)
 find_package(Open62541Cpp REQUIRED)
 
+
 set(PRJ_DIR ${PROJECT_SOURCE_DIR}/SeRoNetSDK)
 
 set(PRJ_FILES
@@ -19,20 +20,18 @@ set(PRJ_FILES
 		${PRJ_DIR}/SeRoNet/OPCUA/Client/AsyncSubscriptionReader.hpp
 		${PRJ_DIR}/SeRoNet/OPCUA/Client/InstanceStorage.hpp
         ${PRJ_DIR}/SeRoNet/OPCUA/Client/IBlocking.cpp
-        ${PRJ_DIR}/SeRoNet/OPCUA/Client/IBlocking.hpp
 		${PRJ_DIR}/SeRoNet/OPCUA/Client/UaClientWithMutex.hpp
+
 		${PRJ_DIR}/SeRoNet/Exceptions/BlockingDisabledException.hpp
 		${PRJ_DIR}/SeRoNet/Exceptions/SeRoNetSDKException.hpp
-		${PRJ_DIR}/SeRoNet/OPCUA/Server/pushserver.hpp
-		${PRJ_DIR}/SeRoNet/OPCUA/Server/queryserver.hpp
 
-		${PRJ_DIR}/SeRoNet/Utils/ICommunicationObject.hpp
-		${PRJ_DIR}/SeRoNet/Utils/IObserver.hpp
-		${PRJ_DIR}/SeRoNet/Utils/observerHandler.cpp
-		${PRJ_DIR}/SeRoNet/Utils/observerHandler.hpp
+		${PRJ_DIR}/SeRoNet/OPCUA/Server/PushServer.hpp
+		${PRJ_DIR}/SeRoNet/OPCUA/Server/QueryServer.hpp
+		${PRJ_DIR}/SeRoNet/OPCUA/Server/QueryServerHandler.hpp
+
 		${PRJ_DIR}/SeRoNet/Utils/SmartComponent.hpp
-		${PRJ_DIR}/SeRoNet/Utils/observerHandler.hpp
-		${PRJ_DIR}/SeRoNet/Utils/smartTaskImpl.hpp
+		${PRJ_DIR}/SeRoNet/Utils/Task.hpp
+
 		)
 
 # Header only Library
@@ -59,6 +58,9 @@ install(TARGETS SeRoNetSDK
 
 install(DIRECTORY SeRoNetSDK/ DESTINATION include/SeRoNetSDK
         FILES_MATCHING PATTERN *.hpp)
+
+install(DIRECTORY SmartSoftComponentDeveloperAPIcpp/ DESTINATION include/SmartSoftComponentDeveloperAPIcpp/
+		FILES_MATCHING PATTERN *.h)
 
 
 set(cmake_configfile_install lib/cmake)
