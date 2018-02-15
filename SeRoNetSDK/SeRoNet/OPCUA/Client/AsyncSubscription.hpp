@@ -5,8 +5,6 @@
 #include <condition_variable>
 #include <mutex>
 
-#include "AsyncSubscriptionReader.hpp"
-
 namespace SeRoNet {
 	namespace OPCUA {
 		namespace Client {
@@ -18,22 +16,22 @@ namespace SeRoNet {
 			class AsyncSubscription
 			{
 			public:
-				typedef std::atomic_uint64_t atomic_counter_t;
-				typedef std::uint64_t counter_t;
+				typedef std::atomic_int64_t atomic_counter_t;
+				typedef std::int64_t counter_t;
 
 				virtual ~AsyncSubscription() = 0;
-			protected:
 
-				//Allow reader to interact with this class
-				template<typename U>
-				friend class AsyncSubscriptionReader;
+				//Functions for Acquire data, easy Access with AsyncSubscriptionReader
+
+				///@todo Implement Iterator instead of reader (Iterator Interface, ++, *, begin(), end()...) !?
+
+				/// Get the DataCounter after the last element (similar to end())
 				virtual counter_t getDataCounter() = 0;
-
-				virtual void addData(const T_DATATYPE& newData) = 0;
-
 				virtual bool hasData(counter_t dataCounter) = 0;
-
 				virtual T_DATATYPE getData(counter_t dataCounter, bool &overflow, counter_t &readDataCounter) = 0;
+				virtual bool empty() = 0;
+			protected:
+				virtual void addData(const T_DATATYPE& newData) = 0;
 			};
 
 			template<typename T_DATATYPE>

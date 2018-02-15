@@ -29,9 +29,7 @@ set(PRJ_FILES
 		${PRJ_DIR}/SeRoNet/OPCUA/Server/QueryServer.hpp
 		${PRJ_DIR}/SeRoNet/OPCUA/Server/QueryServerHandler.hpp
 
-		${PRJ_DIR}/SeRoNet/Utils/SmartComponent.hpp
-		${PRJ_DIR}/SeRoNet/Utils/Task.hpp
-
+		${PRJ_DIR}/SeRoNet/CommunicationObjects/Description/ComplexType.cpp
 		)
 
 # Header only Library
