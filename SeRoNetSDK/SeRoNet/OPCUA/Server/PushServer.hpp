@@ -71,7 +71,7 @@ class PushServer :
   *                                  client. Some clients might still been
   *                                  updated correctly.
   */
-   Smart::StatusCode put(const T_AnswerType& d) override;
+  Smart::StatusCode put(const T_AnswerType &d) override;
 
  protected:
   void serverInitiatedDisconnect() override;
@@ -89,9 +89,9 @@ inline PushServer<T_AnswerType>::PushServer(SeRoNet::Utils::SmartComponent *comp
 }
 
 template<class T_AnswerType>
-Smart::StatusCode PushServer<T_AnswerType>::put(const T_AnswerType& d) {
-    T_AnswerType a(d);
-   a.putObject(this->m_component->getServer());
+Smart::StatusCode PushServer<T_AnswerType>::put(const T_AnswerType &d) {
+  T_AnswerType a(d);
+  a.putObject(this->m_component->getServer());
   return Smart::SMART_OK;
 }
 

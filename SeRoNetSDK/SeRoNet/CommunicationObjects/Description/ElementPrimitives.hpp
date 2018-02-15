@@ -11,11 +11,11 @@
 #include <string>
 
 namespace SeRoNet {
-	namespace CommunicationObjects {
-		namespace Description {
-			using ElementInt32 = ElementPrimitive<std::int32_t>;
-			using ElementString = ElementPrimitive<std::string>;
+namespace CommunicationObjects {
+namespace Description {
+using ElementInt32 = ElementPrimitive<std::int32_t>;
+using ElementString = ElementPrimitive<std::string>;
 
-		}
-	}
+}
+}
 }

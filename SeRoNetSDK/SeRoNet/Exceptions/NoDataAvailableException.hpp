@@ -9,12 +9,12 @@
 #include "SeRoNetSDKException.hpp"
 
 namespace SeRoNet {
-	namespace Exceptions {
-		/// Exception, which is thrown, when data is requested and no Data is available
-		class NoDataAvailableException : public SeRoNetSDKException {
-		public:
-			using SeRoNetSDKException::SeRoNetSDKException;
-		};
-	}
+namespace Exceptions {
+/// Exception, which is thrown, when data is requested and no Data is available
+class NoDataAvailableException : public SeRoNetSDKException {
+ public:
+  using SeRoNetSDKException::SeRoNetSDKException;
+};
+}
 }
 

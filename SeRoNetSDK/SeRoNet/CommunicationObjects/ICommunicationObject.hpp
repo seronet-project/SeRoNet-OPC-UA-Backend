@@ -9,10 +9,10 @@
 #include "Description/ComplexType.hpp"
 
 namespace SeRoNet {
-	namespace CommunicationObjects {
-		class ICommunicationObject {
-		public:
-			virtual Description::ComplexType::shp_t getObjectDescription(std::string name) = 0;
-		};
-	}
+namespace CommunicationObjects {
+class ICommunicationObject {
+ public:
+  virtual Description::ComplexType::shp_t getObjectDescription(std::string name) = 0;
+};
+}
 }

@@ -9,15 +9,15 @@
 #include "IVisitorDescription.hpp"
 
 namespace SeRoNet {
-	namespace CommunicationObjects {
-		namespace Description {
-			///\todo ? Merge with IDescription
-			class IVisitableDescription {
-			public:
-				virtual void accept(IVisitorDescription* visitor) = 0;
-			};
-		}
-	}
+namespace CommunicationObjects {
+namespace Description {
+///\todo ? Merge with IDescription
+class IVisitableDescription {
+ public:
+  virtual void accept(IVisitorDescription *visitor) = 0;
+};
+}
+}
 }
 
 

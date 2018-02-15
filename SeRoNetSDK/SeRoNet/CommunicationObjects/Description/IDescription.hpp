@@ -10,21 +10,21 @@
 #include <memory>
 
 namespace SeRoNet {
-	namespace CommunicationObjects {
-		namespace Description {
-			class IDescription : public IVisitableDescription{
-			public:
-				typedef std::shared_ptr<IDescription> shp_t;
-				explicit IDescription(std::string name): m_name(std::move(name)) {}
+namespace CommunicationObjects {
+namespace Description {
+class IDescription : public IVisitableDescription {
+ public:
+  typedef std::shared_ptr<IDescription> shp_t;
+  explicit IDescription(std::string name) : m_name(std::move(name)) {}
 
-				const std::string &getName() const {
-					return m_name;
-				}
+  const std::string &getName() const {
+    return m_name;
+  }
 
-			private:
-				const std::string m_name;
-			};
+ private:
+  const std::string m_name;
+};
 
-		}
-	}
+}
+}
 }

@@ -10,13 +10,13 @@
 #include "SeRoNetSDKException.hpp"
 
 namespace SeRoNet {
-	namespace Exceptions {
-		/// Exception, which is thrown, when an (blocking) operation can not be completed, because blocking is disabled
-		class BlockingDisabledException : public SeRoNetSDKException {
-		public:
-			using SeRoNetSDKException::SeRoNetSDKException;
-		};
-	}
+namespace Exceptions {
+/// Exception, which is thrown, when an (blocking) operation can not be completed, because blocking is disabled
+class BlockingDisabledException : public SeRoNetSDKException {
+ public:
+  using SeRoNetSDKException::SeRoNetSDKException;
+};
+}
 }
 
 #endif //SERONETSDK_BLOCKINGDISABLEDEXCEPTION_HPP

@@ -10,21 +10,21 @@
 #include <string>
 
 namespace SeRoNet {
-	namespace CommunicationObjects {
-		namespace Description {
-			template <typename T>
-			class ElementPrimitive;
+namespace CommunicationObjects {
+namespace Description {
+template<typename T>
+class ElementPrimitive;
 
-			class ComplexType;
+class ComplexType;
 
-			class IVisitorDescription {
-			public:
-				virtual void visit(ComplexType* complexObject) = 0;
-				virtual void visit(ElementPrimitive<std::int32_t>* el) = 0;
-				virtual void visit(ElementPrimitive<std::string>* el) = 0;
-				/// \todo declare all types
+class IVisitorDescription {
+ public:
+  virtual void visit(ComplexType *complexObject) = 0;
+  virtual void visit(ElementPrimitive<std::int32_t> *el) = 0;
+  virtual void visit(ElementPrimitive<std::string> *el) = 0;
+  /// \todo declare all types
 
-			};
-		}
-	}
+};
+}
+}
 }

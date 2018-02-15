@@ -4,25 +4,22 @@
 /// @date 10.01.2018
 ///
 
-#ifndef SERONETSDK_UACLIENTWITHMUTEX_HPP
-#define SERONETSDK_UACLIENTWITHMUTEX_HPP
+#pragma once
 
 #include <open62541.h>
 #include <memory>
 #include <mutex>
 
 namespace SeRoNet {
-	namespace OPCUA {
-		namespace Client {
-			struct UaClientWithMutex_t
-			{
-				std::shared_ptr<UA_Client> pClient;
-				std::mutex opcuaMutex;
-				typedef std::shared_ptr<UaClientWithMutex_t> shpType;
-			};
-		}
-	}
+namespace OPCUA {
+namespace Client {
+struct UaClientWithMutex_t {
+  std::shared_ptr<UA_Client> pClient;
+  std::mutex opcuaMutex;
+  typedef std::shared_ptr<UaClientWithMutex_t> shpType;
+};
+}
+}
 }
 
 
-#endif //SERONETSDK_UACLIENTWITHMUTEX_HPP
