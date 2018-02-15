@@ -16,6 +16,8 @@ namespace SeRoNet {
 			class ComplexType : public IDescription{
 			public:
 				typedef std::list<IDescription::shp_t> ListOfElements_t;
+				typedef std::shared_ptr<ComplexType> shp_t;
+
 				using IDescription::IDescription;
 				ListOfElements_t::const_iterator begin() {return m_elements.begin();}
 				ListOfElements_t::const_iterator end() {return m_elements.end();}

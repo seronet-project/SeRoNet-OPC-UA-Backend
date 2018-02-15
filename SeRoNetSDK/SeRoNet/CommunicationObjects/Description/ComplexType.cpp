@@ -16,7 +16,7 @@ namespace SeRoNet {
 			}
 
 			void ComplexType::accept(IVisitorDescription *visitor) {
-				visitor->visit(*this);
+				visitor->visit(this);
 			}
 		}
 	}

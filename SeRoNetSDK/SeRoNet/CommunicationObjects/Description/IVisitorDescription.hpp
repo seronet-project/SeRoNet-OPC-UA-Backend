@@ -13,11 +13,12 @@ namespace SeRoNet {
 	namespace CommunicationObjects {
 		namespace Description {
 			template <typename T>
-			class ElementPrimitive<T>;
+			class ElementPrimitive;
 
 			class ComplexType;
 
 			class IVisitorDescription {
+			public:
 				virtual void visit(ComplexType* complexObject) = 0;
 				virtual void visit(ElementPrimitive<std::int32_t>* el) = 0;
 				virtual void visit(ElementPrimitive<std::string>* el) = 0;

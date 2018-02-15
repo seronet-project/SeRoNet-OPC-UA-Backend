@@ -23,7 +23,7 @@ namespace SeRoNet {
 				void set(PRIMITIVE_TYPE newValue) const { m_setter(newValue);};
 
 				void accept(IVisitorDescription *visitor) override {
-					visitor->visit(*this);
+					visitor->visit(this);
 				}
 
 			private:

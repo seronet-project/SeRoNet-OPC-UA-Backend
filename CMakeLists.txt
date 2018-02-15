@@ -33,6 +33,8 @@ set(PRJ_FILES
 		${PRJ_DIR}/SeRoNet/Utils/SmartComponent.hpp
 		${PRJ_DIR}/SeRoNet/Utils/observerHandler.hpp
 		${PRJ_DIR}/SeRoNet/Utils/smartTaskImpl.hpp
+
+		${PRJ_DIR}/SeRoNet/CommunicationObjects/Description/ComplexType.cpp
 		)
 
 # Header only Library
