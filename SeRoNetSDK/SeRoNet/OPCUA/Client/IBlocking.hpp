@@ -32,7 +32,7 @@ class IBlocking {
   /// ReadOnly m_blockingEnabled
   const std::atomic_bool &BlockingEnabled;
  private:
-  std::atomic_bool m_blockingEnabled = true;
+  std::atomic_bool m_blockingEnabled = {true};
   instanceStorage_t *m_pInstStorage;
   instanceStorage_t::Instance_Container_Iterator_t m_it;
 };
