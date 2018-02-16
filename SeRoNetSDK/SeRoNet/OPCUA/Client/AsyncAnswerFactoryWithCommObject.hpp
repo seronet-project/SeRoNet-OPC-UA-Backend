@@ -1,5 +1,5 @@
 ///
-/// \file AsyncAnswerFactoryWithCoordinateObject.hpp
+/// \file AsyncAnswerFactoryWithCommObject.hpp
 /// \author Christian von Arnim
 /// \date 16.02.2018
 ///
@@ -7,7 +7,7 @@
 #pragma once
 
 #include "AsyncAnswerFactory.hpp"
-#include "AsyncAnswerMethodCoordinateObjectRequest.hpp"
+#include "AsyncAnswerMethodCommObjectRequest.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -31,7 +31,7 @@ class AsyncAnswerFactoryWithCommObject : public AsyncAnswerFactory<T_RETURN, T_R
   typename AsyncAnswerFactory<T_RETURN, T_REQUEST>::CallReturn_t call(T_REQUEST arg) override {
     //std::unique_lock<std::remove_reference<decltype(this->m_opcuaThreadMutex)>::type> l_opcUA(this->m_opcuaThreadMutex);
     std::unique_lock l_opcUA(this->m_opcuaThreadMutex);
-    return typename AsyncAnswerFactory<T_RETURN, T_REQUEST>::CallReturn_t(new AsyncAnswerMethodCoordinateObjectRequest<T_RETURN>
+    return typename AsyncAnswerFactory<T_RETURN, T_REQUEST>::CallReturn_t(new AsyncAnswerMethodCommObjectRequest<T_RETURN>
                             (&this->m_activeInstances, this->m_blockingEnabled, this->m_pClient.get(), &arg));
   }
 };

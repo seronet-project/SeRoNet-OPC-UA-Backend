@@ -1,5 +1,5 @@
 ///
-/// \file AsyncAnswerMethodRequest.hpp
+/// \file AsyncAnswerMethodCommObjectRequest.hpp
 /// \author Christian von Arnim
 /// \date 16.02.2018
 ///
@@ -9,16 +9,16 @@
 #include "AsyncAnswerMethod.hpp"
 #include "InstanceStorage.hpp"
 #include "../../CommunicationObjects/ICommunicationObject.hpp"
-#include "Converter/CoordinateObjectToUaVariantArray.hpp"
-#include "Converter/UaVariantArrayToCoordinateObject.hpp"
+#include "Converter/CommObjectToUaVariantArray.hpp"
+#include "Converter/UaVariantArrayToCommObject.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
 namespace Client {
 template<typename T_RETURN>
-class AsyncAnswerMethodCoordinateObjectRequest : public AsyncAnswerMethod<T_RETURN> {
+class AsyncAnswerMethodCommObjectRequest : public AsyncAnswerMethod<T_RETURN> {
  public:
-  AsyncAnswerMethodCoordinateObjectRequest(SeRoNet::OPCUA::Client::IBlocking::instanceStorage_t *instStorage,
+  AsyncAnswerMethodCommObjectRequest(SeRoNet::OPCUA::Client::IBlocking::instanceStorage_t *instStorage,
                                            bool blockingEnabled,
                                            UA_Client *client,
                                            CommunicationObjects::ICommunicationObject *request);
@@ -28,7 +28,7 @@ class AsyncAnswerMethodCoordinateObjectRequest : public AsyncAnswerMethod<T_RETU
   T_RETURN m_answer;
 };
 template<typename T_RETURN>
-AsyncAnswerMethodCoordinateObjectRequest<T_RETURN>::AsyncAnswerMethodCoordinateObjectRequest(
+AsyncAnswerMethodCommObjectRequest<T_RETURN>::AsyncAnswerMethodCommObjectRequest(
     SeRoNet::OPCUA::Client::IBlocking::instanceStorage_t *instStorage,
     bool blockingEnabled,
     UA_Client *client,
@@ -40,15 +40,15 @@ AsyncAnswerMethodCoordinateObjectRequest<T_RETURN>::AsyncAnswerMethodCoordinateO
         UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
         UA_NODEID_STRING_ALLOC(1, "newCoordinateService"),
         static_cast<open62541::UA_ArrayOfVariant> (
-            Converter::CoordinateObjectToUaVariantArray(request->getObjectDescription("").get())
+            Converter::CommObjectToUaVariantArray(request->getObjectDescription("").get())
         )
     ) {
 
 }
 template<typename T_RETURN>
-void AsyncAnswerMethodCoordinateObjectRequest<T_RETURN>::processAnswer(
+void AsyncAnswerMethodCommObjectRequest<T_RETURN>::processAnswer(
     UA_StatusCode result, open62541::UA_ArrayOfVariant *outputs) {
-  Converter::UaVariantArrayToCoordinateObject(*outputs, m_answer.getObjectDescription("").get());
+  Converter::UaVariantArrayToCommObject(*outputs, m_answer.getObjectDescription("").get());
   this->setHasAnswer();
 }
 

@@ -1,5 +1,5 @@
 ///
-/// \file UaVariantArrayToCoordinateObject.hpp
+/// \file UaVariantArrayToCommObject.hpp
 /// \author Christian von Arnim
 /// \date 16.02.2018
 ///
@@ -18,10 +18,10 @@ namespace Client {
 namespace Converter {
 
 
-class UaVariantArrayToCoordinateObject {
+class UaVariantArrayToCommObject {
  public:
-  UaVariantArrayToCoordinateObject(open62541::UA_ArrayOfVariant src, CommunicationObjects::Description::IVisitableDescription *target);
-  virtual ~UaVariantArrayToCoordinateObject() = default;
+  UaVariantArrayToCommObject(open62541::UA_ArrayOfVariant src, CommunicationObjects::Description::IVisitableDescription *target);
+  virtual ~UaVariantArrayToCommObject() = default;
  private:
 
 };

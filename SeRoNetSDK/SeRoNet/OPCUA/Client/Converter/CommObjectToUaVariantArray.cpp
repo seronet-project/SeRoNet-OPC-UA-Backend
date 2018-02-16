@@ -1,10 +1,10 @@
 ///
-/// \file CoordinateObjectToUaVariantArray.cpp
+/// \file CommObjectToUaVariantArray.cpp
 /// \author Christian von Arnim
 /// \date 16.02.2018
 ///
 
-#include "CoordinateObjectToUaVariantArray.hpp"
+#include "CommObjectToUaVariantArray.hpp"
 #include "../../../CommunicationObjects/Description/IVisitorDescription.hpp"
 #include "../../../Exceptions/NotImplementedException.hpp"
 #include <list>
@@ -38,7 +38,7 @@ namespace OPCUA {
 namespace Client {
 namespace Converter {
 
-CoordinateObjectToUaVariantArray::CoordinateObjectToUaVariantArray(
+CommObjectToUaVariantArray::CommObjectToUaVariantArray(
     CommunicationObjects::Description::IVisitableDescription *description
 ) {
   ToUaVariantArrayVisitor visitor;

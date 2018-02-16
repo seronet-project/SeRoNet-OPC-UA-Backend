@@ -1,10 +1,10 @@
 ///
-/// \file UaVariantArrayToCoordinateObject.cpp
+/// \file UaVariantArrayToCommObject.cpp
 /// \author Christian von Arnim
 /// \date 16.02.2018
 ///
 
-#include "UaVariantArrayToCoordinateObject.hpp"
+#include "UaVariantArrayToCommObject.hpp"
 
 #include "../../../CommunicationObjects/Description/IVisitorDescription.hpp"
 #include "../../../Exceptions/NotImplementedException.hpp"
@@ -13,9 +13,9 @@
 #include "../../../CommunicationObjects/Description/ElementPrimitive.hpp"
 
 /// Internal Class
-class ToCoordinateObjectVisitor : public ::SeRoNet::CommunicationObjects::Description::IVisitorDescription {
+class ToCommObjectVisitor : public ::SeRoNet::CommunicationObjects::Description::IVisitorDescription {
  public:
-  ToCoordinateObjectVisitor(
+  ToCommObjectVisitor(
       open62541::UA_ArrayOfVariant srcVariantArray
   ):
   m_srcVariants(srcVariantArray) {
@@ -53,11 +53,11 @@ namespace OPCUA {
 namespace Client {
 namespace Converter {
 
-UaVariantArrayToCoordinateObject::UaVariantArrayToCoordinateObject(
+UaVariantArrayToCommObject::UaVariantArrayToCommObject(
     open62541::UA_ArrayOfVariant src,
     CommunicationObjects::Description::IVisitableDescription *target) {
 
-  ToCoordinateObjectVisitor visitor(src);
+  ToCommObjectVisitor visitor(src);
   target->accept(&visitor);
 
 }
