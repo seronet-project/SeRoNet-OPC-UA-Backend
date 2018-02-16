@@ -16,15 +16,14 @@ class AsyncAnswer : IBlocking {
  public:
   AsyncAnswer(instanceStorage_t *instStorage, bool blockingEnabled);
 
- private:
-  void blockingChanged() override;
-
  public:
   virtual ~AsyncAnswer() override;
 
   bool hasAnswer() { return m_hasAnswer; }
   T_RETURN waitForAnswer();
+
  protected:
+  void blockingChanged() override;
 
   virtual T_RETURN getAnswer() = 0;
   void setHasAnswer(bool hasAnswer = true) {

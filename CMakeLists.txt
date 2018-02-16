@@ -11,6 +11,8 @@ find_package(Open62541Cpp REQUIRED)
 set(PRJ_FILES
 		SeRoNetSDK/SeRoNet/OPCUA/Client/IBlocking.cpp
 		SeRoNetSDK/SeRoNet/CommunicationObjects/Description/ComplexType.cpp
+		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/CoordinateObjectToUaVariantArray.cpp
+		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/UaVariantArrayToCoordinateObject.cpp
 		)
 
 add_library(SeRoNetSDK ${PRJ_FILES})

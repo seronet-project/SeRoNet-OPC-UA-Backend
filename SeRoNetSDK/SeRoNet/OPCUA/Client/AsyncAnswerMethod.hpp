@@ -37,7 +37,7 @@ class AsyncAnswerMethod : public AsyncAnswer<T_RETURN> {
                                              UA_UInt32 requestId,
                                              const void *response);
 
-  /// Callback when an aswer has been received
+  /// Callback when an answer has been received
   void methodCalled_callback(UA_Client *client, void *userdata,
                              UA_UInt32 requestId, const void *response);
 };
