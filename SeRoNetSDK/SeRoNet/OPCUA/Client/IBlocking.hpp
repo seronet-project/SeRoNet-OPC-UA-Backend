@@ -25,6 +25,8 @@ class IBlocking {
   ///@return old value of blockingEnabled
   bool disableBlocking();
 
+  bool isBlockingEnabled() { return m_blockingEnabled; };
+
   virtual ~IBlocking();
  protected:
   /// Called when the value of BlockingEnabled is changed

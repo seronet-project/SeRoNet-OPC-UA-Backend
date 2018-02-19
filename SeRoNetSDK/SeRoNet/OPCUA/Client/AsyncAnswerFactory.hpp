@@ -20,6 +20,7 @@ class AsyncAnswerFactory {
 
   void disableBlocking();
   void enableBlocking();
+  bool isBlockingEnabled() {return m_blockingEnabled;}
  protected:
   std::shared_ptr<UA_Client> m_pClient;
   std::mutex &m_opcuaThreadMutex;
