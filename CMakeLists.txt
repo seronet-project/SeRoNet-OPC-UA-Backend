@@ -13,6 +13,7 @@ set(PRJ_FILES
 		SeRoNetSDK/SeRoNet/CommunicationObjects/Description/ComplexType.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/CommObjectToUaVariantArray.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/UaVariantArrayToCommObject.cpp
+        SeRoNetSDK/SeRoNet/OPCUA/Server/CommObjectToUaArgument.cpp
 		)
 
 add_library(SeRoNetSDK ${PRJ_FILES})

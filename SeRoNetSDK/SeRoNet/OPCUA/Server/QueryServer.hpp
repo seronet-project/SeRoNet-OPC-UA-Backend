@@ -1,28 +1,31 @@
 /**
 * @author Sebastian Friedl
 */
-#ifndef QUERY_SERVER_HPP
-#define QUERY_SERVER_HPP
-
+#pragma once
 #include <iostream>
 #include <csignal>
 #include <mutex>
 #include <map>
 #include <thread>
 #include <open62541.h>
+#include <Open62541Cpp/UA_Argument.hpp>
+#include <Open62541Cpp/UA_ArrayOfArgument.hpp>
 #include "QueryServerHandler.hpp"
 #include "../../Utils/SmartComponent.hpp"
+#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIComponent.h"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIStatusCode.h"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartICommunicationObject.h"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIQueryServerPattern_T.h"
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIComponent.h"
+#include "../../CommunicationObjects/ICommunicationObject.hpp"
+#include "CommObjectToUaArgument.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
 namespace Server {
 
 template<typename T_REQUEST, typename T_ANSWER>
-class QueryServer : public Smart::IQueryServerPattern<T_REQUEST, T_ANSWER, int> {
+class QueryServer :
+    public Smart::IQueryServerPattern<T_REQUEST, T_ANSWER, int> {
   // TODO change int to SmartID implementation
  private:
 
@@ -66,8 +69,6 @@ class QueryServer : public Smart::IQueryServerPattern<T_REQUEST, T_ANSWER, int> 
   */
   virtual ~QueryServer() throw() = default;
 
-  Smart::StatusCode runPort();
-
   /** Provide answer to be sent back to the requestor.
   *
   *  Member function is thread safe and thread reentrant.
@@ -87,6 +88,8 @@ class QueryServer : public Smart::IQueryServerPattern<T_REQUEST, T_ANSWER, int> 
 
 };
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
 template<typename T_REQUEST, typename T_ANSWER>
 UA_StatusCode QueryServer<T_REQUEST, T_ANSWER>::methodCallback(
     UA_Server *server,
@@ -112,6 +115,7 @@ UA_StatusCode QueryServer<T_REQUEST, T_ANSWER>::methodCallback(
   friendThis->m_answers.at(id).toQueryAnswer(output);
   return UA_STATUSCODE_GOOD;
 }
+#pragma clang diagnostic pop
 
 template<typename T_REQUEST, typename T_ANSWER>
 inline QueryServer<T_REQUEST, T_ANSWER>::QueryServer(
@@ -123,13 +127,12 @@ inline QueryServer<T_REQUEST, T_ANSWER>::QueryServer(
     m_service(service) {
   UA_Server *server = dynamic_cast<Utils::SmartComponent *>(component)->getServer();
 
-  int inputSize;
-  UA_Argument *inputArguments = NULL;
-  T_REQUEST::createAsQueryRequestModell(&inputArguments, inputSize);
-
-  int outputSize;
-  UA_Argument *outputArguments = NULL;
-  T_ANSWER::createAsQueryAnswerModell(&outputArguments, outputSize);
+  T_REQUEST *inputCommObject = new T_REQUEST;
+  OPEN_65241_CPP_NAMESPACE::UA_ArrayOfArgument
+      inputArguments = CommObjectToUaArgumentArray(inputCommObject->getObjectDescription("input").get());
+  T_ANSWER *outputCommObject = new T_ANSWER;
+  OPEN_65241_CPP_NAMESPACE::UA_ArrayOfArgument
+      outputArguments = CommObjectToUaArgumentArray(outputCommObject->getObjectDescription("output").get());
 
   UA_MethodAttributes helloAttr;
   UA_MethodAttributes_init(&helloAttr);
@@ -145,29 +148,22 @@ inline QueryServer<T_REQUEST, T_ANSWER>::QueryServer(
       UA_QUALIFIEDNAME_ALLOC(1, "hello world"),
       helloAttr,
       &methodCallback,
-      inputSize,
-      inputArguments,
-      outputSize,
-      outputArguments,
+      inputArguments.arraySize,
+      inputArguments.arguments,
+      outputArguments.arraySize,
+      outputArguments.arguments,
       this,
       NULL);
 
 }
 
 template<typename T_REQUEST, typename T_ANSWER>
-inline Smart::StatusCode QueryServer<T_REQUEST, T_ANSWER>::runPort() {
-
-  return Smart::StatusCode::SMART_ERROR;
-}
-
-template<typename T_REQUEST, typename T_ANSWER>
 Smart::StatusCode QueryServer<T_REQUEST, T_ANSWER>::answer(const int &id, const T_ANSWER &answer) {
-  m_answers.insert(std::pair < int, T_ANSWER > (id, answer));
+  std::pair<int, T_ANSWER> answer_pair(id, answer);
+  m_answers.insert(answer_pair);
   return Smart::StatusCode::SMART_OK;
 }
 
 }
 }
 }
-
-#endif
