@@ -24,7 +24,7 @@ class AsyncSubscriptionOpcUa : public AsyncSubscriptionArrayBuffer<T_DATATYPE> {
   ///@todo rework with Client connection pool
   AsyncSubscriptionOpcUa(UaClientWithMutex_t::shpType pUaClientwithMutex);
 
-  ///@todo Browse Variables (Names given by T_DATATYPE??)
+  ///\todo rework to take iterators
   virtual UA_StatusCode subscribe(std::vector<UA_NodeId> nodeIds);
   void unsubscribe();
   virtual ~AsyncSubscriptionOpcUa();
