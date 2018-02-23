@@ -25,7 +25,7 @@ class AsyncSubscriptionOpcUa : public AsyncSubscriptionArrayBuffer<T_DATATYPE> {
   AsyncSubscriptionOpcUa(UaClientWithMutex_t::shpType pUaClientwithMutex);
 
   ///@todo Browse Variables (Names given by T_DATATYPE??)
-  UA_StatusCode subscribe(std::vector<UA_NodeId> nodeIds);
+  virtual UA_StatusCode subscribe(std::vector<UA_NodeId> nodeIds);
   void unsubscribe();
   virtual ~AsyncSubscriptionOpcUa();
 
@@ -37,6 +37,9 @@ class AsyncSubscriptionOpcUa : public AsyncSubscriptionArrayBuffer<T_DATATYPE> {
     std::shared_ptr<open62541::UA_DataValue> value;
   };
 
+ protected:
+  UaClientWithMutex_t::shpType m_pUaClientWithMutex;
+
  private:
 
   void processValues();
@@ -45,7 +48,6 @@ class AsyncSubscriptionOpcUa : public AsyncSubscriptionArrayBuffer<T_DATATYPE> {
 
   static void handler_ValueChanged(UA_UInt32 monId, UA_DataValue *value, void *context);
 
-  UaClientWithMutex_t::shpType m_pUaClientWithMutex;
   UA_UInt32 m_subId = 0;
 
   ///TODO other map type!?
