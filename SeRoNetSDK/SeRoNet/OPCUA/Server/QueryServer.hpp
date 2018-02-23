@@ -2,22 +2,32 @@
 * @author Sebastian Friedl
 */
 #pragma once
+
 #include <iostream>
 #include <csignal>
 #include <mutex>
 #include <map>
 #include <thread>
+#include <string>
+#include <utility>
+
 #include <open62541.h>
+
 #include <Open62541Cpp/UA_Argument.hpp>
 #include <Open62541Cpp/UA_ArrayOfArgument.hpp>
-#include "QueryServerHandler.hpp"
-#include "../../Utils/SmartComponent.hpp"
+#include <Open62541Cpp/UA_ArrayOfVariant.hpp>
+
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIComponent.h"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIStatusCode.h"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartICommunicationObject.h"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIQueryServerPattern_T.h"
+
+#include "../../Utils/SmartComponent.hpp"
 #include "../../CommunicationObjects/ICommunicationObject.hpp"
+#include "../Client/Converter/CommObjectToUaVariantArray.hpp"
 #include "CommObjectToUaArgument.hpp"
+#include "QueryServerHandler.hpp"
+#include "../../Exceptions/NotImplementedException.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -26,9 +36,8 @@ namespace Server {
 template<typename T_REQUEST, typename T_ANSWER>
 class QueryServer :
     public Smart::IQueryServerPattern<T_REQUEST, T_ANSWER, int> {
-  // TODO change int to SmartID implementation
+  // TODO(sebastian) change int to SmartID implementation
  private:
-
   /// management class of the component
   Smart::IComponent *m_component;
   /// name of service
@@ -72,7 +81,7 @@ class QueryServer :
   /** Provide answer to be sent back to the requestor.
   *
   *  Member function is thread safe and thread reentrant.
-  *  TODO change int to smartsoft id
+  *  TODO (sebastian) change int to smartsoft id
   *
   *  @param id identifies the request to which the answer belongs
   *  @param answer is the reply itself.
@@ -82,10 +91,8 @@ class QueryServer :
   virtual Smart::StatusCode answer(const int &id, const T_ANSWER &answer);
 
   virtual void serverInitiatedDisconnect() {
-    //TODO Implemntation
-    return;
+    throw SeRoNet::Exceptions::NotImplementedException(__FUNCTION__);
   }
-
 };
 
 #pragma clang diagnostic push
@@ -106,13 +113,22 @@ UA_StatusCode QueryServer<T_REQUEST, T_ANSWER>::methodCallback(
   QueryServer<T_REQUEST, T_ANSWER> *friendThis = static_cast<QueryServer<T_REQUEST, T_ANSWER> *>(methodContext);
 
   T_REQUEST request(input, inputSize);
-  int id = rand(); //TODO ersetzten mit std:future
+  int id = rand();  // TODO(Friedl) ersetzten mit std:future
   Smart::QueryServerInputType<T_REQUEST, int> fullRequest = {request, id};
   friendThis->notify_input(fullRequest);
   while (friendThis->m_answers.find(id) == friendThis->m_answers.end()) {
     std::this_thread::yield();
   }
-  friendThis->m_answers.at(id).toQueryAnswer(output);
+  auto tmp = static_cast<open62541::UA_ArrayOfVariant> (Client::Converter::CommObjectToUaVariantArray
+      (friendThis->m_answers.at(id).getObjectDescription("").get()));
+  for (int i = 0; i < tmp.VariantsSize; i++) {
+    UA_copy(&tmp.Variants[i], &output[i], &UA_TYPES[UA_TYPES_VARIANT]);
+  }
+  /*UA_Array_copy(tmp.Variants,
+                tmp.VariantsSize,
+                (void **) &output,
+                &UA_TYPES[UA_TYPES_VARIANT]);  // TODO Warum geht das nicht?*/
+  friendThis->m_answers.erase(id);
   return UA_STATUSCODE_GOOD;
 }
 #pragma clang diagnostic pop
@@ -154,7 +170,6 @@ inline QueryServer<T_REQUEST, T_ANSWER>::QueryServer(
       outputArguments.arguments,
       this,
       NULL);
-
 }
 
 template<typename T_REQUEST, typename T_ANSWER>
@@ -164,6 +179,6 @@ Smart::StatusCode QueryServer<T_REQUEST, T_ANSWER>::answer(const int &id, const 
   return Smart::StatusCode::SMART_OK;
 }
 
-}
-}
-}
+}  // namespace Server
+}  // namespace OPCUA
+}  // namespace SeRoNet
