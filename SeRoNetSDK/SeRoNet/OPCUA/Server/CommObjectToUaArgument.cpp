@@ -1,5 +1,5 @@
 ///
-/// \file QueryServerModellGenerator.cpp
+/// \file CommObjectToUaArgument.cpp
 /// \author Sebastian Friedl
 /// \date 16.02.2018
 ///

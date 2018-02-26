@@ -1,5 +1,5 @@
 ///
-/// \file QueryServerModellGenerator.hpp
+/// \file CommObjectToUaArgument.hpp
 /// \author Sebastian Friedl
 /// \date 16.02.2018
 ///
