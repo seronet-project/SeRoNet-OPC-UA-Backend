@@ -44,7 +44,7 @@ inline Smart::StatusCode QClientOPCUACommObj<RequestType, AnswerType>::queryRequ
 ) {
   typename QClientOPCUA<RequestType, AnswerType>::QueryIDtype::element_type::shpAsyncAnswer_t ans(m_Factory.call(request));
   id.reset(new typename QClientOPCUA<RequestType, AnswerType>::QueryIDtype::element_type(ans));
-  return ans == nullptr ? Smart::StatusCode::SMART_OK : Smart::StatusCode::SMART_ERROR;
+  return ans != nullptr ? Smart::StatusCode::SMART_OK : Smart::StatusCode::SMART_ERROR;
 }
 
 template<class RequestType, class AnswerType>
