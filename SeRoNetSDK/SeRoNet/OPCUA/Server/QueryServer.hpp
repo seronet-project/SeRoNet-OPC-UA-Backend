@@ -124,10 +124,6 @@ UA_StatusCode QueryServer<T_REQUEST, T_ANSWER>::methodCallback(
   for (int i = 0; i < tmp.VariantsSize; i++) {
     UA_copy(&tmp.Variants[i], &output[i], &UA_TYPES[UA_TYPES_VARIANT]);
   }
-  /*UA_Array_copy(tmp.Variants,
-                tmp.VariantsSize,
-                (void **) &output,
-                &UA_TYPES[UA_TYPES_VARIANT]);  // TODO Warum geht das nicht?*/
   friendThis->m_answers.erase(id);
   return UA_STATUSCODE_GOOD;
 }

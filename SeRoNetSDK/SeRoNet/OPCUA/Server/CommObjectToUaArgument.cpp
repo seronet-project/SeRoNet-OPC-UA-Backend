@@ -21,7 +21,6 @@ class ToUaArgumentArrayVisitor :
     }
   }
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<int32_t> *el) override {
-    //TODO @cva check for memory leaks /namespace  please
     open62541::UA_Argument newEl;
     newEl.argument->name = UA_STRING_ALLOC(el->getName().c_str());
     newEl.argument->dataType = UA_TYPES[UA_TYPES_INT32].typeId;
