@@ -8,9 +8,13 @@
 #include <iostream>
 #include <unordered_map>
 #include <open62541.h>
-#include "../../Utils/SmartComponent.hpp"
+#include <Open62541Cpp/UA_ArrayOfVariant.hpp>
+#include "../../Utils/Component.hpp"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIStatusCode.h"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIPushServerPattern_T.h"
+#include "CommObjectToPushModell.hpp"
+#include "../Client/Converter/CommObjectToUaVariantArray.hpp"
+#include "PushServerUpdater.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -21,7 +25,6 @@ class PushServer :
     public Smart::IPushServerPattern<T_AnswerType> {
  private:
   /// management class of the component
-  SeRoNet::Utils::SmartComponent *m_component;
 
   /// name of service
   std::string m_service;
@@ -33,7 +36,7 @@ class PushServer :
   * @param service    name of the service
   *
   */
-  PushServer(SeRoNet::Utils::SmartComponent *component, const std::string &serviceName);
+  PushServer(SeRoNet::Utils::Component *component, const std::string &serviceName);
 
   /** Destructor.
   *  Properly disconnects all service requestors in case of destruction
@@ -78,20 +81,35 @@ class PushServer :
 };
 
 template<class T_AnswerType>
-inline PushServer<T_AnswerType>::PushServer(SeRoNet::Utils::SmartComponent *component,
+inline PushServer<T_AnswerType>::PushServer(SeRoNet::Utils::Component *component,
                                             const std::string &serviceName) :
     Smart::IPushServerPattern<T_AnswerType>::IPushServerPattern(component, serviceName),
-    m_component(component),
     m_service(serviceName) {
   UA_Server *server = component->getServer();
-  T_AnswerType::createPushModell(server);
+  OPEN_65241_CPP_NAMESPACE::UA_NodeId objectsFolderNodeId(component->getNsIndex0(), UA_NS0ID_OBJECTSFOLDER);
+
+  T_AnswerType *CommObject = new T_AnswerType;
+
+  CommObjectToPushModell(
+      CommObject->getObjectDescription(serviceName).get(),
+      server,
+      objectsFolderNodeId,
+      component->getNsIndex1());
 
 }
 
 template<class T_AnswerType>
 Smart::StatusCode PushServer<T_AnswerType>::put(const T_AnswerType &d) {
   T_AnswerType a(d);
-  a.putObject(this->m_component->getServer());
+  OPEN_65241_CPP_NAMESPACE::UA_NodeId objectsFolderNodeId((UA_UInt16) 0, UA_NS0ID_OBJECTSFOLDER);
+  auto localComponent = dynamic_cast<SeRoNet::Utils::Component *>(this->component);
+
+  PushServerUpdater(
+      a.getObjectDescription(this->serviceName).get(),
+      localComponent->getServer(),
+      objectsFolderNodeId,
+      localComponent->getNsIndex1());
+
   return Smart::SMART_OK;
 }
 
