@@ -13,6 +13,7 @@
 #include <open62541.h>
 #include <mutex>
 #include "UaClientWithMutex.hpp"
+#include "../../Exceptions/SeRoNetSDKException.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -40,8 +41,14 @@ class AsyncSubscriptionOpcUa : public AsyncSubscriptionArrayBuffer<T_DATATYPE> {
  protected:
   UaClientWithMutex_t::shpType m_pUaClientWithMutex;
 
+  typedef std::list<monItemInfo_t> listOfNodeIdValue_t;
+  /// Called with a list of nodeid value pairs, order is the same like the order of the subscribed nodeIds
+  /// \param nodeIdvalues
+  virtual void processValues(listOfNodeIdValue_t listOfNodeIdvalues);
+
  private:
 
+  /// Called when valid values for each item has been received
   void processValues();
 
   void valueChanged(UA_UInt32 monId, UA_DataValue *value);
@@ -51,6 +58,8 @@ class AsyncSubscriptionOpcUa : public AsyncSubscriptionArrayBuffer<T_DATATYPE> {
   UA_UInt32 m_subId = 0;
 
   ///TODO other map type!?
+  typedef std::list<UA_UInt32> listOfMonitoredItemIds_t;
+  listOfMonitoredItemIds_t m_monitoredItemsIdorder;
   /// Index is monitored ItemID
   typedef std::map<UA_UInt32, monItemInfo_t> monItems_t;
   monItems_t m_monItems;
@@ -81,6 +90,10 @@ inline UA_StatusCode AsyncSubscriptionOpcUa<T_DATATYPE>::subscribe(std::vector<U
     return ret;
   }
 
+  ///\todo exception
+  assert(m_monItems.empty());
+  assert(m_monitoredItemsIdorder.empty());
+
   //UA_NodeId monitorThis = UA_NODEID_STRING(1, "the.answer");
   UA_UInt32 monId = 0;
   for (auto &nodeid : nodeIds) {
@@ -99,6 +112,8 @@ inline UA_StatusCode AsyncSubscriptionOpcUa<T_DATATYPE>::subscribe(std::vector<U
       unsubscribe();
       return ret;
     }
+    m_monitoredItemsIdorder.push_back(monId);
+
     monItemInfo_t info;
     info.nodeId = open62541::UA_NodeId(nodeid);
     m_monItems.insert(typename monItems_t::value_type(monId, info));
@@ -134,14 +149,31 @@ inline AsyncSubscriptionOpcUa<T_DATATYPE>::~AsyncSubscriptionOpcUa() {
 
 template<typename T_DATATYPE>
 inline void AsyncSubscriptionOpcUa<T_DATATYPE>::processValues() {
-  std::list<monItemInfo_t> listOfValues;
-  for (auto &item : m_monItems) {
-    listOfValues.push_back(item.second);
-    item.second.value.reset();
+  listOfNodeIdValue_t listOfValues;
+  for(const auto &monitoredItemId: m_monitoredItemsIdorder)
+  {
+    auto iter = m_monItems.find(monitoredItemId);
+    if(iter == m_monItems.end())
+    {
+      //Should not occure
+      //\todo define new exception
+      throw Exceptions::SeRoNetSDKException("Not all elements found.");
+    }
+
+    listOfValues.push_back(iter->second);
+    //Reset the value
+    iter->second.value.reset();
   }
+
   m_valuesSet = 0;
 
-  this->addData(T_DATATYPE::FromDataValues(listOfValues));
+  this->processValues(listOfValues);
+}
+
+template<typename T_DATATYPE>
+inline void AsyncSubscriptionOpcUa<T_DATATYPE>::processValues(
+    AsyncSubscriptionOpcUa::listOfNodeIdValue_t nodeIdvalues) {
+  this->addData(T_DATATYPE::FromDataValues(nodeIdvalues));
 }
 
 template<typename T_DATATYPE>

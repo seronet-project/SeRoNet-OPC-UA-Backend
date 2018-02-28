@@ -80,26 +80,6 @@ CommObjectBrowseToNodeIds::CommObjectBrowseToNodeIds(
         // if not a variable, ignore it
         continue;
       }
-
-      /*
-      if (ref->nodeId.nodeId.identifierType == UA_NODEIDTYPE_NUMERIC) {
-        std::string browseName((const char *) ref->browseName.name.data, (int) ref->browseName.name.length);
-
-
-        std::cout << "Myout: " << browseName << ", " << displayName << std::endl;
-
-        printf("%-9d %-16d %-16.*s %-16.*s\n", ref->nodeId.nodeId.namespaceIndex,
-               ref->nodeId.nodeId.identifier.numeric, (int) ref->browseName.name.length,
-               ref->browseName.name.data, (int) ref->displayName.text.length,
-               ref->displayName.text.data);
-      } else if (ref->nodeId.nodeId.identifierType == UA_NODEIDTYPE_STRING) {
-        printf("%-9d %-16.*s %-16.*s %-16.*s\n", ref->nodeId.nodeId.namespaceIndex,
-               (int) ref->nodeId.nodeId.identifier.string.length,
-               ref->nodeId.nodeId.identifier.string.data,
-               (int) ref->browseName.name.length, ref->browseName.name.data,
-               (int) ref->displayName.text.length, ref->displayName.text.data);
-      }
-      */
     }
   }
   UA_BrowseRequest_deleteMembers(&bReq);
