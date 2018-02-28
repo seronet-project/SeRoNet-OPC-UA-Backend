@@ -22,7 +22,7 @@
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartICommunicationObject.h"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIQueryServerPattern_T.h"
 
-#include "../../Utils/SmartComponent.hpp"
+#include "../../Utils/Component.hpp"
 #include "../../CommunicationObjects/ICommunicationObject.hpp"
 #include "../Client/Converter/CommObjectToUaVariantArray.hpp"
 #include "CommObjectToUaArgument.hpp"
@@ -137,7 +137,7 @@ inline QueryServer<T_REQUEST, T_ANSWER>::QueryServer(
     Smart::IQueryServerPattern<T_REQUEST, T_ANSWER, int>::IQueryServerPattern(component, service),
     m_component(component),
     m_service(service) {
-  UA_Server *server = dynamic_cast<Utils::SmartComponent *>(component)->getServer();
+  UA_Server *server = dynamic_cast<Utils::Component *>(component)->getServer();
 
   T_REQUEST *inputCommObject = new T_REQUEST;
   OPEN_65241_CPP_NAMESPACE::UA_ArrayOfArgument

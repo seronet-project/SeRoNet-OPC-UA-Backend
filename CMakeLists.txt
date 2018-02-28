@@ -14,6 +14,9 @@ set(PRJ_FILES
 		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/CommObjectToUaVariantArray.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/UaVariantArrayToCommObject.cpp
         SeRoNetSDK/SeRoNet/OPCUA/Server/CommObjectToUaArgument.cpp
+		SeRoNetSDK/SeRoNet/OPCUA/Server/CommObjectToPushModell.cpp
+		SeRoNetSDK/SeRoNet/OPCUA/Server/PushServerUpdater.cpp
+		SeRoNetSDK/SeRoNet/Utils/Component.cpp
 		)
 
 add_library(SeRoNetSDK ${PRJ_FILES})

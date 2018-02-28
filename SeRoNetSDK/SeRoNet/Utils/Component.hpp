@@ -12,30 +12,27 @@
 
 namespace SeRoNet {
 namespace Utils {
-class SmartComponent : public Smart::IComponent {
+class Component :
+    public Smart::IComponent {
 
  private:
   UA_ServerConfig *config;
   UA_Server *server;
   UA_Boolean running = true;
+  UA_UInt16 m_nsIndex1;
+  const UA_UInt16 m_nsIndex0 = 0; // @TODO remove nsIndex0
 
  public:
-  explicit SmartComponent(const std::string &componentName) : IComponent(componentName) {
-    config = UA_ServerConfig_new_default();
-    server = UA_Server_new(config);
-  };
+  explicit Component(const std::string &componentName);
 
-  Smart::StatusCode run() override {
-    UA_Server_run(server, &running);
-  }
+  inline UA_UInt16 getNsIndex1() { return m_nsIndex1; };
+  inline UA_UInt16 getNsIndex0() { return m_nsIndex0; };
 
-  Smart::StatusCode blocking(const bool b) override {
-    return Smart::StatusCode::SMART_OK;
-  }
+  Smart::StatusCode run() override;
 
-  UA_Server *getServer() {
-    return server;
-  }
+  Smart::StatusCode blocking(const bool b) override;
+
+  inline UA_Server *getServer() { return server; }
 };
 
 }
