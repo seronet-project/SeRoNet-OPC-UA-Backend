@@ -27,7 +27,7 @@ class CommObjectBrowseToNodeIds {
       const open62541::UA_NodeId& nodeId,
       std::shared_ptr<UA_Client> pClient
   );
-  virtual ~CommObjectToUaVariantArray() = default;
+  virtual ~CommObjectBrowseToNodeIds() = default;
 
   struct NodeId_NodeClass_Primitive{
     open62541::UA_NodeId NodeId;

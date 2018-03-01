@@ -6,8 +6,8 @@
 
 #include "CommObjectBrowseToNodeIds.hpp"
 #include <Open62541Cpp/UA_String.hpp>
-#include <../../../CommunicationObjects/Description/ElementPrimitive.hpp>
-#include <../../../CommunicationObjects/Description/ComplexType.hpp>
+#include "../../../CommunicationObjects/Description/ElementPrimitive.hpp"
+#include "../../../CommunicationObjects/Description/ComplexType.hpp"
 #include <open62541/open62541.h>
 
 namespace SeRoNet {
@@ -32,8 +32,8 @@ CommObjectBrowseToNodeIds::CommObjectBrowseToNodeIds(
 
   bReq.nodesToBrowse[0].browseDirection = UA_BROWSEDIRECTION_FORWARD;
 
-  UA_BrowseResponse bResp = UA_Client_Service_browse(client, bReq);
-  printf("%-9s %-16s %-16s %-16s\n", "NAMESPACE", "NODEID", "BROWSE NAME", "DISPLAY NAME");
+  UA_BrowseResponse bResp = UA_Client_Service_browse(pClient.get(), bReq);
+
   for (size_t i = 0; i < bResp.resultsSize; ++i) {
     for (size_t j = 0; j < bResp.results[i].referencesSize; ++j) {
       UA_ReferenceDescription *ref = &(bResp.results[i].references[j]);
@@ -49,7 +49,7 @@ CommObjectBrowseToNodeIds::CommObjectBrowseToNodeIds(
       }
 
       ///\todo handle the case of different servers?(ref.nodeId.serverIndex)
-      open62541::UA_NodeId nodeIdOfRefTarget(ref->nodeId.nodeId, false);
+      open62541::UA_NodeId nodeIdOfRefTarget(&(ref->nodeId.nodeId), false);
 
       if (std::dynamic_pointer_cast<CommunicationObjects::Description::ComplexType>(description) != nullptr) {
         if (ref->nodeClass == UA_NODECLASS_OBJECT) {

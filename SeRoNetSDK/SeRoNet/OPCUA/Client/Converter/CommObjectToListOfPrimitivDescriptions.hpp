@@ -16,8 +16,8 @@ namespace Converter {
 /// Flat the hierarchical description to a list of primitives
 class CommObjectToListOfPrimitivDescriptions {
  public:
-  CommObjectToListOfPrimitivDescriptions(CommunicationObjects::Description::IDescription::shpt_t description);
-  virtual ~CommObjectToUaVariantArray() = default;
+  CommObjectToListOfPrimitivDescriptions(CommunicationObjects::Description::IDescription::shp_t description);
+  virtual ~CommObjectToListOfPrimitivDescriptions() = default;
   typedef std::list<CommunicationObjects::Description::IDescription::shp_t > ConvTarget_t;
   inline operator ConvTarget_t() { return getValue(); }
   inline  ConvTarget_t getValue() { return m_convertedValue; }

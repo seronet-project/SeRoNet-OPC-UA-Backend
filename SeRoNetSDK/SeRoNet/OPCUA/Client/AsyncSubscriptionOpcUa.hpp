@@ -44,7 +44,7 @@ class AsyncSubscriptionOpcUa : public AsyncSubscriptionArrayBuffer<T_DATATYPE> {
   typedef std::list<monItemInfo_t> listOfNodeIdValue_t;
   /// Called with a list of nodeid value pairs, order is the same like the order of the subscribed nodeIds
   /// \param nodeIdvalues
-  virtual void processValues(listOfNodeIdValue_t listOfNodeIdvalues);
+  virtual void processValues(listOfNodeIdValue_t listOfNodeIdvalues) = 0;
 
  private:
 
@@ -168,12 +168,6 @@ inline void AsyncSubscriptionOpcUa<T_DATATYPE>::processValues() {
   m_valuesSet = 0;
 
   this->processValues(listOfValues);
-}
-
-template<typename T_DATATYPE>
-inline void AsyncSubscriptionOpcUa<T_DATATYPE>::processValues(
-    AsyncSubscriptionOpcUa::listOfNodeIdValue_t nodeIdvalues) {
-  this->addData(T_DATATYPE::FromDataValues(nodeIdvalues));
 }
 
 template<typename T_DATATYPE>

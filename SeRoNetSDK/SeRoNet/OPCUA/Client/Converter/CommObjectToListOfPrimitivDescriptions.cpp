@@ -5,6 +5,7 @@
 ///
 
 #include "CommObjectToListOfPrimitivDescriptions.hpp"
+#include "../../../CommunicationObjects/Description/ComplexType.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -12,12 +13,13 @@ namespace Client {
 namespace Converter {
 
 CommObjectToListOfPrimitivDescriptions::CommObjectToListOfPrimitivDescriptions(
-    CommunicationObjects::Description::IDescription::shpt_t description) {
+    CommunicationObjects::Description::IDescription::shp_t description) {
 
-  auto complexOj = std::dynamic_pointer_cast<CommunicationObjects::Description::ComplexType>(description);
-  if (complexOj) {
+  auto complexObj = std::dynamic_pointer_cast<CommunicationObjects::Description::ComplexType>(description);
+  if (complexObj) {
     //Complex object, flat it to list
-    for (auto &element: *complexOj) {
+    //for (auto element = complexObj->begin(); element != complexObj->end(); ++element) {
+    for (auto &element : *complexObj) {
       CommObjectToListOfPrimitivDescriptions elementList(element);
       m_convertedValue.splice(m_convertedValue.end(), elementList.m_convertedValue);
     }

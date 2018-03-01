@@ -28,7 +28,8 @@ class AsyncSubscriptionWithCommObject : public AsyncSubscriptionOpcUa<T_DATATYPE
       "T_DATATYPE must be a descendant of CommunicationObjects::ICommunicationObject"
   );
  protected:
-  void processValues(listOfNodeIdValue_t nodeIdvalues) override;
+  void processValues(typename AsyncSubscriptionOpcUa<T_DATATYPE>::listOfNodeIdValue_t nodeIdvalues) override;
+  using AsyncSubscriptionOpcUa<T_DATATYPE>::m_pUaClientWithMutex;
  public:
   using AsyncSubscriptionOpcUa<T_DATATYPE>::AsyncSubscriptionOpcUa;
   /// Subscribe based on an CommunicationObject description
@@ -75,7 +76,8 @@ UA_StatusCode AsyncSubscriptionWithCommObject<T_DATATYPE>::subscribe(open62541::
 
   };
   ///reorder nodeIds to match the order of flatListOfDescriptions
-  std::sort(nodeIds.begin(), nodeIds.end(), compare);
+  nodeIds.sort(compare);
+  //std::sort(nodeIds.begin(), nodeIds.end(), compare);
 
   //\todo Extract nodeIds and pass to parent class
   std::vector<UA_NodeId> vecOfNodeIds;
@@ -87,21 +89,21 @@ UA_StatusCode AsyncSubscriptionWithCommObject<T_DATATYPE>::subscribe(open62541::
     }
   }
   // Call parent class function
-  AsyncSubscriptionOpcUa::subscribe(vecOfNodeIds);
+  AsyncSubscriptionOpcUa<T_DATATYPE>::subscribe(vecOfNodeIds);
 }
 
 template<typename T_DATATYPE>
 void AsyncSubscriptionWithCommObject<T_DATATYPE>::processValues(
-    AsyncSubscriptionOpcUa<T_DATATYPE>::listOfNodeIdValue_t listOfNodeIdvalues) {
+    typename AsyncSubscriptionOpcUa<T_DATATYPE>::listOfNodeIdValue_t listOfNodeIdvalues) {
   open62541::UA_ArrayOfVariant variantArray(listOfNodeIdvalues.size());
   std::size_t i = 0;
   for(auto &nodeIdAndValue: listOfNodeIdvalues){
-    UA_Variant_copy(nodeIdAndValue->value->DataValue->value, &(variantArray.Variants[i]));
+    UA_Variant_copy(&(nodeIdAndValue.value->DataValue->value), &(variantArray.Variants[i]));
     ++i;
   }
   T_DATATYPE newValue;
 
-  Converter::UaVariantArrayToCommObject conv(variantArray, newValue->getObjectDescription(""));
+  Converter::UaVariantArrayToCommObject conv(variantArray, newValue.getObjectDescription("").get());
   this->addData(newValue);
 }
 
