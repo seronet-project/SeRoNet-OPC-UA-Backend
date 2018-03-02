@@ -27,6 +27,8 @@ class AsyncSubscriptionWithCommObject : public AsyncSubscriptionOpcUa<T_DATATYPE
       std::is_base_of<CommunicationObjects::ICommunicationObject, T_DATATYPE>::value,
       "T_DATATYPE must be a descendant of CommunicationObjects::ICommunicationObject"
   );
+
+  ~AsyncSubscriptionWithCommObject() override = default;
  protected:
   void processValues(typename AsyncSubscriptionOpcUa<T_DATATYPE>::listOfNodeIdValue_t nodeIdvalues) override;
   using AsyncSubscriptionOpcUa<T_DATATYPE>::m_pUaClientWithMutex;
@@ -41,7 +43,7 @@ template<typename T_DATATYPE>
 UA_StatusCode AsyncSubscriptionWithCommObject<T_DATATYPE>::subscribe(open62541::UA_NodeId nodeId) {
   T_DATATYPE data; // Dummy Data instance to get the description
   CommunicationObjects::ICommunicationObject *pData = &data;
-  m_pUaClientWithMutex->pClient;
+  std::unique_lock<decltype(m_pUaClientWithMutex->opcuaMutex)> lock(m_pUaClientWithMutex->opcuaMutex);
 
   auto nodeIds = Converter::CommObjectBrowseToNodeIds(
       pData->getObjectDescription(""),
@@ -88,6 +90,9 @@ UA_StatusCode AsyncSubscriptionWithCommObject<T_DATATYPE>::subscribe(open62541::
       vecOfNodeIds.push_back(*nodeIdClassPrimitive.NodeId.NodeId);
     }
   }
+
+  lock.unlock();
+
   // Call parent class function
   AsyncSubscriptionOpcUa<T_DATATYPE>::subscribe(vecOfNodeIds);
 }
