@@ -13,9 +13,15 @@ namespace Utils {
 Component::Component(const std::string &componentName)
     : IComponent(componentName) {
   config = UA_ServerConfig_new_default();
-  config->customHostname = UA_STRING_ALLOC(componentName.c_str());
-  config->mdnsServerName = UA_STRING_ALLOC(componentName.c_str());
+  config->mdnsServerName = UA_String_fromChars(componentName.c_str());
   config->applicationDescription.applicationName = UA_LOCALIZEDTEXT_ALLOC("", componentName.c_str());
+  config->applicationDescription.applicationType = UA_APPLICATIONTYPE_SERVER;
+  config->mdnsServerName = UA_String_fromChars(componentName.c_str());
+
+  UA_String *caps = UA_String_new();
+  *caps = UA_String_fromChars(componentName.c_str());
+  config->serverCapabilities = caps;
+
   server = UA_Server_new(config);
   m_nsIndex1 = UA_Server_addNamespace(server, "http://seronet-projekt.de/");
 };
