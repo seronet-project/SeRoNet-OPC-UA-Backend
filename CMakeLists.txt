@@ -17,6 +17,8 @@ set(PRJ_FILES
 		SeRoNetSDK/SeRoNet/OPCUA/Server/CommObjectToPushModell.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Server/PushServerUpdater.cpp
 		SeRoNetSDK/SeRoNet/Utils/Component.cpp
+		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/CommObjectToListOfPrimitivDescriptions.cpp
+		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/CommObjectBrowseToNodeIds.cpp
 		)
 
 add_library(SeRoNetSDK ${PRJ_FILES})

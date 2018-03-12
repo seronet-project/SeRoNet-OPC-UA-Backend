@@ -25,7 +25,9 @@ class AsyncSubscriptionArrayBuffer : public AsyncSubscription<T_DATATYPE> {
   /// Return counter, pointing to the element after end()
   typename AsyncSubscription<T_DATATYPE>::counter_t getDataCounter() override { return m_dataCounter; }
 
-  bool hasData(typename AsyncSubscription<T_DATATYPE>::counter_t dataCounter) { return m_dataCounter > dataCounter; }
+  bool hasData(typename AsyncSubscription<T_DATATYPE>::counter_t dataCounter) override {
+    return m_dataCounter > dataCounter;
+  }
 
   ///TODO? Use default arguments (static variables) for overflow and readDatacounter?
   T_DATATYPE getData(
