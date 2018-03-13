@@ -1,11 +1,11 @@
-#ifndef ASYNC_ANSWER_HPP
-#define ASYNC_ANSWER_HPP
+#pragma once
 
 #include <mutex>
 #include <atomic>
 #include <condition_variable>
 #include "IBlocking.hpp"
 #include "../../Exceptions/BlockingDisabledException.hpp"
+
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -17,7 +17,7 @@ class AsyncAnswer : IBlocking {
   AsyncAnswer(instanceStorage_t *instStorage, bool blockingEnabled);
 
  public:
-  virtual ~AsyncAnswer() override;
+  ~AsyncAnswer() override;
 
   bool hasAnswer() { return m_hasAnswer; }
   T_RETURN waitForAnswer();
@@ -32,9 +32,8 @@ class AsyncAnswer : IBlocking {
   }
 
  private:
-  std::atomic_bool m_hasAnswer = false;
+  std::atomic_bool m_hasAnswer = {false};
   std::condition_variable m_cv_hasAnswer;
-
 };
 
 template<typename T_RETURN>
@@ -63,8 +62,7 @@ void AsyncAnswer<T_RETURN>::blockingChanged() {
   m_cv_hasAnswer.notify_all();
 }
 
-}
-}
-}
+}//  namespace Client
+}//  namespace OPCUA
+}//  namespace SeRoNet
 
-#endif

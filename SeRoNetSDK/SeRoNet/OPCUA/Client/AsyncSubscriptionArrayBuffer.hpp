@@ -1,5 +1,4 @@
-#ifndef ASYNC_SUBSCRIPTION_ARRAY_BUFFER_HPP
-#define ASYNC_SUBSCRIPTION_ARRAY_BUFFER_HPP
+#pragma once
 
 #include "AsyncSubscription.hpp"
 #include <memory>
@@ -12,7 +11,8 @@ namespace Client {
 
 /// T_DATATYPE must be assignable (operator=) and constructable
 template<typename T_DATATYPE>
-class AsyncSubscriptionArrayBuffer : public AsyncSubscription<T_DATATYPE> {
+class AsyncSubscriptionArrayBuffer :
+    public AsyncSubscription<T_DATATYPE> {
  public:
   explicit AsyncSubscriptionArrayBuffer(std::size_t queueSize = 8)
       : m_bufferSize(queueSize), m_dataBuffer(new T_DATATYPE[queueSize]) {
@@ -29,7 +29,7 @@ class AsyncSubscriptionArrayBuffer : public AsyncSubscription<T_DATATYPE> {
     return m_dataCounter > dataCounter;
   }
 
-  ///TODO? Use default arguments (static variables) for overflow and readDatacounter?
+  /// \todo? Use default arguments (static variables) for overflow and readDatacounter?
   T_DATATYPE getData(
       typename AsyncSubscription<T_DATATYPE>::counter_t dataCounter,
       bool &overflow,
@@ -46,7 +46,7 @@ class AsyncSubscriptionArrayBuffer : public AsyncSubscription<T_DATATYPE> {
 
  private:
   T_DATATYPE *m_dataBuffer;
-  std::shared_mutex m_dataBufferLock;
+  std::shared_timed_mutex m_dataBufferLock;
   const std::size_t m_bufferSize;
 
   typename AsyncSubscription<T_DATATYPE>::atomic_counter_t m_dataCounter = 0;
@@ -63,28 +63,29 @@ bool AsyncSubscriptionArrayBuffer<T_DATATYPE>::empty() {
 }
 
 template<typename T_DATATYPE>
-T_DATATYPE AsyncSubscriptionArrayBuffer<T_DATATYPE>::getData(typename AsyncSubscription<T_DATATYPE>::counter_t dataCounter,
-                                                             bool &overflow,
-                                                             typename AsyncSubscription<T_DATATYPE>::counter_t &readDataCounter) {
-  ///TODO Assert dataCounter  <= m_dataCounter (max next unread value?!)
+T_DATATYPE AsyncSubscriptionArrayBuffer<T_DATATYPE>::getData(
+    typename AsyncSubscription<T_DATATYPE>::counter_t dataCounter,
+    bool &overflow,
+    typename AsyncSubscription<T_DATATYPE>::counter_t &readDataCounter) {
+  /// \todo (CvA) Assert dataCounter  <= m_dataCounter (max next unread value?!)
 
   std::shared_lock<decltype(m_dataBufferLock)> lock(m_dataBufferLock);
 
   // Wait for data if no data is availiable
   if (!this->hasData(dataCounter)) {
-    lock.unlock(); //Unlock so new values are possible
+    lock.unlock();  // Unlock so new values are possible
     std::mutex cv_m;
     std::unique_lock<decltype(cv_m)> cv_ml(cv_m);
     m_cv_hasData.wait(cv_ml, [&]() -> bool { return this->hasData(dataCounter); });
     lock.lock();
   }
 
-  ///@todo assert datacounter < m_dataCounter
+  /// \todo assert datacounter < m_dataCounter
   overflow = (m_dataCounter - dataCounter) > m_bufferSize;
 
   // Check if buffer has overflow (values has not been read and has been discarded)
   if (overflow) {
-    //Read oldest/nearest valid value
+    // Read oldest/nearest valid value
     readDataCounter = m_dataCounter - m_bufferSize;
   } else {
     readDataCounter = dataCounter;
@@ -92,8 +93,7 @@ T_DATATYPE AsyncSubscriptionArrayBuffer<T_DATATYPE>::getData(typename AsyncSubsc
   std::size_t index = static_cast<std::size_t> (readDataCounter % m_bufferSize);
   return m_dataBuffer[index];
 }
-}
-}
-}
 
-#endif
+}//  namespace Client
+}//  namespace OPCUA
+}//  namespace SeRoNet
