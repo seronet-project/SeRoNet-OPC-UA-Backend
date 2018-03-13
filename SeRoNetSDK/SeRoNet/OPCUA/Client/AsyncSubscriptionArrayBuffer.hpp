@@ -49,7 +49,7 @@ class AsyncSubscriptionArrayBuffer :
   std::shared_timed_mutex m_dataBufferLock;
   const std::size_t m_bufferSize;
 
-  typename AsyncSubscription<T_DATATYPE>::atomic_counter_t m_dataCounter = 0;
+  typename AsyncSubscription<T_DATATYPE>::atomic_counter_t m_dataCounter = {0};
   std::condition_variable m_cv_hasData;
 };
 

@@ -15,6 +15,10 @@
 #include <memory>
 #include "UaClientWithMutex.hpp"
 
+namespace SeRoNet {
+namespace OPCUA {
+namespace Client {
+
 template<class DataType>
 class PushClientOpcUa :
     public Smart::IPushClientPattern<DataType> {
@@ -126,3 +130,7 @@ template<class DataType>
 PushClientOpcUa<DataType>::~PushClientOpcUa() {
   this->unsubscribe();
 }
+
+} // namespace Client
+} // namespace OPCUA
+} // namespace SeRoNet
