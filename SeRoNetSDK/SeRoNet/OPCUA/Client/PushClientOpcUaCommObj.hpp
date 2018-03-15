@@ -67,7 +67,7 @@ Smart::StatusCode PushClientOpcUa<DataType>::subscribe(const int &prescale) {
   );
 
   m_pSubscription->subscribe(m_startNodeId);
-  return Smart::StatusCode::SMART_ERROR;
+  return Smart::StatusCode::SMART_OK;
 }
 
 template<class DataType>

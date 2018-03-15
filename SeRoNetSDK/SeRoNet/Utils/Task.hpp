@@ -14,7 +14,8 @@ namespace SeRoNet {
 
 namespace Utils {
 
-class Task : public Smart::ITask {
+class Task :
+    public Smart::ITask {
  private:
   std::thread m_thread;
 
@@ -28,10 +29,11 @@ class Task : public Smart::ITask {
   }
 
   /** Creates and starts a new thread (if not yet started)
-   *
    */
   int open() override {
-    m_thread = std::thread(&Task::svc, this);
+    if (!m_thread.joinable()) {
+      m_thread = std::thread(&Task::svc, this);
+    }
     return 0;
   }
 
