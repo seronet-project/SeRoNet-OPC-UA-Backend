@@ -15,7 +15,7 @@ template<typename T_DATATYPE>
 ///TODO Add invalid flag
 class AsyncSubscription {
  public:
-  typedef std::atomic_int64_t atomic_counter_t;
+  typedef std::atomic<std::int64_t> atomic_counter_t;
   typedef std::int64_t counter_t;
 
   virtual ~AsyncSubscription() = 0;
