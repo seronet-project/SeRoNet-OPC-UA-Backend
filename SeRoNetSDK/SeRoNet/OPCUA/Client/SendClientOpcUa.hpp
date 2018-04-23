@@ -9,6 +9,7 @@
 #include "UaClientWithMutex.hpp"
 #include "Converter/CommObjectToUaVariantArray.hpp"
 #include "../../CommunicationObjects/ICommunicationObject.hpp"
+#include "../../CommunicationObjects/Description/SelfDescription.hpp"
 
 #include <Open62541Cpp/UA_NodeId.hpp>
 #include <open62541/open62541.h>
@@ -47,7 +48,10 @@ class SendClientOpcUa :
     UA_NodeId_copy(m_objNodeId.NodeId, &(methodRequest.objectId));
     UA_NodeId_copy(m_methodNodeId.NodeId, &(methodRequest.methodId));
     {
-      Converter::CommObjectToUaVariantArray convToUaVariantArray(data.getObjectDescription());
+
+      Converter::CommObjectToUaVariantArray convToUaVariantArray(
+          CommunicationObjects::Description::SelfDescription(&data).get()
+      );
       auto varInput = convToUaVariantArray.getValue();
       UA_Array_copy(varInput.Variants,
                     varInput.VariantsSize,
