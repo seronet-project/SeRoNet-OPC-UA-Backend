@@ -28,6 +28,7 @@
 #include "CommObjectToUaArgument.hpp"
 #include "QueryServerHandler.hpp"
 #include "../../Exceptions/NotImplementedException.hpp"
+#include "../../CommunicationObjects/Description/SelfDescription.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -120,7 +121,7 @@ UA_StatusCode QueryServer<T_REQUEST, T_ANSWER>::methodCallback(
     std::this_thread::yield();
   }
   auto tmp = static_cast<open62541::UA_ArrayOfVariant> (Client::Converter::CommObjectToUaVariantArray
-      (friendThis->m_answers.at(id).getObjectDescription("").get()));
+      (CommunicationObjects::Description::SelfDescription(&friendThis->m_answers.at(id), "").get()));
   for (int i = 0; i < tmp.VariantsSize; i++) {
     UA_copy(&tmp.Variants[i], &output[i], &UA_TYPES[UA_TYPES_VARIANT]);
   }
@@ -141,10 +142,12 @@ inline QueryServer<T_REQUEST, T_ANSWER>::QueryServer(
 
   T_REQUEST *inputCommObject = new T_REQUEST;
   OPEN_65241_CPP_NAMESPACE::UA_ArrayOfArgument
-      inputArguments = CommObjectToUaArgumentArray(inputCommObject->getObjectDescription("input").get());
+      inputArguments =
+      CommObjectToUaArgumentArray(CommunicationObjects::Description::SelfDescription(inputCommObject, "input").get());
   T_ANSWER *outputCommObject = new T_ANSWER;
   OPEN_65241_CPP_NAMESPACE::UA_ArrayOfArgument
-      outputArguments = CommObjectToUaArgumentArray(outputCommObject->getObjectDescription("output").get());
+      outputArguments =
+      CommObjectToUaArgumentArray(CommunicationObjects::Description::SelfDescription(outputCommObject, "output").get());
 
   UA_MethodAttributes helloAttr;
   UA_MethodAttributes_init(&helloAttr);

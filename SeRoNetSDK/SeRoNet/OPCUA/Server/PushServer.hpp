@@ -106,7 +106,7 @@ Smart::StatusCode PushServer<T_AnswerType>::put(const T_AnswerType &d) {
   auto localComponent = dynamic_cast<SeRoNet::Utils::Component *>(this->component);
 
   PushServerUpdater(
-      a.getObjectDescription(this->serviceName).get(),
+      CommunicationObjects::Description::SelfDescription(&a, this->serviceName).get(),
       localComponent->getServer(),
       objectsFolderNodeId,
       localComponent->getNsIndex1());
