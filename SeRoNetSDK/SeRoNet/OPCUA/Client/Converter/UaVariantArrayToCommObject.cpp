@@ -27,6 +27,20 @@ class ToCommObjectVisitor : public ::SeRoNet::CommunicationObjects::Description:
       el->accept(this);
     }
   }
+
+  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<bool> *el) override {
+    assert(m_srcVariants.VariantsSize > m_nextIndex); ///\todo throw exception instead
+    auto nextData = m_srcVariants[m_nextIndex];
+    ++m_nextIndex;
+    if (!nextData.is_a(&UA_TYPES[UA_TYPES_BOOLEAN])) {
+      ///\todo throw exception
+      std::cout << "ERROR: Wrong Type." << std::endl;
+      return;
+    }
+
+    el->set(*nextData.getDataAs<UA_Boolean>());
+  }
+
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<int32_t> *el) override {
     assert(m_srcVariants.VariantsSize > m_nextIndex); ///\todo throw exception instead
     auto nextData = m_srcVariants[m_nextIndex];

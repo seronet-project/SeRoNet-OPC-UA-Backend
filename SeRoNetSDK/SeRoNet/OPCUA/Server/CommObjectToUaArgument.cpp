@@ -20,6 +20,15 @@ class ToUaArgumentArrayVisitor :
       el->accept(this);
     }
   }
+
+  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<bool> *el) override {
+    open62541::UA_Argument newEl;
+    newEl.argument->name = UA_STRING_ALLOC(el->getName().c_str());
+    newEl.argument->dataType = UA_TYPES[UA_TYPES_BOOLEAN].typeId;
+    newEl.argument->valueRank = -1;
+    arguments.push_back(newEl);
+  }
+
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<int32_t> *el) override {
     open62541::UA_Argument newEl;
     newEl.argument->name = UA_STRING_ALLOC(el->getName().c_str());

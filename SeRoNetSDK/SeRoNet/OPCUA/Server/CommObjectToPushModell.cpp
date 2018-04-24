@@ -54,11 +54,35 @@ class ToPushModellVisitor :
     }
   }
 
+  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<bool> *el) override {
+    UA_StatusCode retVal;
+    UA_VariableAttributes attr = UA_VariableAttributes_default;
+
+    attr.userAccessLevel = UA_ACCESSLEVELMASK_READ;
+    attr.accessLevel = UA_ACCESSLEVELMASK_READ;
+    attr.dataType = UA_NODEID_NUMERIC(ns0, UA_NS0ID_BOOLEAN);
+    void *dataContents = UA_alloca(UA_TYPES[UA_TYPES_BOOLEAN].memSize);
+    UA_init(dataContents, &UA_TYPES[UA_TYPES_BOOLEAN]);
+    UA_Variant_setScalar(&attr.value, dataContents, &UA_TYPES[UA_TYPES_BOOLEAN]);
+    attr.displayName = UA_LOCALIZEDTEXT_ALLOC("", el->getName().c_str());
+
+    auto myNodeId = generateNodeId(el);
+
+    retVal = UA_Server_addVariableNode(m_pServer,
+                                       *myNodeId.NodeId,
+                                       *m_parent.NodeId,
+                                       UA_NODEID_NUMERIC(ns0, UA_NS0ID_HASCOMPONENT),
+                                       UA_QUALIFIEDNAME_ALLOC(m_nsIndex, el->getName().c_str()),
+                                       UA_NODEID_NUMERIC(ns0, UA_NS0ID_BASEDATAVARIABLETYPE),
+                                       attr,
+                                       nullptr, nullptr);
+    if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
+  }
+
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<int32_t> *el) override {
     UA_StatusCode retVal;
     UA_VariableAttributes attr = UA_VariableAttributes_default;
 
-    // TODO (Sebastian Friedl) change magic number to UA_ACCESSLEVELMASK_READ
     attr.userAccessLevel = UA_ACCESSLEVELMASK_READ;
     attr.accessLevel = UA_ACCESSLEVELMASK_READ;
     attr.dataType = UA_NODEID_NUMERIC(ns0, UA_NS0ID_INT32);

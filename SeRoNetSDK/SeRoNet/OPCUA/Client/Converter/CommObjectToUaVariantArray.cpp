@@ -19,6 +19,13 @@ class ToUaVariantArrayVisitor : public ::SeRoNet::CommunicationObjects::Descript
       el->accept(this);
     }
   }
+  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<bool> *el) override {
+    open62541::UA_Variant newEl;
+    auto value = el->get();
+    UA_Variant_setScalarCopy(newEl.Variant, &value, &UA_TYPES[UA_TYPES_BOOLEAN]);
+    Variants.push_back(newEl);
+  }
+
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<int32_t> *el) override {
     open62541::UA_Variant newEl;
     auto value = el->get();

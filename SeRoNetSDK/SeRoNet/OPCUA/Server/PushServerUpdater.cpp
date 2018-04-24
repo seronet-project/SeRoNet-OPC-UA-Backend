@@ -42,6 +42,20 @@ class UpdateOpcuaServerVisitor :
     }
   }
 
+  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<bool> *el) override {
+    UA_StatusCode retVal;
+
+    auto myNodeId = generateNodeId(el);
+    auto myVariant = OPEN_65241_CPP_NAMESPACE::UA_Variant();
+    auto value = el->get();
+
+    retVal = UA_Variant_setScalarCopy(myVariant.Variant, &value, &UA_TYPES[UA_TYPES_BOOLEAN]);
+    if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
+
+    retVal = UA_Server_writeValue(m_pServer, *myNodeId.NodeId, *myVariant.Variant);
+    if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
+  }
+
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<int32_t> *el) override {
     UA_StatusCode retVal;
 
