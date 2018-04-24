@@ -15,6 +15,7 @@
 #include "CommObjectToPushModell.hpp"
 #include "../Client/Converter/CommObjectToUaVariantArray.hpp"
 #include "PushServerUpdater.hpp"
+#include "../../CommunicationObjects/Description/SelfDescription.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -91,7 +92,7 @@ inline PushServer<T_AnswerType>::PushServer(SeRoNet::Utils::Component *component
   T_AnswerType *CommObject = new T_AnswerType;
 
   CommObjectToPushModell(
-      CommObject->getObjectDescription(serviceName).get(),
+      CommunicationObjects::Description::SelfDescription(CommObject, serviceName).get(),
       server,
       objectsFolderNodeId,
       component->getNsIndex1());
