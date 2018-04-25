@@ -12,6 +12,7 @@
 #include "Converter/CommObjectToListOfPrimitivDescriptions.hpp"
 #include "Converter/UaVariantArrayToCommObject.hpp"
 #include "./../../CommunicationObjects/ICommunicationObject.hpp"
+#include "../../CommunicationObjects/Description/SelfDescription.hpp"
 
 #include <map>
 #include <algorithm>
@@ -46,13 +47,13 @@ UA_StatusCode AsyncSubscriptionWithCommObject<T_DATATYPE>::subscribe(open62541::
   std::unique_lock<decltype(m_pUaClientWithMutex->opcuaMutex)> lock(m_pUaClientWithMutex->opcuaMutex);
 
   auto nodeIds = Converter::CommObjectBrowseToNodeIds(
-      pData->getObjectDescription(""),
+      CommunicationObjects::Description::SelfDescription(&data, ""),
       nodeId,
       m_pUaClientWithMutex->pClient).getValue();
   auto flatListOfDescriptions =
       Converter::CommObjectToListOfPrimitivDescriptions(
           std::static_pointer_cast<CommunicationObjects::Description::IDescription>(
-              pData->getObjectDescription("")
+              CommunicationObjects::Description::SelfDescription(&data, "")
           )
       ).getValue();
 
@@ -108,7 +109,8 @@ void AsyncSubscriptionWithCommObject<T_DATATYPE>::processValues(
   }
   T_DATATYPE newValue;
 
-  Converter::UaVariantArrayToCommObject conv(variantArray, newValue.getObjectDescription("").get());
+  Converter::UaVariantArrayToCommObject
+      conv(variantArray, CommunicationObjects::Description::SelfDescription(&newValue, "").get());
   this->addData(newValue);
 }
 
