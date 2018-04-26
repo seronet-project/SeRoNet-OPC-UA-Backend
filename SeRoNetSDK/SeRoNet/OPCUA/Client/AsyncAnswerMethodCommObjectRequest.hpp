@@ -8,9 +8,10 @@
 
 #include "AsyncAnswerMethod.hpp"
 #include "InstanceStorage.hpp"
-#include "../../CommunicationObjects/ICommunicationObject.hpp"
 #include "Converter/CommObjectToUaVariantArray.hpp"
 #include "Converter/UaVariantArrayToCommObject.hpp"
+#include "../../CommunicationObjects/Description/IDescription.hpp"
+#include "../../CommunicationObjects/Description/SelfDescription.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -21,7 +22,7 @@ class AsyncAnswerMethodCommObjectRequest : public AsyncAnswerMethod<T_RETURN> {
   AsyncAnswerMethodCommObjectRequest(SeRoNet::OPCUA::Client::IBlocking::instanceStorage_t *instStorage,
                                            bool blockingEnabled,
                                            UA_Client *client,
-                                           CommunicationObjects::ICommunicationObject *request);
+                                          CommunicationObjects::Description::IDescription::shp_t requestDescription);
   void processAnswer(UA_StatusCode result, open62541::UA_ArrayOfVariant *outputs) override;
  protected:
   T_RETURN getAnswer() override { return m_answer; };
@@ -32,7 +33,7 @@ AsyncAnswerMethodCommObjectRequest<T_RETURN>::AsyncAnswerMethodCommObjectRequest
     SeRoNet::OPCUA::Client::IBlocking::instanceStorage_t *instStorage,
     bool blockingEnabled,
     UA_Client *client,
-    CommunicationObjects::ICommunicationObject *request) :
+    CommunicationObjects::Description::IDescription::shp_t requestDescription) :
     AsyncAnswerMethod<T_RETURN>::AsyncAnswerMethod(
         instStorage,
         blockingEnabled,
@@ -40,7 +41,7 @@ AsyncAnswerMethodCommObjectRequest<T_RETURN>::AsyncAnswerMethodCommObjectRequest
         UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
         UA_NODEID_STRING_ALLOC(1, "newCoordinateService"),
         static_cast<open62541::UA_ArrayOfVariant> (
-            Converter::CommObjectToUaVariantArray(request->getObjectDescription("").get())
+            Converter::CommObjectToUaVariantArray(requestDescription.get())
         )
     ) {
 
@@ -48,7 +49,7 @@ AsyncAnswerMethodCommObjectRequest<T_RETURN>::AsyncAnswerMethodCommObjectRequest
 template<typename T_RETURN>
 void AsyncAnswerMethodCommObjectRequest<T_RETURN>::processAnswer(
     UA_StatusCode result, open62541::UA_ArrayOfVariant *outputs) {
-  Converter::UaVariantArrayToCommObject(*outputs, m_answer.getObjectDescription("").get());
+  Converter::UaVariantArrayToCommObject(*outputs, CommunicationObjects::Description::SelfDescription(&m_answer).get());
   this->setHasAnswer();
 }
 
