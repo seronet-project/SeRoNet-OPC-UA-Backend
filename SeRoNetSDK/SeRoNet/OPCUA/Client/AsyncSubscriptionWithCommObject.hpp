@@ -11,7 +11,6 @@
 #include "Converter/CommObjectBrowseToNodeIds.hpp"
 #include "Converter/CommObjectToListOfPrimitivDescriptions.hpp"
 #include "Converter/UaVariantArrayToCommObject.hpp"
-#include "./../../CommunicationObjects/ICommunicationObject.hpp"
 #include "../../CommunicationObjects/Description/SelfDescription.hpp"
 
 #include <map>
@@ -24,11 +23,6 @@ namespace Client {
 template<typename T_DATATYPE>
 class AsyncSubscriptionWithCommObject : public AsyncSubscriptionOpcUa<T_DATATYPE> {
  public:
-  static_assert(
-      std::is_base_of<CommunicationObjects::ICommunicationObject, T_DATATYPE>::value,
-      "T_DATATYPE must be a descendant of CommunicationObjects::ICommunicationObject"
-  );
-
   ~AsyncSubscriptionWithCommObject() override = default;
  protected:
   void processValues(typename AsyncSubscriptionOpcUa<T_DATATYPE>::listOfNodeIdValue_t nodeIdvalues) override;
@@ -43,7 +37,6 @@ class AsyncSubscriptionWithCommObject : public AsyncSubscriptionOpcUa<T_DATATYPE
 template<typename T_DATATYPE>
 UA_StatusCode AsyncSubscriptionWithCommObject<T_DATATYPE>::subscribe(open62541::UA_NodeId nodeId) {
   T_DATATYPE data; // Dummy Data instance to get the description
-  CommunicationObjects::ICommunicationObject *pData = &data;
   std::unique_lock<decltype(m_pUaClientWithMutex->opcuaMutex)> lock(m_pUaClientWithMutex->opcuaMutex);
 
   auto nodeIds = Converter::CommObjectBrowseToNodeIds(
