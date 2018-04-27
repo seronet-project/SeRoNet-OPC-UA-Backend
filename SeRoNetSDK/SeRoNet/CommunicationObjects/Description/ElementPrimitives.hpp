@@ -15,6 +15,10 @@ namespace CommunicationObjects {
 namespace Description {
 using ElementBool = ElementPrimitive<bool>;
 using ElementInt32 = ElementPrimitive<std::int32_t>;
+
+using ElementFloat = ElementPrimitive<float>;
+using ElementDouble = ElementPrimitive<double>;
+
 using ElementString = ElementPrimitive<std::string>;
 
 }

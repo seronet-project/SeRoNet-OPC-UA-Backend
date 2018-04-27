@@ -104,8 +104,80 @@ class ToPushModellVisitor :
     if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
   }
 
+  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<float> *el) override {
+    UA_StatusCode retVal;
+    UA_VariableAttributes attr = UA_VariableAttributes_default;
+
+    attr.userAccessLevel = UA_ACCESSLEVELMASK_READ;
+    attr.accessLevel = UA_ACCESSLEVELMASK_READ;
+    attr.dataType = UA_NODEID_NUMERIC(ns0, UA_NS0ID_FLOAT);
+    void *dataContents = UA_alloca(UA_TYPES[UA_TYPES_FLOAT].memSize);
+    UA_init(dataContents, &UA_TYPES[UA_TYPES_FLOAT]);
+    UA_Variant_setScalar(&attr.value, dataContents, &UA_TYPES[UA_TYPES_FLOAT]);
+    attr.displayName = UA_LOCALIZEDTEXT_ALLOC("", el->getName().c_str());
+
+    auto myNodeId = generateNodeId(el);
+
+    retVal = UA_Server_addVariableNode(m_pServer,
+                                       *myNodeId.NodeId,
+                                       *m_parent.NodeId,
+                                       UA_NODEID_NUMERIC(ns0, UA_NS0ID_HASCOMPONENT),
+                                       UA_QUALIFIEDNAME_ALLOC(m_nsIndex, el->getName().c_str()),
+                                       UA_NODEID_NUMERIC(ns0, UA_NS0ID_BASEDATAVARIABLETYPE),
+                                       attr,
+                                       nullptr, nullptr);
+    if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
+  }
+
+  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<double> *el) override {
+    UA_StatusCode retVal;
+    UA_VariableAttributes attr = UA_VariableAttributes_default;
+
+    attr.userAccessLevel = UA_ACCESSLEVELMASK_READ;
+    attr.accessLevel = UA_ACCESSLEVELMASK_READ;
+    attr.dataType = UA_NODEID_NUMERIC(ns0, UA_NS0ID_DOUBLE);
+    void *dataContents = UA_alloca(UA_TYPES[UA_TYPES_DOUBLE].memSize);
+    UA_init(dataContents, &UA_TYPES[UA_TYPES_DOUBLE]);
+    UA_Variant_setScalar(&attr.value, dataContents, &UA_TYPES[UA_TYPES_DOUBLE]);
+    attr.displayName = UA_LOCALIZEDTEXT_ALLOC("", el->getName().c_str());
+
+    auto myNodeId = generateNodeId(el);
+
+    retVal = UA_Server_addVariableNode(m_pServer,
+                                       *myNodeId.NodeId,
+                                       *m_parent.NodeId,
+                                       UA_NODEID_NUMERIC(ns0, UA_NS0ID_HASCOMPONENT),
+                                       UA_QUALIFIEDNAME_ALLOC(m_nsIndex, el->getName().c_str()),
+                                       UA_NODEID_NUMERIC(ns0, UA_NS0ID_BASEDATAVARIABLETYPE),
+                                       attr,
+                                       nullptr, nullptr);
+    if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
+  }
+
+
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<std::string> *el) override {
-    throw ::SeRoNet::Exceptions::NotImplementedException(std::string(__FUNCTION__) + " not implemented");
+    UA_StatusCode retVal;
+    UA_VariableAttributes attr = UA_VariableAttributes_default;
+
+    attr.userAccessLevel = UA_ACCESSLEVELMASK_READ;
+    attr.accessLevel = UA_ACCESSLEVELMASK_READ;
+    attr.dataType = UA_NODEID_NUMERIC(ns0, UA_NS0ID_STRING);
+    void *dataContents = UA_alloca(UA_TYPES[UA_TYPES_STRING].memSize);
+    UA_init(dataContents, &UA_TYPES[UA_TYPES_STRING]);
+    UA_Variant_setScalar(&attr.value, dataContents, &UA_TYPES[UA_TYPES_STRING]);
+    attr.displayName = UA_LOCALIZEDTEXT_ALLOC("", el->getName().c_str());
+
+    auto myNodeId = generateNodeId(el);
+
+    retVal = UA_Server_addVariableNode(m_pServer,
+                                       *myNodeId.NodeId,
+                                       *m_parent.NodeId,
+                                       UA_NODEID_NUMERIC(ns0, UA_NS0ID_HASCOMPONENT),
+                                       UA_QUALIFIEDNAME_ALLOC(m_nsIndex, el->getName().c_str()),
+                                       UA_NODEID_NUMERIC(ns0, UA_NS0ID_BASEDATAVARIABLETYPE),
+                                       attr,
+                                       nullptr, nullptr);
+    if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
   }
 
  private:
