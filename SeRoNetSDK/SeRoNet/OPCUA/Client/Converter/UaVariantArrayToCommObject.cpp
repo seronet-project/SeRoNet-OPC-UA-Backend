@@ -9,6 +9,7 @@
 #include "../../../CommunicationObjects/Description/IVisitorDescription.hpp"
 #include "../../../Exceptions/NotImplementedException.hpp"
 #include <iostream>
+#include <Open62541Cpp/UA_String.hpp>
 #include "../../../CommunicationObjects/Description/ComplexType.hpp"
 #include "../../../CommunicationObjects/Description/ElementPrimitive.hpp"
 
@@ -90,8 +91,9 @@ class ToCommObjectVisitor : public ::SeRoNet::CommunicationObjects::Description:
       std::cout << "ERROR: Wrong Type." << std::endl;
       return;
     }
+    open62541::UA_String tmp = open62541::UA_String(nextData.getDataAs<UA_String>());
 
-    el->set(*nextData.getDataAs<std::string>());
+    el->set(static_cast<std::string>(tmp));
   }
 
   open62541::UA_ArrayOfVariant m_srcVariants;

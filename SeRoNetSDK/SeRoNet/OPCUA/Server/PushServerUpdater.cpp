@@ -104,8 +104,9 @@ class UpdateOpcuaServerVisitor :
     auto myNodeId = generateNodeId(el);
     auto myVariant = OPEN_65241_CPP_NAMESPACE::UA_Variant();
     auto value = el->get();
+    open62541::UA_String tmp = open62541::UA_String(value);
 
-    retVal = UA_Variant_setScalarCopy(myVariant.Variant, &value, &UA_TYPES[UA_TYPES_STRING]);
+    retVal = UA_Variant_setScalarCopy(myVariant.Variant, tmp.String, &UA_TYPES[UA_TYPES_STRING]);
     if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
 
     retVal = UA_Server_writeValue(m_pServer, *myNodeId.NodeId, *myVariant.Variant);

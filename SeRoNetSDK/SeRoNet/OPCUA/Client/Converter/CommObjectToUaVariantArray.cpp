@@ -8,6 +8,7 @@
 #include "../../../CommunicationObjects/Description/IVisitorDescription.hpp"
 #include "../../../Exceptions/NotImplementedException.hpp"
 #include <list>
+#include <Open62541Cpp/UA_String.hpp>
 #include "../../../CommunicationObjects/Description/ComplexType.hpp"
 #include "../../../CommunicationObjects/Description/ElementPrimitive.hpp"
 
@@ -51,7 +52,7 @@ class ToUaVariantArrayVisitor : public ::SeRoNet::CommunicationObjects::Descript
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<std::string> *el) override {
     open62541::UA_Variant newEl;
     auto value = el->get();
-    UA_Variant_setScalarCopy(newEl.Variant, &value, &UA_TYPES[UA_TYPES_STRING]);
+    UA_Variant_setScalarCopy(newEl.Variant, open62541::UA_String(value).String, &UA_TYPES[UA_TYPES_STRING]);
     Variants.push_back(newEl);
   }
 
