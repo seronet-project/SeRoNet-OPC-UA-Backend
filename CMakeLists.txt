@@ -19,6 +19,7 @@ set(PRJ_FILES
 		SeRoNetSDK/SeRoNet/Utils/Component.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/CommObjectToListOfPrimitivDescriptions.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/CommObjectBrowseToNodeIds.cpp
+		SeRoNetSDK/SeRoNet/OPCUA/Client/NamingServiceOpcUa.cpp
 		)
 
 add_library(SeRoNetSDK ${PRJ_FILES})
