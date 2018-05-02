@@ -6,6 +6,7 @@
 
 #include <open62541/open62541.h>
 #include "Component.hpp"
+#include "../Exceptions/NotImplementedException.hpp"
 
 namespace SeRoNet {
 namespace Utils {
@@ -32,6 +33,9 @@ Smart::StatusCode Component::run() {
 
 Smart::StatusCode Component::blocking(const bool b) {
   return Smart::StatusCode::SMART_OK;
+}
+Smart::ITimerManager *Component::getTimerManager() {
+  throw SeRoNet::Exceptions::NotImplementedException(__FUNCTION__);
 }
 
 } //  namespace Utils

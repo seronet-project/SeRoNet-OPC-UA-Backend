@@ -5,9 +5,13 @@
 ///
 #pragma once
 
-#include <SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIQueryClientPattern_T.h>
-#include <SeRoNet/OPCUA/Client/AsyncAnswer.hpp>
 #include <memory>
+#include <chrono>
+
+#include <SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIQueryClientPattern_T.h>
+#include "AsyncAnswer.hpp"
+
+#include "../../Exceptions/BlockingDisabledException.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -44,7 +48,9 @@ class QClientOPCUA :
 
   Smart::StatusCode query(const RequestType &request, AnswerType &answer) override;
   Smart::StatusCode queryReceive(const QueryIDtype &id, AnswerType &answer) override;
-  Smart::StatusCode queryReceiveWait(const QueryIDtype &id, AnswerType &answer) override;
+  Smart::StatusCode queryReceiveWait(const QueryIDtype_template<AnswerType> &id,
+                                     AnswerType &answer,
+                                     const std::chrono::steady_clock::duration &timeout = std::chrono::steady_clock::duration::zero()) override;
   ///@todo Remove!? Not needed in an implementation with shared pointern, will allow to read a request multiple
   /// 	times (e.g. from different threads)
   Smart::StatusCode queryDiscard(const QueryIDtype &id) override;
@@ -58,7 +64,7 @@ inline Smart::StatusCode QClientOPCUA<RequestType, AnswerType>::query(const Requ
     return status;
   }
 
-  return this->queryReceiveWait(qID, answer);
+  return this->queryReceiveWait(qID, answer, std::chrono::microseconds(0));
   //qID will be discarded automatically when the last reference is gone (shared_ptr)
 }
 
@@ -78,8 +84,10 @@ inline Smart::StatusCode QClientOPCUA<RequestType, AnswerType>::queryReceive(con
 }
 
 template<class RequestType, class AnswerType>
-inline Smart::StatusCode QClientOPCUA<RequestType, AnswerType>::queryReceiveWait(const QueryIDtype &id,
-                                                                                 AnswerType &answer) {
+inline Smart::StatusCode QClientOPCUA<RequestType,
+                                      AnswerType>::queryReceiveWait(const QueryIDtype_template<AnswerType> &id,
+                                                                    AnswerType &answer,
+                                                                    const std::chrono::steady_clock::duration &timeout) {
   if (!id->isValid) {
     return Smart::StatusCode::SMART_WRONGID;
   }

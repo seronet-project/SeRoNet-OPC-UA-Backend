@@ -35,7 +35,8 @@ class PushClientOpcUa :
 
   Smart::StatusCode getUpdate(DataType &d) override;
 
-  Smart::StatusCode getUpdateWait(DataType &d) override;
+  Smart::StatusCode getUpdateWait(DataType &d,
+                                  const std::chrono::steady_clock::duration &timeout = std::chrono::steady_clock::duration::zero()) override;
 
  private:
   DataType readValueFromSubscription(typename SeRoNet::OPCUA::Client::AsyncSubscriptionOpcUa<DataType>::counter_t offset);
@@ -92,7 +93,8 @@ Smart::StatusCode PushClientOpcUa<DataType>::getUpdate(DataType &d) {
 }
 
 template<class DataType>
-Smart::StatusCode PushClientOpcUa<DataType>::getUpdateWait(DataType &d) {
+Smart::StatusCode PushClientOpcUa<DataType>::getUpdateWait(DataType &d,
+                                                           const std::chrono::steady_clock::duration &timeout) {
   if (m_pReader == nullptr || m_pSubscription == nullptr) {
     return Smart::StatusCode::SMART_UNSUBSCRIBED;
   }
