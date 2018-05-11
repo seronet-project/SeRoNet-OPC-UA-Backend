@@ -6,8 +6,13 @@
 
 #include <iostream>
 #include <functional>
+#include <open62541/open62541.h>
+#include <Open62541Cpp/UA_String.hpp>
 
 #include "NamingServiceOpcUa.hpp"
+#include "../../Exceptions/SeRoNetSDKException.hpp"
+
+#define DISCOVERY_SERVER_ENDPOINT "opc.tcp://localhost:4840"
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -24,61 +29,83 @@ INamingService::ConnectionAndNodeid NamingServiceOpcUa::getConnectionAndNodeIdBy
 
 UaClientWithMutex_t::shpType NamingServiceOpcUa::getConnectionByName(const std::string &serverName) {
 
-  {
-    // Check if cache availiable
-    auto it = m_connectionCache.find(serverName);
-    if (it != m_connectionCache.end()) {
-      // Check if pointer is valid
-      ConnectionAndThread connAndThread = it->second;
-      auto shpConn = connAndThread.connection.lock();
-      if (!shpConn) {
-        // Remove from cache
-        m_connectionCache.erase(it);
-      } else {
-        // Connection still valid, return
-        return shpConn;
+
+  // Check if cache availiable
+  auto it = m_connectionCache.find(serverName);
+  if (it != m_connectionCache.end()) {
+    // Check if pointer is valid
+    ConnectionAndThread connAndThread = it->second;
+    auto shpConn = connAndThread.connection.lock();
+    if (!shpConn) {
+      // Remove from cache
+      m_connectionCache.erase(it);
+    } else {
+      // Connection still valid, return
+      return shpConn;
+    }
+    // No connection in the cache, create a new one
+  } else {
+
+    ///@todo Aquirre server url ("opc.tcp://host:port")
+    std::string serverURL;
+    UA_ServerOnNetwork *serverOnNetwork = NULL;
+    size_t serverOnNetworkSize = 0;
+
+    UA_Client *client = UA_Client_new(UA_ClientConfig_default);
+    UA_StatusCode retval = UA_Client_findServersOnNetwork(client, DISCOVERY_SERVER_ENDPOINT, 0, 0,
+                                                          0, NULL, &serverOnNetworkSize, &serverOnNetwork);
+    if (retval != UA_STATUSCODE_GOOD) {
+      printf("\n\terror: %s", retval);
+      UA_Client_delete(client);;
+    }
+
+    // check server exist
+    for (size_t i = 0; i < serverOnNetworkSize; i++) {
+      UA_ServerOnNetwork *server = &serverOnNetwork[i];
+      if (serverName == std::string(open62541::UA_String(&server->serverName))) {
+
+        std::atomic_bool run = {true};
+        SeRoNet::OPCUA::Client::UaClientWithMutex_t::shpType
+            shpUaClientWithMutex(
+            new SeRoNet::OPCUA::Client::UaClientWithMutex_t,
+            std::bind(clientWithMutexDeletedCallback, std::placeholders::_1, shared_from_this())
+        );
+
+        // std::mutex OPCUA_Mutex;
+        std::promise<shpUA_Client_t> promiseClient;
+        std::future<shpUA_Client_t> futureClient = promiseClient.get_future();
+
+        std::thread opcUA_Thread(opcUaBackgroudTask,
+                                 this,
+                                 std::move(promiseClient),
+                                 &run,
+                                 std::ref(shpUaClientWithMutex->opcuaMutex),
+                                 std::string(open62541::UA_String(&server->serverName))
+        );
+
+        // Wait until client is set
+        shpUA_Client_t pClient = futureClient.get();
+        if (pClient == nullptr) {
+          std::cerr << "No valid client" << std::endl;
+          return UaClientWithMutex_t::shpType();
+        }
+        shpUaClientWithMutex->pClient = pClient;
+
+        /// \todo add shpUaClientWithMutex to cache
+        ConnectionAndThread connAndThread;
+        connAndThread.connection = shpUaClientWithMutex;
+
+        m_connectionCache.insert(std::make_pair(serverName, connAndThread));
+
+        return shpUaClientWithMutex;
+
       }
     }
+
+    UA_Array_delete(serverOnNetwork, serverOnNetworkSize,
+                    &UA_TYPES[UA_TYPES_SERVERONNETWORK]);
+    throw SeRoNet::Exceptions::SeRoNetSDKException(("No Server with name: %s found!",serverName));
   }
-  // No connection in the cache, create a new one
-
-  ///@todo Aquirre server url ("opc.tcp://host:port")
-  std::string serverURL;
-
-  std::atomic_bool run = {true};
-  SeRoNet::OPCUA::Client::UaClientWithMutex_t::shpType
-      shpUaClientWithMutex(
-      new SeRoNet::OPCUA::Client::UaClientWithMutex_t,
-      std::bind(clientWithMutexDeletedCallback, std::placeholders::_1, shared_from_this())
-  );
-
-  // std::mutex OPCUA_Mutex;
-  std::promise<shpUA_Client_t> promiseClient;
-  std::future<shpUA_Client_t> futureClient = promiseClient.get_future();
-
-  std::thread opcUA_Thread(opcUaBackgroudTask,
-                           this,
-                           std::move(promiseClient),
-                           &run,
-                           std::ref(shpUaClientWithMutex->opcuaMutex),
-                           serverURL
-  );
-
-  // Wait until client is set
-  shpUA_Client_t pClient = futureClient.get();
-  if (pClient == nullptr) {
-    std::cerr << "No valid client" << std::endl;
-    return UaClientWithMutex_t::shpType();
-  }
-  shpUaClientWithMutex->pClient = pClient;
-
-  /// \todo add shpUaClientWithMutex to cache
-  ConnectionAndThread connAndThread;
-  connAndThread.connection = shpUaClientWithMutex;
-
-  m_connectionCache.insert(std::make_pair(serverName, connAndThread));
-
-  return shpUaClientWithMutex;
 }
 
 void deleteUaClient(UA_Client *pClient) {

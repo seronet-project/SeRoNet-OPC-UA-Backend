@@ -15,7 +15,7 @@ namespace SeRoNet {
 namespace OPCUA {
 namespace Client {
 
-class NamingServiceOpcUa : public INamingService, public std::enable_shared_from_this{
+class NamingServiceOpcUa : public INamingService, public std::enable_shared_from_this<NamingServiceOpcUa> {
  public:
   ConnectionAndNodeid getConnectionAndNodeIdByName(const std::string &serverName, const std::string &service) override;
   typedef std::shared_ptr<NamingServiceOpcUa> shpType;
