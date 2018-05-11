@@ -10,12 +10,13 @@
 #include <open62541.h>
 #include <Open62541Cpp/UA_ArrayOfVariant.hpp>
 #include "../../Utils/Component.hpp"
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIStatusCode.h"
+#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartStatusCode.h"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIPushServerPattern_T.h"
 #include "CommObjectToPushModell.hpp"
 #include "../Client/Converter/CommObjectToUaVariantArray.hpp"
 #include "PushServerUpdater.hpp"
 #include "../../CommunicationObjects/Description/SelfDescription.hpp"
+#include "../../Exceptions/NotImplementedException.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -103,7 +104,7 @@ template<class T_AnswerType>
 Smart::StatusCode PushServer<T_AnswerType>::put(const T_AnswerType &d) {
   T_AnswerType a(d);
   OPEN_65241_CPP_NAMESPACE::UA_NodeId objectsFolderNodeId((UA_UInt16) 0, UA_NS0ID_OBJECTSFOLDER);
-  auto localComponent = dynamic_cast<SeRoNet::Utils::Component *>(this->component);
+  auto localComponent = dynamic_cast<SeRoNet::Utils::Component *>(this->icomponent);
 
   PushServerUpdater(
       CommunicationObjects::Description::SelfDescription(&a, this->serviceName).get(),
@@ -116,7 +117,7 @@ Smart::StatusCode PushServer<T_AnswerType>::put(const T_AnswerType &d) {
 
 template<class T_AnswerType>
 void PushServer<T_AnswerType>::serverInitiatedDisconnect() {
-  //TODO what is here todo?
+  throw SeRoNet::Exceptions::NotImplementedException(__FUNCTION__);
   return;
 }
 

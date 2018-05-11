@@ -37,8 +37,28 @@ class ToUaArgumentArrayVisitor :
     arguments.push_back(newEl);
   }
 
+  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<float> *el) override {
+    open62541::UA_Argument newEl;
+    newEl.argument->name = UA_STRING_ALLOC(el->getName().c_str());
+    newEl.argument->dataType = UA_TYPES[UA_TYPES_FLOAT].typeId;
+    newEl.argument->valueRank = -1;
+    arguments.push_back(newEl);
+  }
+
+  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<double> *el) override {
+    open62541::UA_Argument newEl;
+    newEl.argument->name = UA_STRING_ALLOC(el->getName().c_str());
+    newEl.argument->dataType = UA_TYPES[UA_TYPES_DOUBLE].typeId;
+    newEl.argument->valueRank = -1;
+    arguments.push_back(newEl);
+  }
+
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<std::string> *el) override {
-    throw ::SeRoNet::Exceptions::NotImplementedException(std::string(__FUNCTION__) + " not implemented");
+    open62541::UA_Argument newEl;
+    newEl.argument->name = UA_STRING_ALLOC(el->getName().c_str());
+    newEl.argument->dataType = UA_TYPES[UA_TYPES_STRING].typeId;
+    newEl.argument->valueRank = -1;
+    arguments.push_back(newEl);
   }
 
   std::list<open62541::UA_Argument> arguments;

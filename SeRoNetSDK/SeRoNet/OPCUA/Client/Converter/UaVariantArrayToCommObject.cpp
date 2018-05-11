@@ -9,6 +9,7 @@
 #include "../../../CommunicationObjects/Description/IVisitorDescription.hpp"
 #include "../../../Exceptions/NotImplementedException.hpp"
 #include <iostream>
+#include <Open62541Cpp/UA_String.hpp>
 #include "../../../CommunicationObjects/Description/ComplexType.hpp"
 #include "../../../CommunicationObjects/Description/ElementPrimitive.hpp"
 
@@ -54,8 +55,45 @@ class ToCommObjectVisitor : public ::SeRoNet::CommunicationObjects::Description:
     el->set(*nextData.getDataAs<UA_Int32>());
   }
 
+  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<float> *el) override {
+    assert(m_srcVariants.VariantsSize > m_nextIndex); ///\todo throw exception instead
+    auto nextData = m_srcVariants[m_nextIndex];
+    ++m_nextIndex;
+    if (!nextData.is_a(&UA_TYPES[UA_TYPES_FLOAT])) {
+      ///\todo throw exception
+      std::cout << "ERROR: Wrong Type." << std::endl;
+      return;
+    }
+
+    el->set(*nextData.getDataAs<UA_Float>());
+  }
+
+  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<double> *el) override {
+    assert(m_srcVariants.VariantsSize > m_nextIndex); ///\todo throw exception instead
+    auto nextData = m_srcVariants[m_nextIndex];
+    ++m_nextIndex;
+    if (!nextData.is_a(&UA_TYPES[UA_TYPES_DOUBLE])) {
+      ///\todo throw exception
+      std::cout << "ERROR: Wrong Type." << std::endl;
+      return;
+    }
+
+    el->set(*nextData.getDataAs<UA_Double>());
+  }
+
+
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<std::string> *el) override {
-    throw ::SeRoNet::Exceptions::NotImplementedException(std::string(__FUNCTION__) + " not implemented");
+    assert(m_srcVariants.VariantsSize > m_nextIndex); ///\todo throw exception instead
+    auto nextData = m_srcVariants[m_nextIndex];
+    ++m_nextIndex;
+    if (!nextData.is_a(&UA_TYPES[UA_TYPES_STRING])) {
+      ///\todo throw exception
+      std::cout << "ERROR: Wrong Type." << std::endl;
+      return;
+    }
+    open62541::UA_String tmp = open62541::UA_String(nextData.getDataAs<UA_String>());
+
+    el->set(static_cast<std::string>(tmp));
   }
 
   open62541::UA_ArrayOfVariant m_srcVariants;

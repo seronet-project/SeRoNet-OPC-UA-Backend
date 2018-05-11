@@ -20,8 +20,8 @@ set(PRJ_FILES
 		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/CommObjectToListOfPrimitivDescriptions.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/CommObjectBrowseToNodeIds.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Client/NamingServiceOpcUa.cpp
+		SeRoNetSDK/SeRoNet/OPCUA/Server/SendServerHandler.hpp
 		)
-
 add_library(SeRoNetSDK ${PRJ_FILES})
 set_target_properties(SeRoNetSDK PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(SeRoNetSDK PROPERTIES DEBUG_POSTFIX "d")

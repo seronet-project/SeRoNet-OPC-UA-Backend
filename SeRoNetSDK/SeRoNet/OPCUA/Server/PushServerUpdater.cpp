@@ -70,8 +70,47 @@ class UpdateOpcuaServerVisitor :
     if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
   }
 
+  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<float> *el) override {
+    UA_StatusCode retVal;
+
+    auto myNodeId = generateNodeId(el);
+    auto myVariant = OPEN_65241_CPP_NAMESPACE::UA_Variant();
+    auto value = el->get();
+
+    retVal = UA_Variant_setScalarCopy(myVariant.Variant, &value, &UA_TYPES[UA_TYPES_FLOAT]);
+    if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
+
+    retVal = UA_Server_writeValue(m_pServer, *myNodeId.NodeId, *myVariant.Variant);
+    if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
+  }
+
+  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<double> *el) override {
+    UA_StatusCode retVal;
+
+    auto myNodeId = generateNodeId(el);
+    auto myVariant = OPEN_65241_CPP_NAMESPACE::UA_Variant();
+    auto value = el->get();
+
+    retVal = UA_Variant_setScalarCopy(myVariant.Variant, &value, &UA_TYPES[UA_TYPES_DOUBLE]);
+    if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
+
+    retVal = UA_Server_writeValue(m_pServer, *myNodeId.NodeId, *myVariant.Variant);
+    if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
+  }
+
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<std::string> *el) override {
-    throw ::SeRoNet::Exceptions::NotImplementedException(std::string(__FUNCTION__) + " not implemented");
+    UA_StatusCode retVal;
+
+    auto myNodeId = generateNodeId(el);
+    auto myVariant = OPEN_65241_CPP_NAMESPACE::UA_Variant();
+    auto value = el->get();
+    open62541::UA_String tmp = open62541::UA_String(value);
+
+    retVal = UA_Variant_setScalarCopy(myVariant.Variant, tmp.String, &UA_TYPES[UA_TYPES_STRING]);
+    if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
+
+    retVal = UA_Server_writeValue(m_pServer, *myNodeId.NodeId, *myVariant.Variant);
+    if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
   }
 
  private:

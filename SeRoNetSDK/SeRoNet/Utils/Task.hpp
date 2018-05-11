@@ -9,6 +9,7 @@
 
 #include "../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIComponent.h"
 #include "../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartITask.h"
+#include "../Exceptions/NotImplementedException.hpp"
 
 namespace SeRoNet {
 
@@ -21,25 +22,31 @@ class Task :
 
   std::atomic_bool m_interruption_requested = {false};
 
+ protected:
+  void sleep_for(const std::chrono::steady_clock::duration &rel_time) override {
+    throw SeRoNet::Exceptions::NotImplementedException(__FUNCTION__);
+  }
+
  public:
   using Smart::ITask::ITask;
 
   ~Task() override {
-    this->close();
+    this->stop();
   }
 
   /** Creates and starts a new thread (if not yet started)
    */
-  int open() override {
+  int start() override {
     if (!m_thread.joinable()) {
-      m_thread = std::thread(&Task::svc, this);
+      m_thread = std::thread(&Task::task_execution, this);
     }
     return 0;
   }
 
   /** Closes currently active thread (if it was started before)
+   * @warning wait_till_stopped=false not implemented
    */
-  int close() override {
+  int stop(const bool wait_till_stopped = true) override {
     if (m_thread.joinable()) {
       this->m_interruption_requested.store(true);
       m_thread.join();

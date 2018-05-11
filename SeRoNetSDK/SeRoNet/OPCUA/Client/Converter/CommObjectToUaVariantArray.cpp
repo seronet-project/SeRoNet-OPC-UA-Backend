@@ -8,6 +8,7 @@
 #include "../../../CommunicationObjects/Description/IVisitorDescription.hpp"
 #include "../../../Exceptions/NotImplementedException.hpp"
 #include <list>
+#include <Open62541Cpp/UA_String.hpp>
 #include "../../../CommunicationObjects/Description/ComplexType.hpp"
 #include "../../../CommunicationObjects/Description/ElementPrimitive.hpp"
 
@@ -33,8 +34,26 @@ class ToUaVariantArrayVisitor : public ::SeRoNet::CommunicationObjects::Descript
     Variants.push_back(newEl);
   }
 
+  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<float> *el) override {
+    open62541::UA_Variant newEl;
+    auto value = el->get();
+    UA_Variant_setScalarCopy(newEl.Variant, &value, &UA_TYPES[UA_TYPES_FLOAT]);
+    Variants.push_back(newEl);
+  }
+
+  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<double> *el) override {
+    open62541::UA_Variant newEl;
+    auto value = el->get();
+    UA_Variant_setScalarCopy(newEl.Variant, &value, &UA_TYPES[UA_TYPES_DOUBLE]);
+    Variants.push_back(newEl);
+  }
+
+
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<std::string> *el) override {
-    throw ::SeRoNet::Exceptions::NotImplementedException(std::string(__FUNCTION__) + " not implemented");
+    open62541::UA_Variant newEl;
+    auto value = el->get();
+    UA_Variant_setScalarCopy(newEl.Variant, open62541::UA_String(value).String, &UA_TYPES[UA_TYPES_STRING]);
+    Variants.push_back(newEl);
   }
 
   std::list<open62541::UA_Variant> Variants;

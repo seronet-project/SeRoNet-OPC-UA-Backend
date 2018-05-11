@@ -31,7 +31,7 @@ class Component :
   Smart::StatusCode run() override;
 
   Smart::StatusCode blocking(const bool b) override;
-
+  Smart::ITimerManager *getTimerManager() override;
   inline UA_Server *getServer() { return server; }
 };
 

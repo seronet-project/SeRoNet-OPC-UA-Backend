@@ -18,13 +18,14 @@
 #include <Open62541Cpp/UA_ArrayOfVariant.hpp>
 
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIComponent.h"
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIStatusCode.h"
+#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartStatusCode.h"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartICommunicationObject.h"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIQueryServerPattern_T.h"
 
 #include "../../Utils/Component.hpp"
 #include "../../CommunicationObjects/ICommunicationObject.hpp"
 #include "../Client/Converter/CommObjectToUaVariantArray.hpp"
+#include "../Client/Converter/UaVariantArrayToCommObject.hpp"
 #include "CommObjectToUaArgument.hpp"
 #include "QueryServerHandler.hpp"
 #include "../../Exceptions/NotImplementedException.hpp"
@@ -113,7 +114,12 @@ UA_StatusCode QueryServer<T_REQUEST, T_ANSWER>::methodCallback(
     UA_Variant *output) {
   QueryServer<T_REQUEST, T_ANSWER> *friendThis = static_cast<QueryServer<T_REQUEST, T_ANSWER> *>(methodContext);
 
-  T_REQUEST request(input, inputSize);
+  T_REQUEST request;
+
+  OPCUA::Client::Converter::UaVariantArrayToCommObject
+      conv(open62541::UA_ArrayOfVariant(input, inputSize),
+           CommunicationObjects::Description::SelfDescription(&request, "").get());
+
   int id = rand();  // TODO(Friedl) ersetzten mit std:future
   Smart::QueryServerInputType<T_REQUEST, int> fullRequest = {request, id};
   friendThis->notify_input(fullRequest);
