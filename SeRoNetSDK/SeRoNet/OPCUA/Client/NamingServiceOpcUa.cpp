@@ -29,7 +29,7 @@ INamingService::ConnectionAndNodeid NamingServiceOpcUa::getConnectionAndNodeIdBy
 
 UaClientWithMutex_t::shpType NamingServiceOpcUa::getConnectionByName(const std::string &serverName) {
 
-
+  UA_Client *client = UA_Client_new(UA_ClientConfig_default);
   // Check if cache availiable
   auto it = m_connectionCache.find(serverName);
   if (it != m_connectionCache.end()) {
@@ -47,22 +47,27 @@ UaClientWithMutex_t::shpType NamingServiceOpcUa::getConnectionByName(const std::
   } else {
 
     ///@todo Aquirre server url ("opc.tcp://host:port")
-    std::string serverURL;
-    UA_ServerOnNetwork *serverOnNetwork = NULL;
-    size_t serverOnNetworkSize = 0;
 
-    UA_Client *client = UA_Client_new(UA_ClientConfig_default);
-    UA_StatusCode retval = UA_Client_findServersOnNetwork(client, DISCOVERY_SERVER_ENDPOINT, 0, 0,
-                                                          0, NULL, &serverOnNetworkSize, &serverOnNetwork);
+    UA_ApplicationDescription *applicationDescriptionArray = nullptr;
+    size_t applicationDescriptionArraySize = 0;
+
+    UA_StatusCode retval;
+    {
+
+      retval = UA_Client_findServers(client, DISCOVERY_SERVER_ENDPOINT, 0, nullptr, 0, nullptr,
+                                     &applicationDescriptionArraySize, &applicationDescriptionArray);
+    }
+
     if (retval != UA_STATUSCODE_GOOD) {
-      printf("\n\terror: %s", retval);
-      UA_Client_delete(client);;
+      //todo better error Handling
+      throw SeRoNet::Exceptions::SeRoNetSDKException("Error in function Ua_Client_findServer");
+
     }
 
     // check server exist
-    for (size_t i = 0; i < serverOnNetworkSize; i++) {
-      UA_ServerOnNetwork *server = &serverOnNetwork[i];
-      if (serverName == std::string(open62541::UA_String(&server->serverName))) {
+    for (size_t i = 0; i < applicationDescriptionArraySize; i++) {
+      UA_ApplicationDescription *description = &applicationDescriptionArray[i];
+      if (serverName == std::string(open62541::UA_String(&description->applicationName.text))) {
 
         std::atomic_bool run = {true};
         SeRoNet::OPCUA::Client::UaClientWithMutex_t::shpType
@@ -71,16 +76,27 @@ UaClientWithMutex_t::shpType NamingServiceOpcUa::getConnectionByName(const std::
             std::bind(clientWithMutexDeletedCallback, std::placeholders::_1, shared_from_this())
         );
 
+        UA_EndpointDescription *endpointArray = nullptr;
+        size_t endpointArraySize = 0;
+        std::string serverUrl;
+        std::string discoveryUrl = std::string(open62541::UA_String(&description->discoveryUrls[0]));
+        retval = UA_Client_getEndpoints(client, discoveryUrl.c_str(), &endpointArraySize, &endpointArray);
+        if (retval != UA_STATUSCODE_GOOD) {
+          break;
+        }
+        for (size_t j = 0; j < endpointArraySize; j++) {
+          serverUrl = std::string(open62541::UA_String(&endpointArray[j].endpointUrl));
+        }
         // std::mutex OPCUA_Mutex;
         std::promise<shpUA_Client_t> promiseClient;
         std::future<shpUA_Client_t> futureClient = promiseClient.get_future();
 
-        std::thread opcUA_Thread(opcUaBackgroudTask,
-                                 this,
-                                 std::move(promiseClient),
-                                 &run,
-                                 std::ref(shpUaClientWithMutex->opcuaMutex),
-                                 std::string(open62541::UA_String(&server->serverName))
+        std::thread *opcUA_Thread = new std::thread(opcUaBackgroudTask,
+                                                    this,
+                                                    std::move(promiseClient),
+                                                    &run,
+                                                    std::ref(shpUaClientWithMutex->opcuaMutex),
+                                                    serverUrl
         );
 
         // Wait until client is set
@@ -93,6 +109,7 @@ UaClientWithMutex_t::shpType NamingServiceOpcUa::getConnectionByName(const std::
 
         /// \todo add shpUaClientWithMutex to cache
         ConnectionAndThread connAndThread;
+        connAndThread.thread = opcUA_Thread;
         connAndThread.connection = shpUaClientWithMutex;
 
         m_connectionCache.insert(std::make_pair(serverName, connAndThread));
@@ -102,8 +119,8 @@ UaClientWithMutex_t::shpType NamingServiceOpcUa::getConnectionByName(const std::
       }
     }
 
-    UA_Array_delete(serverOnNetwork, serverOnNetworkSize,
-                    &UA_TYPES[UA_TYPES_SERVERONNETWORK]);
+    UA_Array_delete(applicationDescriptionArray, applicationDescriptionArraySize,
+                    &UA_TYPES[UA_TYPES_APPLICATIONDESCRIPTION]);
     throw SeRoNet::Exceptions::SeRoNetSDKException(("No Server with name: %s found!",serverName));
   }
 }
@@ -136,7 +153,7 @@ void NamingServiceOpcUa::opcUaBackgroudTask(std::promise<shpUA_Client_t> promise
   /* Connect to a server */
   retval = UA_Client_connect(pClient.get(), serverURL.c_str());
   if (retval != UA_STATUSCODE_GOOD) {
-    std::cerr << "Connection failed: " << retval << std::endl;
+    std::cout << "Connection failed: " << retval << std::endl;
     pClient = nullptr;
     promiseClient.set_value(pClient);
     return;
@@ -144,6 +161,8 @@ void NamingServiceOpcUa::opcUaBackgroudTask(std::promise<shpUA_Client_t> promise
   promiseClient.set_value(pClient);
   /// OPC UA Client Loop, acquire lock while checking for new messages
   {
+    std::this_thread::sleep_for(std::chrono::seconds(5));
+
     /// Initialize without locking
     std::unique_lock<std::remove_reference<decltype(OPCUA_Mutex)>::type> l_opcUA(OPCUA_Mutex, std::defer_lock);
     int cnt = 0;

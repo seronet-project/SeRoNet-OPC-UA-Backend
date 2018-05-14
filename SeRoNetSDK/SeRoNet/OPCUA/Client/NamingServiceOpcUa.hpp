@@ -27,6 +27,7 @@ class NamingServiceOpcUa : public INamingService, public std::enable_shared_from
   struct ConnectionAndThread
   {
     UaClientWithMutex_t::weakpType connection;
+    std::thread *thread;
     /// \todo add possibility to kill the corresponding thread, save reference to thread, ...
 
   };

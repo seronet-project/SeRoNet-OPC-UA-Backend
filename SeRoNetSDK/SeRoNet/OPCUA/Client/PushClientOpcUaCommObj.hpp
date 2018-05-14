@@ -44,7 +44,7 @@ class PushClientOpcUa :
   std::shared_ptr<SeRoNet::OPCUA::Client::AsyncSubscriptionWithCommObject<DataType>> m_pSubscription;
   std::shared_ptr<SeRoNet::OPCUA::Client::AsyncSubscriptionReader<DataType>> m_pReader;
   open62541::UA_NodeId m_startNodeId;
-  SeRoNet::OPCUA::Client::NamingServiceOpcUa m_namingService;
+  std::shared_ptr<SeRoNet::OPCUA::Client::NamingServiceOpcUa> m_namingService;
 };
 
 template<class DataType>
@@ -53,6 +53,7 @@ PushClientOpcUa<DataType>::PushClientOpcUa(
     open62541::UA_NodeId startNodeId):
     m_pUaClientWithMutex(nullptr),
     m_pSubscription(nullptr),
+    m_namingService(std::make_shared<SeRoNet::OPCUA::Client::NamingServiceOpcUa>()),
     Smart::IPushClientPattern<DataType>::IPushClientPattern(pComponent),
     m_startNodeId(startNodeId) {
 }
@@ -112,7 +113,7 @@ DataType PushClientOpcUa<DataType>::readValueFromSubscription(
 
 template<class DataType>
 Smart::StatusCode PushClientOpcUa<DataType>::connect(const std::string &server, const std::string &service) {
-  auto retValue = this->m_namingService.getConnectionAndNodeIdByName(server,service);
+  auto retValue = this->m_namingService.get()->getConnectionAndNodeIdByName(server, service);
   m_pUaClientWithMutex = retValue.connection;
   return Smart::StatusCode::SMART_OK;
 }
