@@ -24,8 +24,7 @@ template<class DataType>
 class PushClientOpcUa :
     public Smart::IPushClientPattern<DataType> {
  public:
-  explicit PushClientOpcUa(Smart::IComponent *pComponent,
-                           open62541::UA_NodeId startNodeId);
+  explicit PushClientOpcUa(Smart::IComponent *pComponent);
   Smart::StatusCode connect(const std::string &server, const std::string &service) override;
   Smart::StatusCode disconnect() override;
   Smart::StatusCode blocking(const bool blocking) override;
@@ -49,13 +48,12 @@ class PushClientOpcUa :
 
 template<class DataType>
 PushClientOpcUa<DataType>::PushClientOpcUa(
-    Smart::IComponent *pComponent,
-    open62541::UA_NodeId startNodeId):
+    Smart::IComponent *pComponent):
     m_pUaClientWithMutex(nullptr),
     m_pSubscription(nullptr),
     m_namingService(std::make_shared<SeRoNet::OPCUA::Client::NamingServiceOpcUa>()),
-    Smart::IPushClientPattern<DataType>::IPushClientPattern(pComponent),
-    m_startNodeId(startNodeId) {
+    Smart::IPushClientPattern<DataType>::IPushClientPattern(pComponent)
+{
 }
 
 template<class DataType>
@@ -115,6 +113,7 @@ template<class DataType>
 Smart::StatusCode PushClientOpcUa<DataType>::connect(const std::string &server, const std::string &service) {
   auto retValue = this->m_namingService.get()->getConnectionAndNodeIdByName(server, service);
   m_pUaClientWithMutex = retValue.connection;
+  m_startNodeId = retValue.nodeId;
   return Smart::StatusCode::SMART_OK;
 }
 

@@ -32,6 +32,8 @@ class NamingServiceOpcUa : public INamingService, public std::enable_shared_from
 
   };
 
+  OPEN_65241_CPP_NAMESPACE::UA_NodeId createNodeIdFromServiceName(const std::string &service);
+
   /// \todo use one thread for all connections (loop for the connections in the thread
   void opcUaBackgroudTask(std::promise<shpUA_Client_t> promiseClient,
                           std::atomic_bool *run,

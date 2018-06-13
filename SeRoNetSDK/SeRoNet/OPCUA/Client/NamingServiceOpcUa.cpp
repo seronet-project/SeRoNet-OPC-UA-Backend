@@ -8,6 +8,7 @@
 #include <functional>
 #include <open62541/open62541.h>
 #include <Open62541Cpp/UA_String.hpp>
+#include <sstream>
 
 #include "NamingServiceOpcUa.hpp"
 #include "../../Exceptions/SeRoNetSDKException.hpp"
@@ -22,9 +23,18 @@ INamingService::ConnectionAndNodeid NamingServiceOpcUa::getConnectionAndNodeIdBy
                                                                                      const std::string &service) {
 
   ConnectionAndNodeid ret;
+  ret.nodeId = createNodeIdFromServiceName(service);
   ret.connection = getConnectionByName(serverName);
 
+
+
   return ret;
+}
+OPEN_65241_CPP_NAMESPACE::UA_NodeId NamingServiceOpcUa::createNodeIdFromServiceName(const std::string &service){
+
+  std::stringstream ss;
+  ss << "85." << service;
+  return OPEN_65241_CPP_NAMESPACE::UA_NodeId(2, ss.str());
 }
 
 UaClientWithMutex_t::shpType NamingServiceOpcUa::getConnectionByName(const std::string &serverName) {
