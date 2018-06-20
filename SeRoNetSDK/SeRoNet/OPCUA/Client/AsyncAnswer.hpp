@@ -5,7 +5,8 @@
 #include <condition_variable>
 #include "IBlocking.hpp"
 #include "../../Exceptions/BlockingDisabledException.hpp"
-
+#include "../../Exceptions/ResultErrorException.hpp"
+#include <string>
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -31,8 +32,14 @@ class AsyncAnswer : IBlocking {
     m_cv_hasAnswer.notify_all();
   }
 
+  void setError(std::string error_msg)
+  {
+    m_error_msg = error_msg;
+    this->setHasAnswer();
+  }
  private:
   std::atomic_bool m_hasAnswer = {false};
+  std::string m_error_msg;
   std::condition_variable m_cv_hasAnswer;
 };
 
@@ -54,6 +61,12 @@ inline T_RETURN AsyncAnswer<T_RETURN>::waitForAnswer() {
   if (!this->hasAnswer()) {
     throw SeRoNet::Exceptions::BlockingDisabledException("No AsyncAnswer available.");
   }
+
+  if(!m_error_msg.empty())
+  {
+    throw SeRoNet::Exceptions::ResultErrorException(m_error_msg);
+  }
+
   return getAnswer();
 }
 

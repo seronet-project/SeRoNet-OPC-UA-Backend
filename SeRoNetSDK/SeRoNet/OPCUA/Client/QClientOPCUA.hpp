@@ -12,6 +12,7 @@
 #include "AsyncAnswer.hpp"
 
 #include "../../Exceptions/BlockingDisabledException.hpp"
+#include <iostream>
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -97,6 +98,11 @@ inline Smart::StatusCode QClientOPCUA<RequestType,
   }
   catch (SeRoNet::Exceptions::BlockingDisabledException &ex) {
     return Smart::StatusCode::SMART_CANCELLED;
+  }
+  catch (SeRoNet::Exceptions::ResultErrorException &ex) {
+    std::cout << "SeRoNet::Exceptions::ResultErrorException: " << ex.what() << std::endl;
+    /// \todo correct return code?
+    return Smart::StatusCode::SMART_ERROR;
   }
 
   this->queryDiscard(id);

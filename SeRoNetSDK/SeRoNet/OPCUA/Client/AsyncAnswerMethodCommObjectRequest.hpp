@@ -12,6 +12,7 @@
 #include "Converter/UaVariantArrayToCommObject.hpp"
 #include "../../CommunicationObjects/Description/IDescription.hpp"
 #include "../../CommunicationObjects/Description/SelfDescription.hpp"
+#include <sstream>
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -49,6 +50,15 @@ AsyncAnswerMethodCommObjectRequest<T_RETURN>::AsyncAnswerMethodCommObjectRequest
 template<typename T_RETURN>
 void AsyncAnswerMethodCommObjectRequest<T_RETURN>::processAnswer(
     UA_StatusCode result, open62541::UA_ArrayOfVariant *outputs) {
+
+  ///\todo move check to AsyncAnswerMethod?
+  if(result != UA_STATUSCODE_GOOD)
+  {
+    std::stringstream ss;
+    ss << "Receive nongood result: " << UA_StatusCode_name(result);
+    this->setError(ss.str());
+    return;
+  }
   Converter::UaVariantArrayToCommObject(*outputs, CommunicationObjects::Description::SelfDescription(&m_answer).get());
   this->setHasAnswer();
 }

@@ -10,6 +10,8 @@
 #include <open62541.h>
 #include <Open62541Cpp/UA_ArrayOfVariant.hpp>
 #include <memory>
+#include <iostream>
+#include <open62541/open62541.h>
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -75,7 +77,6 @@ inline AsyncAnswerMethod<T_RETURN>::AsyncAnswerMethod(
   callRequ.methodsToCallSize = 1;
 
   UA_Client_AsyncService_call(client, callRequ, methodCalledCallback < T_RETURN > , this, &m_requestId);
-
   ///@todo use Open62541Cpp::UA_NodeID as parameter type instead
   UA_NodeId_deleteMembers(&objectId);
   UA_NodeId_deleteMembers(&methodId);
@@ -95,16 +96,21 @@ inline void AsyncAnswerMethod<T_RETURN>::methodCalled_callback(UA_Client *client
 
   UA_StatusCode resultCode = callResponse->responseHeader.serviceResult;
 
-  std::shared_ptr < open62541::UA_ArrayOfVariant > outArgs(nullptr);
+  std::shared_ptr<open62541::UA_ArrayOfVariant> outArgs = std::make_shared<::open62541::UA_ArrayOfVariant>(nullptr, 0);
   ///@todo Check ReturnCode of the output arguments
   if (callResponse->resultsSize > 0) {
+    resultCode = callResponse->results[0].statusCode;
     if (callResponse->results[0].outputArgumentsSize > 0) {
       outArgs.reset(new open62541::UA_ArrayOfVariant(callResponse->results[0].outputArguments,
                                                      callResponse->results[0].outputArgumentsSize));
+    } else{
+      std::cerr << "Receive Empty Method Call Response without output arguments." << std::endl;
     }
+    this->processAnswer(resultCode, outArgs.get());
+  } else {
+    std::cerr << "Receive Empty Method Call Response." << std::endl;
   }
 
-  this->processAnswer(resultCode, outArgs.get());
 }
 }
 }
