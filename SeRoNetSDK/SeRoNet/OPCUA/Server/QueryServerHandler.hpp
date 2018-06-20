@@ -21,27 +21,16 @@ class QueryServerHandler : public Smart::IQueryServerHandler<T_REQUEST, T_ANSWER
  public:
   QueryServerHandler() = default;
 
-  QueryServerHandler(SeRoNet::OPCUA::Server::QueryServer<T_REQUEST, T_ANSWER> *server) : m_server
-                                                                                             (server),
-                                                                                         Smart::IQueryServerHandler<
-                                                                                             T_REQUEST,
-                                                                                             T_ANSWER,
-                                                                                             int>(
-                                                                                             server) {}
+  QueryServerHandler(SeRoNet::OPCUA::Server::QueryServer<T_REQUEST, T_ANSWER> *server)
+      : m_server(server),
+        Smart::IQueryServerHandler<T_REQUEST, T_ANSWER, int>(server) {}
 
   ~QueryServerHandler() = default;
 
   virtual void handle_input(int id, Smart::ICommunicationObject *input) {
     auto request = static_cast<T_REQUEST *> (input);
-    this->handleQuery(id, request);
+    this->handleQuery(id, *request);
 
-  }
-
-  void handleQuery(
-      const int id,
-      const T_REQUEST *r
-  ) {
-    return;
   }
 
 };

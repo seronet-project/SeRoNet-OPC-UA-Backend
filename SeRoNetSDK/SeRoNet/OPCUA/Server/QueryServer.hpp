@@ -128,6 +128,8 @@ UA_StatusCode QueryServer<T_REQUEST, T_ANSWER>::methodCallback(
   }
   auto tmp = static_cast<open62541::UA_ArrayOfVariant> (Client::Converter::CommObjectToUaVariantArray
       (CommunicationObjects::Description::SelfDescription(&friendThis->m_answers.at(id), "").get()));
+
+  ///\todo use UA_Variant_setArrayCopy()!
   for (int i = 0; i < tmp.VariantsSize; i++) {
     UA_copy(&tmp.Variants[i], &output[i], &UA_TYPES[UA_TYPES_VARIANT]);
   }
