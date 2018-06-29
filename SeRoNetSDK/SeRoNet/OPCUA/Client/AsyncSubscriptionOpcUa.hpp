@@ -12,6 +12,7 @@
 #include <Open62541Cpp/UA_DataValue.hpp>
 #include <open62541.h>
 #include <mutex>
+#include <open62541/open62541.h>
 #include "UaClientWithMutex.hpp"
 #include "../../Exceptions/SeRoNetSDKException.hpp"
 #include "../../Exceptions/NotImplementedException.hpp"
@@ -57,7 +58,13 @@ class AsyncSubscriptionOpcUa : public AsyncSubscriptionArrayBuffer<T_DATATYPE> {
 
   void valueChanged(UA_UInt32 monId, UA_DataValue *value);
 
-  static void handler_ValueChanged(UA_UInt32 monId, UA_DataValue *value, void *context);
+  static void handler_ValueChanged(
+      UA_Client *client,
+      UA_UInt32 subId,
+      void *subContext,
+      UA_UInt32 monId, void *monContext,
+      UA_DataValue *value
+      );
 
   UA_UInt32 m_subId = 0;
 
@@ -85,11 +92,15 @@ inline UA_StatusCode AsyncSubscriptionOpcUa<T_DATATYPE>::subscribe(std::vector<U
   }
   UA_StatusCode ret;
   ///TODO set interval
-  auto subscSettings = UA_SubscriptionSettings_default;
-  subscSettings.requestedPublishingInterval = 250;
-  subscSettings.requestedLifetimeCount = 2500;
-  ret = UA_Client_Subscriptions_new(m_pUaClientWithMutex->pClient.get(), UA_SubscriptionSettings_default, &m_subId);
-  if (ret != UA_STATUSCODE_GOOD) {
+  UA_CreateSubscriptionRequest subscRequest = UA_CreateSubscriptionRequest_default();
+  subscRequest.requestedPublishingInterval = 250;
+  subscRequest.requestedLifetimeCount = 250;
+  /// \todo use callbacks for state updates
+  UA_CreateSubscriptionResponse subscResponse = UA_Client_Subscriptions_create(
+      m_pUaClientWithMutex->pClient.get(), subscRequest, NULL, NULL, NULL);
+  m_subId = subscResponse.subscriptionId;
+
+  if (subscResponse.responseHeader.serviceResult != UA_STATUSCODE_GOOD) {
     std::cout << "Nongood status code: " << ret << std::endl;
     return ret;
   }
@@ -98,33 +109,39 @@ inline UA_StatusCode AsyncSubscriptionOpcUa<T_DATATYPE>::subscribe(std::vector<U
   assert(m_monItems.empty());
   assert(m_monitoredItemsIdorder.empty());
 
-  //UA_NodeId monitorThis = UA_NODEID_STRING(1, "the.answer");
-  UA_UInt32 monId = 0;
-  for (auto &nodeid : nodeIds) {
+  for (auto &nodeId : nodeIds) {
+    UA_MonitoredItemCreateRequest monItemRequest =
+        UA_MonitoredItemCreateRequest_default(nodeId);
+    monItemRequest.monitoringMode = UA_MONITORINGMODE_REPORTING;
+    monItemRequest.requestedParameters.queueSize = 3;
+    /// \todo set elsewhere
+    monItemRequest.requestedParameters.samplingInterval = 250;
+    /// \todo test DataChangeFilter with STATUS_VALUE_TIMESTAMP_2
+    /*monItemRequest.requestedParameters.filter.encoding = UA_EXTENSIONOBJECT_DECODED;
+    auto dataChaneFilter = UA_DataChangeFilter_new();
+    UA_DataChangeFilter_init(dataChaneFilter);
+    dataChaneFilter->trigger = UA_DataChangeTrigger::UA_DATACHANGETRIGGER_STATUSVALUETIMESTAMP;
+    monItemRequest.requestedParameters.filter.content.decoded.data = dataChaneFilter;
+    monItemRequest.requestedParameters.filter.content.decoded.type = &(UA_TYPES[UA_TYPES_DATACHANGEFILTER]);
+    */
+    UA_MonitoredItemCreateResult monItemResponse =
+        UA_Client_MonitoredItems_createDataChange(m_pUaClientWithMutex->pClient.get(), m_subId,
+                                                  UA_TIMESTAMPSTORETURN_BOTH,
+                                                  monItemRequest, this, &handler_ValueChanged, NULL);
 
-    ret = UA_Client_Subscriptions_addMonitoredItem(m_pUaClientWithMutex->pClient.get(),
-                                                   m_subId,
-                                                   nodeid,
-                                                   UA_ATTRIBUTEID_VALUE,
-                                                   &handler_ValueChanged,
-                                                   this,
-                                                   &monId,
-                                                   250);
-    if (ret != UA_STATUSCODE_GOOD) {
+    if (monItemResponse.statusCode != UA_STATUSCODE_GOOD) {
       /// TODO Logging
       std::cout << "Nongood status code while adding MonitoredItem: " << ret << std::endl;
       unsubscribe();
       return ret;
     }
-    m_monitoredItemsIdorder.push_back(monId);
+    m_monitoredItemsIdorder.push_back(monItemResponse.monitoredItemId);
 
     monItemInfo_t info;
-    info.nodeId = open62541::UA_NodeId(nodeid);
-    m_monItems.insert(typename monItems_t::value_type(monId, info));
+    info.nodeId = open62541::UA_NodeId(nodeId);
+    m_monItems.insert(typename monItems_t::value_type(monItemResponse.monitoredItemId, info));
   }
 
-  /// Send first request
-  UA_Client_Subscriptions_manuallySendPublishRequest_Async(m_pUaClientWithMutex->pClient.get());
   return ret;
 }
 
@@ -134,7 +151,7 @@ inline void AsyncSubscriptionOpcUa<T_DATATYPE>::unsubscribe() {
   /// Check if there is a valid subscription
   if (m_subId != 0) {
     UA_StatusCode ret;
-    ret = UA_Client_Subscriptions_remove(m_pUaClientWithMutex->pClient.get(), m_subId);
+    ret = UA_Client_Subscriptions_deleteSingle(m_pUaClientWithMutex->pClient.get(), m_subId);
     if (ret != UA_STATUSCODE_GOOD) {
       ///TODO Logging
       std::cout << "Nongood status code while unsubscribing:" << ret << std::endl;
@@ -199,10 +216,15 @@ inline void AsyncSubscriptionOpcUa<T_DATATYPE>::valueChanged(UA_UInt32 monId, UA
 }
 
 template<typename T_DATATYPE>
-inline void AsyncSubscriptionOpcUa<T_DATATYPE>::handler_ValueChanged(UA_UInt32 monId,
-                                                                     UA_DataValue *value,
-                                                                     void *context) {
-  AsyncSubscriptionOpcUa<T_DATATYPE> *ptr = static_cast<AsyncSubscriptionOpcUa<T_DATATYPE> *>(context);
+inline void AsyncSubscriptionOpcUa<T_DATATYPE>::handler_ValueChanged(
+    UA_Client *client,
+    UA_UInt32 subId,
+    void *subContext,
+    UA_UInt32 monId, void *monContext,
+    UA_DataValue *value)
+{
+  ///\todo use monContext instead of internal list of monIds! (easier code)
+  AsyncSubscriptionOpcUa<T_DATATYPE> *ptr = static_cast<AsyncSubscriptionOpcUa<T_DATATYPE> *>(monContext);
   ptr->valueChanged(monId, value);
 }
 

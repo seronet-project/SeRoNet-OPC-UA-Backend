@@ -24,12 +24,13 @@ class NamingServiceOpcUa : public INamingService, public std::enable_shared_from
 
   UaClientWithMutex_t::shpType getConnectionByName(const std::string &serverName);
 
+  std::string getEndpointByName(const std::string serverName);
+
   struct ConnectionAndThread
   {
     UaClientWithMutex_t::weakpType connection;
     std::thread *thread;
-    /// \todo add possibility to kill the corresponding thread, save reference to thread, ...
-
+    std::shared_ptr<std::atomic_bool> pRun = std::make_shared<std::atomic_bool>(true);
   };
 
   OPEN_65241_CPP_NAMESPACE::UA_NodeId createNodeIdFromServiceName(const std::string &service);
@@ -40,8 +41,9 @@ class NamingServiceOpcUa : public INamingService, public std::enable_shared_from
                           std::mutex &OPCUA_Mutex,
                           std::string serverURL);
   /// Custom Deleter of shared_ptr
-  static void clientWithMutexDeletedCallback(UaClientWithMutex_t *pClientWithMutex, shpType pNamingService);
+  static void clientWithMutexDeletedCallback(UaClientWithMutex_t *pClientWithMutex, shpType pNamingService, std::string serverName);
 
+  std::mutex m_connectionCacheMutex;
   std::map<std::string, ConnectionAndThread> m_connectionCache;
 };
 

@@ -10,6 +10,7 @@
 #include <Open62541Cpp/UA_String.hpp>
 #include <Open62541Cpp/UA_NodeId.hpp>
 #include <Open62541Cpp/Exceptions/OpcUaErrorException.hpp>
+#include <open62541/open62541.h>
 
 //#include <open62541.h>
 //#include <open62541/open62541.h>
@@ -54,16 +55,17 @@ class ToPushModellVisitor :
     }
   }
 
-  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<bool> *el) override {
+  void createPrimitive(SeRoNet::CommunicationObjects::Description::IDescription *el, std::size_t uaTypesIndex)
+  {
     UA_StatusCode retVal;
     UA_VariableAttributes attr = UA_VariableAttributes_default;
 
     attr.userAccessLevel = UA_ACCESSLEVELMASK_READ;
     attr.accessLevel = UA_ACCESSLEVELMASK_READ;
-    attr.dataType = UA_NODEID_NUMERIC(ns0, UA_NS0ID_BOOLEAN);
-    void *dataContents = UA_alloca(UA_TYPES[UA_TYPES_BOOLEAN].memSize);
-    UA_init(dataContents, &UA_TYPES[UA_TYPES_BOOLEAN]);
-    UA_Variant_setScalar(&attr.value, dataContents, &UA_TYPES[UA_TYPES_BOOLEAN]);
+    UA_NodeId_copy(&UA_TYPES[uaTypesIndex].typeId, &attr.dataType);
+    void *dataContents = UA_malloc(UA_TYPES[uaTypesIndex].memSize);
+    UA_init(dataContents, &UA_TYPES[uaTypesIndex]);
+    UA_Variant_setScalar(&attr.value, dataContents, &UA_TYPES[uaTypesIndex]);
     attr.displayName = UA_LOCALIZEDTEXT_ALLOC("", el->getName().c_str());
 
     auto myNodeId = generateNodeId(el);
@@ -77,107 +79,27 @@ class ToPushModellVisitor :
                                        attr,
                                        nullptr, nullptr);
     if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
+  }
+
+  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<bool> *el) override {
+    createPrimitive(el, UA_TYPES_BOOLEAN);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<int32_t> *el) override {
-    UA_StatusCode retVal;
-    UA_VariableAttributes attr = UA_VariableAttributes_default;
-
-    attr.userAccessLevel = UA_ACCESSLEVELMASK_READ;
-    attr.accessLevel = UA_ACCESSLEVELMASK_READ;
-    attr.dataType = UA_NODEID_NUMERIC(ns0, UA_NS0ID_INT32);
-    void *dataContents = UA_alloca(UA_TYPES[UA_TYPES_INT32].memSize);
-    UA_init(dataContents, &UA_TYPES[UA_TYPES_INT32]);
-    UA_Variant_setScalar(&attr.value, dataContents, &UA_TYPES[UA_TYPES_INT32]);
-    attr.displayName = UA_LOCALIZEDTEXT_ALLOC("", el->getName().c_str());
-
-    auto myNodeId = generateNodeId(el);
-
-    retVal = UA_Server_addVariableNode(m_pServer,
-                                       *myNodeId.NodeId,
-                                       *m_parent.NodeId,
-                                       UA_NODEID_NUMERIC(ns0, UA_NS0ID_HASCOMPONENT),
-                                       UA_QUALIFIEDNAME_ALLOC(m_nsIndex, el->getName().c_str()),
-                                       UA_NODEID_NUMERIC(ns0, UA_NS0ID_BASEDATAVARIABLETYPE),
-                                       attr,
-                                       nullptr, nullptr);
-    if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
+    createPrimitive(el, UA_TYPES_INT32);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<float> *el) override {
-    UA_StatusCode retVal;
-    UA_VariableAttributes attr = UA_VariableAttributes_default;
-
-    attr.userAccessLevel = UA_ACCESSLEVELMASK_READ;
-    attr.accessLevel = UA_ACCESSLEVELMASK_READ;
-    attr.dataType = UA_NODEID_NUMERIC(ns0, UA_NS0ID_FLOAT);
-    void *dataContents = UA_alloca(UA_TYPES[UA_TYPES_FLOAT].memSize);
-    UA_init(dataContents, &UA_TYPES[UA_TYPES_FLOAT]);
-    UA_Variant_setScalar(&attr.value, dataContents, &UA_TYPES[UA_TYPES_FLOAT]);
-    attr.displayName = UA_LOCALIZEDTEXT_ALLOC("", el->getName().c_str());
-
-    auto myNodeId = generateNodeId(el);
-
-    retVal = UA_Server_addVariableNode(m_pServer,
-                                       *myNodeId.NodeId,
-                                       *m_parent.NodeId,
-                                       UA_NODEID_NUMERIC(ns0, UA_NS0ID_HASCOMPONENT),
-                                       UA_QUALIFIEDNAME_ALLOC(m_nsIndex, el->getName().c_str()),
-                                       UA_NODEID_NUMERIC(ns0, UA_NS0ID_BASEDATAVARIABLETYPE),
-                                       attr,
-                                       nullptr, nullptr);
-    if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
+    createPrimitive(el, UA_TYPES_FLOAT);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<double> *el) override {
-    UA_StatusCode retVal;
-    UA_VariableAttributes attr = UA_VariableAttributes_default;
-
-    attr.userAccessLevel = UA_ACCESSLEVELMASK_READ;
-    attr.accessLevel = UA_ACCESSLEVELMASK_READ;
-    attr.dataType = UA_NODEID_NUMERIC(ns0, UA_NS0ID_DOUBLE);
-    void *dataContents = UA_alloca(UA_TYPES[UA_TYPES_DOUBLE].memSize);
-    UA_init(dataContents, &UA_TYPES[UA_TYPES_DOUBLE]);
-    UA_Variant_setScalar(&attr.value, dataContents, &UA_TYPES[UA_TYPES_DOUBLE]);
-    attr.displayName = UA_LOCALIZEDTEXT_ALLOC("", el->getName().c_str());
-
-    auto myNodeId = generateNodeId(el);
-
-    retVal = UA_Server_addVariableNode(m_pServer,
-                                       *myNodeId.NodeId,
-                                       *m_parent.NodeId,
-                                       UA_NODEID_NUMERIC(ns0, UA_NS0ID_HASCOMPONENT),
-                                       UA_QUALIFIEDNAME_ALLOC(m_nsIndex, el->getName().c_str()),
-                                       UA_NODEID_NUMERIC(ns0, UA_NS0ID_BASEDATAVARIABLETYPE),
-                                       attr,
-                                       nullptr, nullptr);
-    if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
+    createPrimitive(el, UA_TYPES_DOUBLE);
   }
 
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<std::string> *el) override {
-    UA_StatusCode retVal;
-    UA_VariableAttributes attr = UA_VariableAttributes_default;
-
-    attr.userAccessLevel = UA_ACCESSLEVELMASK_READ;
-    attr.accessLevel = UA_ACCESSLEVELMASK_READ;
-    attr.dataType = UA_NODEID_NUMERIC(ns0, UA_NS0ID_STRING);
-    void *dataContents = UA_alloca(UA_TYPES[UA_TYPES_STRING].memSize);
-    UA_init(dataContents, &UA_TYPES[UA_TYPES_STRING]);
-    UA_Variant_setScalar(&attr.value, dataContents, &UA_TYPES[UA_TYPES_STRING]);
-    attr.displayName = UA_LOCALIZEDTEXT_ALLOC("", el->getName().c_str());
-
-    auto myNodeId = generateNodeId(el);
-
-    retVal = UA_Server_addVariableNode(m_pServer,
-                                       *myNodeId.NodeId,
-                                       *m_parent.NodeId,
-                                       UA_NODEID_NUMERIC(ns0, UA_NS0ID_HASCOMPONENT),
-                                       UA_QUALIFIEDNAME_ALLOC(m_nsIndex, el->getName().c_str()),
-                                       UA_NODEID_NUMERIC(ns0, UA_NS0ID_BASEDATAVARIABLETYPE),
-                                       attr,
-                                       nullptr, nullptr);
-    if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
+    createPrimitive(el, UA_TYPES_STRING);
   }
 
  private:

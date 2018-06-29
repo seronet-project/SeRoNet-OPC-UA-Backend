@@ -18,7 +18,7 @@ namespace OPCUA {
 namespace Client {
 ///template<> is needed for friend definition
 template<typename T_RETURN>
-static void methodCalledCallback(UA_Client *client, void *userdata, UA_UInt32 requestId, const void *response);
+static void methodCalledCallback(UA_Client *client, void *userdata, UA_UInt32 requestId, UA_CallResponse *response);
 
 template<typename T_RETURN>
 class AsyncAnswerMethod : public AsyncAnswer<T_RETURN> {
@@ -37,16 +37,16 @@ class AsyncAnswerMethod : public AsyncAnswer<T_RETURN> {
   friend void methodCalledCallback<T_RETURN>(UA_Client *client,
                                              void *userdata,
                                              UA_UInt32 requestId,
-                                             const void *response);
+                                             UA_CallResponse *response);
 
   /// Callback when an answer has been received
   void methodCalled_callback(UA_Client *client, void *userdata,
-                             UA_UInt32 requestId, const void *response);
+                             UA_UInt32 requestId, UA_CallResponse *callResponse);
 };
 
 /// Callback which gets called when method execution has finished
 template<typename T_RETURN>
-static void methodCalledCallback(UA_Client *client, void *userdata, UA_UInt32 requestId, const void *response) {
+static void methodCalledCallback(UA_Client *client, void *userdata, UA_UInt32 requestId, UA_CallResponse *response) {
   AsyncAnswerMethod<T_RETURN> *pAsyncAnswer = static_cast<AsyncAnswerMethod<T_RETURN> *>(userdata);
   assert(pAsyncAnswer != nullptr);
 
@@ -76,19 +76,29 @@ inline AsyncAnswerMethod<T_RETURN>::AsyncAnswerMethod(
   callRequ.methodsToCall = &methodRequest;
   callRequ.methodsToCallSize = 1;
 
-  UA_Client_AsyncService_call(client, callRequ, methodCalledCallback < T_RETURN > , this, &m_requestId);
+  UA_Client_call_async(
+      client,
+      objectId,
+      methodId,
+      inputs.VariantsSize,
+      inputs.Variants,
+      methodCalledCallback < T_RETURN > ,
+      this,
+      &m_requestId
+  );
+
   ///@todo use Open62541Cpp::UA_NodeID as parameter type instead
   UA_NodeId_deleteMembers(&objectId);
   UA_NodeId_deleteMembers(&methodId);
 }
 
 template<typename T_RETURN>
-inline void AsyncAnswerMethod<T_RETURN>::methodCalled_callback(UA_Client *client,
-                                                               void *userdata,
-                                                               UA_UInt32 requestId,
-                                                               const void *response) {
-  const UA_CallResponse *callResponse = static_cast<const UA_CallResponse *>(response);
-
+inline void AsyncAnswerMethod<T_RETURN>::methodCalled_callback(
+    UA_Client *client,
+    void *userdata,
+    UA_UInt32 requestId,
+    UA_CallResponse *callResponse
+) {
   if (!callResponse) {
     assert(callResponse != nullptr);
     return;
@@ -103,7 +113,7 @@ inline void AsyncAnswerMethod<T_RETURN>::methodCalled_callback(UA_Client *client
     if (callResponse->results[0].outputArgumentsSize > 0) {
       outArgs.reset(new open62541::UA_ArrayOfVariant(callResponse->results[0].outputArguments,
                                                      callResponse->results[0].outputArgumentsSize));
-    } else{
+    } else {
       std::cerr << "Receive Empty Method Call Response without output arguments." << std::endl;
     }
     this->processAnswer(resultCode, outArgs.get());

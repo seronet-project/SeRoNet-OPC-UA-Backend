@@ -52,8 +52,7 @@ PushClientOpcUa<DataType>::PushClientOpcUa(
     m_pUaClientWithMutex(nullptr),
     m_pSubscription(nullptr),
     m_namingService(std::make_shared<SeRoNet::OPCUA::Client::NamingServiceOpcUa>()),
-    Smart::IPushClientPattern<DataType>::IPushClientPattern(pComponent)
-{
+    Smart::IPushClientPattern<DataType>::IPushClientPattern(pComponent) {
 }
 
 template<class DataType>
@@ -105,7 +104,7 @@ DataType PushClientOpcUa<DataType>::readValueFromSubscription(
     typename SeRoNet::OPCUA::Client::AsyncSubscriptionOpcUa<DataType>::counter_t offset) {
   bool overflow = false;
   typename decltype(m_pSubscription)::element_type::counter_t
-  dataRead;
+      dataRead;
   return m_pSubscription->getData(m_pSubscription->getDataCounter() + offset, overflow, dataRead);
 }
 
@@ -119,7 +118,8 @@ Smart::StatusCode PushClientOpcUa<DataType>::connect(const std::string &server, 
 
 template<class DataType>
 Smart::StatusCode PushClientOpcUa<DataType>::disconnect() {
-  ///\todo implement
+  ///\todo unsubscribe
+  m_pUaClientWithMutex = nullptr;
   return Smart::StatusCode::SMART_OK;
 }
 
