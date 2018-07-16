@@ -15,11 +15,11 @@ namespace OPCUA {
 namespace Client {
 
 template<class RequestType, class AnswerType>
-class QClientOPCUACommObj :
+class QueryClient :
     public QClientOPCUA<RequestType, AnswerType> {
  public:
-  QClientOPCUACommObj(Smart::IComponent *pComponent);
-  ~QClientOPCUACommObj() = default;
+  QueryClient(Smart::IComponent *pComponent);
+  ~QueryClient() = default;
 
   Smart::StatusCode queryRequest(
       const RequestType &request,
@@ -35,7 +35,7 @@ class QClientOPCUACommObj :
 };
 
 template<class RequestType, class AnswerType>
-inline QClientOPCUACommObj<RequestType, AnswerType>::QClientOPCUACommObj(
+inline QueryClient<RequestType, AnswerType>::QueryClient(
     Smart::IComponent *pComponent
 ) :
     QClientOPCUA<RequestType, AnswerType>::QClientOPCUA(pComponent),
@@ -45,7 +45,7 @@ inline QClientOPCUACommObj<RequestType, AnswerType>::QClientOPCUACommObj(
 }
 
 template<class RequestType, class AnswerType>
-inline Smart::StatusCode QClientOPCUACommObj<RequestType, AnswerType>::queryRequest(
+inline Smart::StatusCode QueryClient<RequestType, AnswerType>::queryRequest(
     const RequestType &request,
     typename QClientOPCUA<RequestType, AnswerType>::QueryIDtype &id
 ) {
@@ -56,7 +56,7 @@ inline Smart::StatusCode QClientOPCUACommObj<RequestType, AnswerType>::queryRequ
 }
 
 template<class RequestType, class AnswerType>
-inline Smart::StatusCode QClientOPCUACommObj<RequestType, AnswerType>::blocking(const bool blocking) {
+inline Smart::StatusCode QueryClient<RequestType, AnswerType>::blocking(const bool blocking) {
   if (blocking) {
     m_Factory->enableBlocking();
   } else {
@@ -67,7 +67,7 @@ inline Smart::StatusCode QClientOPCUACommObj<RequestType, AnswerType>::blocking(
 }
 
 template<class RequestType, class AnswerType>
-Smart::StatusCode QClientOPCUACommObj<RequestType, AnswerType>::connect(const std::string &server,
+Smart::StatusCode QueryClient<RequestType, AnswerType>::connect(const std::string &server,
                                                                         const std::string &service) {
   auto retValue = this->m_namingService->getConnectionAndNodeIdByName(server, service);
   m_pUaClientWithMutex = retValue.connection;
