@@ -75,7 +75,7 @@ UaClientWithMutex_t::shpType NamingServiceOpcUa::getConnectionByName(const std::
 
     std::thread *opcUA_Thread =
         new std::thread(
-            opcUaBackgroudTask,
+            &opcUaBackgroudTask,
             this,
             std::move(promiseClient),
             connAndThread.pRun.get(),
