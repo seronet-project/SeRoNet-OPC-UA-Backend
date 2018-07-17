@@ -25,8 +25,11 @@ class QueryClient :
       const RequestType &request,
       typename QClientOPCUA<RequestType, AnswerType>::QueryIDtype &id
   ) override;
+
   Smart::StatusCode blocking(const bool blocking) override;
+
   Smart::StatusCode connect(const std::string &server, const std::string &service) override;
+
  protected:
   std::shared_ptr<AsyncAnswerFactoryWithCommObject<RequestType, AnswerType>> m_Factory;
   std::shared_ptr<SeRoNet::OPCUA::Client::NamingServiceOpcUa> m_namingService;

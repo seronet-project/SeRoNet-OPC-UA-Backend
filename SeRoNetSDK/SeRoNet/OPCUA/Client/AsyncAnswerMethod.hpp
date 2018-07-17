@@ -122,6 +122,33 @@ inline void AsyncAnswerMethod<T_RETURN>::methodCalled_callback(
   }
 
 }
+
+template<>
+inline void AsyncAnswerMethod<void *>::methodCalled_callback(
+    UA_Client *client,
+    void *userdata,
+    UA_UInt32 requestId,
+    UA_CallResponse *callResponse
+) {
+  if (!callResponse) {
+    assert(callResponse != nullptr);
+    return;
+  }
+
+  UA_StatusCode resultCode = callResponse->responseHeader.serviceResult;
+
+  ///@todo Check ReturnCode of the output arguments
+  if (callResponse->resultsSize > 0) {
+    resultCode = callResponse->results[0].statusCode;
+    if (callResponse->results[0].outputArgumentsSize != 0) {
+      std::cerr << "Receive  Method Call Response with output arguments. No output arguments allowed!" << std::endl;
+    }
+  } else {
+    std::cerr << "Receive Empty Method Call Response." << std::endl;
+  }
+
+}
+
 }
 }
 }

@@ -40,16 +40,18 @@ AsyncAnswerMethodCommObjectRequest<T_RETURN>::AsyncAnswerMethodCommObjectRequest
         blockingEnabled,
         client,
         UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
-        UA_NODEID_STRING_ALLOC(1, "newCoordinateService"),
+        UA_NODEID_STRING_ALLOC(1, "newCoordinateService"), //FIXME using namingservice to get NodeId
         static_cast<open62541::UA_ArrayOfVariant> (
             Converter::CommObjectToUaVariantArray(requestDescription.get())
         )
     ) {
 
 }
+
 template<typename T_RETURN>
 void AsyncAnswerMethodCommObjectRequest<T_RETURN>::processAnswer(
     UA_StatusCode result, open62541::UA_ArrayOfVariant *outputs) {
+
 
   ///\todo move check to AsyncAnswerMethod?
   if(result != UA_STATUSCODE_GOOD)
@@ -61,6 +63,18 @@ void AsyncAnswerMethodCommObjectRequest<T_RETURN>::processAnswer(
   }
   Converter::UaVariantArrayToCommObject(*outputs, CommunicationObjects::Description::SelfDescription(&m_answer).get());
   this->setHasAnswer();
+}
+
+template<>
+void AsyncAnswerMethodCommObjectRequest<void *>::processAnswer(
+    UA_StatusCode result, open62541::UA_ArrayOfVariant *outputs) {
+  std::cout << "syncAnswerMethodCommObjectRequest<void*>::processAnswer" << std::endl;
+  if (result != UA_STATUSCODE_GOOD) {
+    std::stringstream ss;
+    ss << "Receive nongood result: " << UA_StatusCode_name(result);
+    this->setError(ss.str());
+    return;
+  }
 }
 
 }

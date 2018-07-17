@@ -99,7 +99,7 @@ inline UA_StatusCode SendServer<DataType>::methodCallback(
 
   OPCUA::Client::Converter::UaVariantArrayToCommObject
       conv(open62541::UA_ArrayOfVariant(input, inputSize),
-           CommunicationObjects::Description::SelfDescription(&request, "").get())
+           CommunicationObjects::Description::SelfDescription(&request, "").get());
   friendThis->notify_input(request);
   return UA_STATUSCODE_GOOD;
 }
