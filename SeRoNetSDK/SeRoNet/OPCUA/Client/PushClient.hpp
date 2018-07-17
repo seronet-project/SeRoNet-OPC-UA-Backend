@@ -21,15 +21,15 @@ namespace OPCUA {
 namespace Client {
 
 template<class DataType>
-class PushClientOpcUa :
+class PushClient :
     public Smart::IPushClientPattern<DataType> {
  public:
-  explicit PushClientOpcUa(Smart::IComponent *pComponent);
+  explicit PushClient(Smart::IComponent *pComponent);
   Smart::StatusCode connect(const std::string &server, const std::string &service) override;
   Smart::StatusCode disconnect() override;
   Smart::StatusCode blocking(const bool blocking) override;
   Smart::StatusCode subscribe(const int &prescale) override;
-  ~PushClientOpcUa() override;
+  ~PushClient() override;
   Smart::StatusCode unsubscribe() override;
 
   Smart::StatusCode getUpdate(DataType &d) override;
@@ -47,7 +47,7 @@ class PushClientOpcUa :
 };
 
 template<class DataType>
-PushClientOpcUa<DataType>::PushClientOpcUa(
+PushClient<DataType>::PushClient(
     Smart::IComponent *pComponent):
     m_pUaClientWithMutex(nullptr),
     m_pSubscription(nullptr),
@@ -56,7 +56,7 @@ PushClientOpcUa<DataType>::PushClientOpcUa(
 }
 
 template<class DataType>
-Smart::StatusCode PushClientOpcUa<DataType>::subscribe(const int &prescale) {
+Smart::StatusCode PushClient<DataType>::subscribe(const int &prescale) {
 
   m_pSubscription.reset(new SeRoNet::OPCUA::Client::AsyncSubscriptionWithCommObject<DataType>(m_pUaClientWithMutex));
   m_pReader.reset(new SeRoNet::OPCUA::Client::AsyncSubscriptionReader<DataType>(
@@ -69,14 +69,14 @@ Smart::StatusCode PushClientOpcUa<DataType>::subscribe(const int &prescale) {
 }
 
 template<class DataType>
-Smart::StatusCode PushClientOpcUa<DataType>::unsubscribe() {
+Smart::StatusCode PushClient<DataType>::unsubscribe() {
   m_pReader = nullptr;
   m_pSubscription = nullptr;
   return Smart::StatusCode::SMART_OK;
 }
 
 template<class DataType>
-Smart::StatusCode PushClientOpcUa<DataType>::getUpdate(DataType &d) {
+Smart::StatusCode PushClient<DataType>::getUpdate(DataType &d) {
   if (m_pReader == nullptr || m_pSubscription == nullptr) {
     return Smart::StatusCode::SMART_UNSUBSCRIBED;
   }
@@ -90,7 +90,7 @@ Smart::StatusCode PushClientOpcUa<DataType>::getUpdate(DataType &d) {
 }
 
 template<class DataType>
-Smart::StatusCode PushClientOpcUa<DataType>::getUpdateWait(DataType &d,
+Smart::StatusCode PushClient<DataType>::getUpdateWait(DataType &d,
                                                            const std::chrono::steady_clock::duration &timeout) {
   if (m_pReader == nullptr || m_pSubscription == nullptr) {
     return Smart::StatusCode::SMART_UNSUBSCRIBED;
@@ -100,7 +100,7 @@ Smart::StatusCode PushClientOpcUa<DataType>::getUpdateWait(DataType &d,
 }
 
 template<class DataType>
-DataType PushClientOpcUa<DataType>::readValueFromSubscription(
+DataType PushClient<DataType>::readValueFromSubscription(
     typename SeRoNet::OPCUA::Client::AsyncSubscriptionOpcUa<DataType>::counter_t offset) {
   bool overflow = false;
   typename decltype(m_pSubscription)::element_type::counter_t
@@ -109,7 +109,7 @@ DataType PushClientOpcUa<DataType>::readValueFromSubscription(
 }
 
 template<class DataType>
-Smart::StatusCode PushClientOpcUa<DataType>::connect(const std::string &server, const std::string &service) {
+Smart::StatusCode PushClient<DataType>::connect(const std::string &server, const std::string &service) {
   auto retValue = this->m_namingService.get()->getConnectionAndNodeIdByName(server, service);
   m_pUaClientWithMutex = retValue.connection;
   m_startNodeId = retValue.nodeId;
@@ -117,19 +117,19 @@ Smart::StatusCode PushClientOpcUa<DataType>::connect(const std::string &server, 
 }
 
 template<class DataType>
-Smart::StatusCode PushClientOpcUa<DataType>::disconnect() {
+Smart::StatusCode PushClient<DataType>::disconnect() {
   ///\todo unsubscribe
   m_pUaClientWithMutex = nullptr;
   return Smart::StatusCode::SMART_OK;
 }
 
 template<class DataType>
-Smart::StatusCode PushClientOpcUa<DataType>::blocking(const bool blocking) {
+Smart::StatusCode PushClient<DataType>::blocking(const bool blocking) {
   ///\todo implement
   return Smart::StatusCode::SMART_OK;
 }
 template<class DataType>
-PushClientOpcUa<DataType>::~PushClientOpcUa() {
+PushClient<DataType>::~PushClient() {
   this->unsubscribe();
 }
 
