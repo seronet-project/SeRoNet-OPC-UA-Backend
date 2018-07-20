@@ -11,6 +11,7 @@
 #include <Open62541Cpp/UA_NodeId.hpp>
 #include <Open62541Cpp/Exceptions/OpcUaErrorException.hpp>
 #include <open62541/open62541.h>
+#include <iostream>
 
 //#include <open62541.h>
 //#include <open62541/open62541.h>
@@ -117,7 +118,7 @@ class ToPushModellVisitor :
     }
 
     ss << description->getName();
-    open62541::UA_NodeId ownNodeId = open62541::UA_NodeId(m_nsIndex, ss.str());
+    open62541::UA_NodeId ownNodeId = open62541::UA_NodeId(1, ss.str()); // FIXME use generic Namespace
     return ownNodeId;
   }
 

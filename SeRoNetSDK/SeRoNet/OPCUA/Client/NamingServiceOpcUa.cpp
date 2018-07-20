@@ -32,7 +32,8 @@ OPEN_65241_CPP_NAMESPACE::UA_NodeId NamingServiceOpcUa::createNodeIdFromServiceN
 
   std::stringstream ss;
   ss << "85." << service;
-  return OPEN_65241_CPP_NAMESPACE::UA_NodeId(2, ss.str());
+  // FIXME use generic Namespace
+  return OPEN_65241_CPP_NAMESPACE::UA_NodeId(1, ss.str());
 }
 
 UaClientWithMutex_t::shpType NamingServiceOpcUa::getConnectionByName(const std::string &serverName) {

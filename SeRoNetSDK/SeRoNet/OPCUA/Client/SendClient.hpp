@@ -44,6 +44,7 @@ class SendClient :
   open62541::UA_NodeId m_methodNodeId;
   open62541::UA_NodeId m_objNodeId;
   std::shared_ptr<AsyncAnswerFactoryWithCommObject<void *, DataType>> m_Factory;
+  open62541::UA_NodeId m_methodId;
 };
 
 template<class DataType>
@@ -58,9 +59,10 @@ Smart::StatusCode SendClient<DataType>::connect(const std::string &server,
                                                 const std::string &service) {
   auto retValue = this->m_namingService->getConnectionAndNodeIdByName(server, service);
   m_pUaClientWithMutex = retValue.connection;
+  m_methodId = retValue.nodeId;
   //FIXME use new Constructor for factory with only one element SeRoNet::OPCUA::Client::UaClientWithMutex_t
   m_Factory = std::make_shared<AsyncAnswerFactoryWithCommObject<void *, DataType>>
-      (m_pUaClientWithMutex->pClient, m_pUaClientWithMutex->opcuaMutex);
+      (m_pUaClientWithMutex->pClient, m_pUaClientWithMutex->opcuaMutex, m_methodNodeId);
   return Smart::SMART_OK;
 }
 

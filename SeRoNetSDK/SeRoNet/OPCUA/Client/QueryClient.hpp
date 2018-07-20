@@ -35,6 +35,7 @@ class QueryClient :
   std::shared_ptr<SeRoNet::OPCUA::Client::NamingServiceOpcUa> m_namingService;
   SeRoNet::OPCUA::Client::UaClientWithMutex_t::shpType m_pUaClientWithMutex;
 
+  open62541::UA_NodeId m_methodNodeId;
 };
 
 template<class RequestType, class AnswerType>
@@ -74,8 +75,11 @@ Smart::StatusCode QueryClient<RequestType, AnswerType>::connect(const std::strin
                                                                         const std::string &service) {
   auto retValue = this->m_namingService->getConnectionAndNodeIdByName(server, service);
   m_pUaClientWithMutex = retValue.connection;
+  m_methodNodeId = retValue.nodeId;
   //FIXME use new Constructor for factory with only one element SeRoNet::OPCUA::Client::UaClientWithMutex_t
-  m_Factory = std::make_shared<AsyncAnswerFactoryWithCommObject<RequestType, AnswerType>>(m_pUaClientWithMutex->pClient,m_pUaClientWithMutex->opcuaMutex);
+  m_Factory = std::make_shared<AsyncAnswerFactoryWithCommObject<RequestType, AnswerType>>(m_pUaClientWithMutex->pClient,
+                                                                                          m_pUaClientWithMutex->opcuaMutex,
+                                                                                          m_methodNodeId);
   return Smart::SMART_OK;
 }
 

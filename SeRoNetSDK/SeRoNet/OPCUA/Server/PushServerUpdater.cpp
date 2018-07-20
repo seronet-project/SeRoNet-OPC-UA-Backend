@@ -14,6 +14,7 @@
 
 //#include <open62541.h>
 #include <Open62541Cpp/UA_Variant.hpp>
+#include <iostream>
 
 #include "PushServerUpdater.hpp"
 
@@ -128,7 +129,7 @@ class UpdateOpcuaServerVisitor :
     }
 
     ss << description->getName();
-    open62541::UA_NodeId ownNodeId = open62541::UA_NodeId(m_nsIndex, ss.str());
+    open62541::UA_NodeId ownNodeId = open62541::UA_NodeId(1, ss.str());// FIXME use generic Namespace
     return ownNodeId;
   }
 

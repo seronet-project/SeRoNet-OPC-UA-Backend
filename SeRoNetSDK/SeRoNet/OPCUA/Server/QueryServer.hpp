@@ -16,6 +16,8 @@
 #include <Open62541Cpp/UA_Argument.hpp>
 #include <Open62541Cpp/UA_ArrayOfArgument.hpp>
 #include <Open62541Cpp/UA_ArrayOfVariant.hpp>
+#include <sstream>
+#include <Open62541Cpp/UA_NodeId.hpp>
 
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIComponent.h"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartStatusCode.h"
@@ -163,9 +165,13 @@ inline QueryServer<T_REQUEST, T_ANSWER>::QueryServer(
   helloAttr.displayName = UA_LOCALIZEDTEXT_ALLOC("en_US", this->m_service.c_str());
   helloAttr.executable = true;
   helloAttr.userExecutable = true;
+
+  std::stringstream ss;
+  ss << "85." << this->m_service.c_str();
+
   UA_Server_addMethodNode(
       server,
-      UA_NODEID_STRING_ALLOC(1, this->m_service.c_str()),
+      UA_NODEID_STRING_ALLOC(1, ss.str().c_str()),
       UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
       UA_NODEID_NUMERIC(0, UA_NS0ID_HASORDEREDCOMPONENT),
       UA_QUALIFIEDNAME_ALLOC(1, "hello world"),

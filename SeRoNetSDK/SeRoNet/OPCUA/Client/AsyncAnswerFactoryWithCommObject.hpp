@@ -27,7 +27,8 @@ class AsyncAnswerFactoryWithCommObject :
             (&this->m_activeInstances,
              this->m_blockingEnabled,
              this->m_pClient.get(),
-             CommunicationObjects::Description::SelfDescription(&arg)));
+             CommunicationObjects::Description::SelfDescription(&arg),
+             this->m_methodNodeId));
   }
 };
 

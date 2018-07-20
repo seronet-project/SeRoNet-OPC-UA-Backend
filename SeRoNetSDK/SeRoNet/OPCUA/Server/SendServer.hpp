@@ -8,6 +8,7 @@
 #include <Open62541Cpp/UA_ArrayOfArgument.hpp>
 #include <Open62541Cpp/UA_ArrayOfVariant.hpp>
 #include <thread>
+#include <sstream>
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartISendServerPattern_T.h"
 #include "../../Utils/Component.hpp"
 #include "CommObjectToUaArgument.hpp"
@@ -55,9 +56,13 @@ class SendServer : public Smart::ISendServerPattern<DataType> {
     helloAttr.displayName = UA_LOCALIZEDTEXT_ALLOC("en_US", service.c_str());
     helloAttr.executable = true;
     helloAttr.userExecutable = true;
+
+    std::stringstream ss;
+    ss << "85." << service.c_str(); // @todo hier sollte eine besser dynamischer weg geunden werden.
+
     UA_Server_addMethodNode(
         server,
-        UA_NODEID_STRING_ALLOC(1, service.c_str()),
+        UA_NODEID_STRING_ALLOC(1, ss.str().c_str()),
         UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
         UA_NODEID_NUMERIC(0, UA_NS0ID_HASORDEREDCOMPONENT),
         UA_QUALIFIEDNAME_ALLOC(1, service.c_str()),
