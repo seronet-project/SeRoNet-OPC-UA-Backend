@@ -11,6 +11,7 @@
 #include <Open62541Cpp/UA_String.hpp>
 #include "../../../CommunicationObjects/Description/ComplexType.hpp"
 #include "../../../CommunicationObjects/Description/ElementPrimitive.hpp"
+#include "../../../CommunicationObjects/Description/ElementArray.hpp"
 
 /// Internal Class
 class ToUaVariantArrayVisitor : public ::SeRoNet::CommunicationObjects::Description::IVisitorDescription {
@@ -54,6 +55,10 @@ class ToUaVariantArrayVisitor : public ::SeRoNet::CommunicationObjects::Descript
     auto value = el->get();
     UA_Variant_setScalarCopy(newEl.Variant, open62541::UA_String(value).String, &UA_TYPES[UA_TYPES_STRING]);
     Variants.push_back(newEl);
+  }
+
+  void visit(SeRoNet::CommunicationObjects::Description::ElementArray *elementArray) override {
+    throw SeRoNet::Exceptions::NotImplementedException(__FUNCTION__);
   }
 
   std::list<open62541::UA_Variant> Variants;

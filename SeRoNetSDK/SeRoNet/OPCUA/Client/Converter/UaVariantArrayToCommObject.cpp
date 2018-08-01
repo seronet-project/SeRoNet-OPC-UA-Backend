@@ -96,6 +96,10 @@ class ToCommObjectVisitor : public ::SeRoNet::CommunicationObjects::Description:
     el->set(static_cast<std::string>(tmp));
   }
 
+  void visit(SeRoNet::CommunicationObjects::Description::ElementArray *elementArray) override {
+    throw SeRoNet::Exceptions::NotImplementedException(__FUNCTION__);
+  }
+
   open62541::UA_ArrayOfVariant m_srcVariants;
   std::size_t m_nextIndex = 0;
 };

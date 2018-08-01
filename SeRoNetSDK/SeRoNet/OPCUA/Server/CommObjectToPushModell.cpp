@@ -103,6 +103,10 @@ class ToPushModellVisitor :
     createPrimitive(el, UA_TYPES_STRING);
   }
 
+  void visit(SeRoNet::CommunicationObjects::Description::ElementArray *elementArray) override {
+    throw SeRoNet::Exceptions::NotImplementedException(__FUNCTION__);
+  }
+
  private:
 
   open62541::UA_NodeId generateNodeId(const SeRoNet::CommunicationObjects::Description::IDescription *description)

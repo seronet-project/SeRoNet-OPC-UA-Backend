@@ -61,6 +61,10 @@ class ToUaArgumentArrayVisitor :
     arguments.push_back(newEl);
   }
 
+  void visit(SeRoNet::CommunicationObjects::Description::ElementArray *elementArray) override {
+    throw SeRoNet::Exceptions::NotImplementedException(__FUNCTION__);
+  }
+
   std::list<open62541::UA_Argument> arguments;
 };
 
