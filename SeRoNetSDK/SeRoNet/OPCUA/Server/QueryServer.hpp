@@ -80,7 +80,7 @@ class QueryServer :
   *  such that all pending queries are handled correctly at client side
   *  even when the service provider disappears during pending queries.
   */
-  virtual ~QueryServer() throw() = default;
+  virtual ~QueryServer() noexcept = default;
 
   /** Provide answer to be sent back to the requestor.
   *
@@ -167,14 +167,14 @@ inline QueryServer<T_REQUEST, T_ANSWER>::QueryServer(
   helloAttr.userExecutable = true;
 
   std::stringstream ss;
-  ss << "85." << this->m_service.c_str();
+  ss << "85." << this->m_service.c_str(); //TODO use a own function to create nodeIds
 
   UA_Server_addMethodNode(
       server,
       UA_NODEID_STRING_ALLOC(1, ss.str().c_str()),
       UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
       UA_NODEID_NUMERIC(0, UA_NS0ID_HASORDEREDCOMPONENT),
-      UA_QUALIFIEDNAME_ALLOC(1, "hello world"),
+      UA_QUALIFIEDNAME_ALLOC(1, this->m_service.c_str()),
       helloAttr,
       &methodCallback,
       inputArguments.arraySize,

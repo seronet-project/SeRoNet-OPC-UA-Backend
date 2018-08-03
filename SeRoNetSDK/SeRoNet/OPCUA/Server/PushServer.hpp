@@ -118,7 +118,6 @@ Smart::StatusCode PushServer<T_AnswerType>::put(const T_AnswerType &d) {
 template<class T_AnswerType>
 void PushServer<T_AnswerType>::serverInitiatedDisconnect() {
   throw SeRoNet::Exceptions::NotImplementedException(__FUNCTION__);
-  return;
 }
 
 }

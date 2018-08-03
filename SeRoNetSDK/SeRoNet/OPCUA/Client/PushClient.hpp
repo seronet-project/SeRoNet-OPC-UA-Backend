@@ -124,7 +124,7 @@ Smart::StatusCode PushClient<DataType>::disconnect() {
 }
 
 template<class DataType>
-Smart::StatusCode PushClient<DataType>::blocking(const bool blocking) {
+Smart::StatusCode PushClient<DataType>::blocking(const bool /*blocking*/) {
   ///\todo implement
   return Smart::StatusCode::SMART_OK;
 }

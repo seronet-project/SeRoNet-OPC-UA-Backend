@@ -30,7 +30,7 @@ class AsyncAnswerMethod : public AsyncAnswer<T_RETURN> {
 
   virtual void processAnswer(UA_StatusCode result, open62541::UA_ArrayOfVariant *outputs) = 0;
 
-  virtual ~AsyncAnswerMethod() = default;
+  ~AsyncAnswerMethod() override = default;
  protected:
   UA_UInt32 m_requestId = 0;
  private:
@@ -92,11 +92,12 @@ inline AsyncAnswerMethod<T_RETURN>::AsyncAnswerMethod(
   UA_NodeId_deleteMembers(&methodId);
 }
 
+////@todo creat an exception hanlding
 template<typename T_RETURN>
 inline void AsyncAnswerMethod<T_RETURN>::methodCalled_callback(
-    UA_Client *client,
-    void *userdata,
-    UA_UInt32 requestId,
+    UA_Client * /*client*/,
+    void * /*userdata*/,
+    UA_UInt32 /*requestId*/,
     UA_CallResponse *callResponse
 ) {
   if (!callResponse) {

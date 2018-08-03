@@ -70,7 +70,7 @@ void AsyncAnswerMethodCommObjectRequest<T_RETURN>::processAnswer(
 
 template<>
 void AsyncAnswerMethodCommObjectRequest<void *>::processAnswer(
-    UA_StatusCode result, open62541::UA_ArrayOfVariant *outputs) {
+    UA_StatusCode result, open62541::UA_ArrayOfVariant */*outputs*/) {
   std::cout << "syncAnswerMethodCommObjectRequest<void*>::processAnswer" << std::endl;
   if (result != UA_STATUSCODE_GOOD) {
     std::stringstream ss;

@@ -108,15 +108,15 @@ class EventServer :
 template<class T_ParameterType, class T_ResultType, class T_StatusType, class T_IdentificationType>
 UA_StatusCode EventServer<T_ParameterType, T_ResultType, T_StatusType, T_IdentificationType>::activateCallback(
     UA_Server *server,
-    const UA_NodeId *sessionId,
-    void *sessionContext,
-    const UA_NodeId *methodId,
+    const UA_NodeId */*sessionId*/,
+    void */*sessionContext*/,
+    const UA_NodeId */*methodId*/,
     void *methodContext,
     const UA_NodeId *objectId,
-    void *objectContext,
+    void */*objectContext*/,
     size_t inputSize,
     const UA_Variant *input,
-    size_t outputSize,
+    size_t /*outputSize*/,
     UA_Variant *output) {
 
   EventServer<T_ParameterType, T_ResultType, T_StatusType, T_IdentificationType> *friendThis =

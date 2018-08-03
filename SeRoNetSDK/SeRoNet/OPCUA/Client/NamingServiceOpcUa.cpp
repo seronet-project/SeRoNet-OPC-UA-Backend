@@ -157,7 +157,6 @@ void NamingServiceOpcUa::opcUaBackgroudTask(std::promise<shpUA_Client_t> promise
   {
     /// Initialize without locking
     std::unique_lock<std::remove_reference<decltype(OPCUA_Mutex)>::type> l_opcUA(OPCUA_Mutex, std::defer_lock);
-    int cnt = 0;
     while (*run) {
       l_opcUA.lock();
       UA_Client_run_iterate(pClient.get(), 10);

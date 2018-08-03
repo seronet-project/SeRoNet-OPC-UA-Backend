@@ -90,7 +90,7 @@ inline UA_StatusCode AsyncSubscriptionOpcUa<T_DATATYPE>::subscribe(std::vector<U
   if (isSubscribed()) {
     unsubscribe();
   }
-  UA_StatusCode ret;
+  UA_StatusCode ret = UA_STATUSCODE_GOOD;
   ///TODO set interval
   UA_CreateSubscriptionRequest subscRequest = UA_CreateSubscriptionRequest_default();
   subscRequest.requestedPublishingInterval = 250;
@@ -217,9 +217,9 @@ inline void AsyncSubscriptionOpcUa<T_DATATYPE>::valueChanged(UA_UInt32 monId, UA
 
 template<typename T_DATATYPE>
 inline void AsyncSubscriptionOpcUa<T_DATATYPE>::handler_ValueChanged(
-    UA_Client *client,
-    UA_UInt32 subId,
-    void *subContext,
+    UA_Client */*client*/,
+    UA_UInt32 /*subId*/,
+    void */*subContext*/,
     UA_UInt32 monId, void *monContext,
     UA_DataValue *value)
 {

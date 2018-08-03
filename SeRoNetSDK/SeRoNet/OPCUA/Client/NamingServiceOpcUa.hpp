@@ -15,6 +15,7 @@ namespace SeRoNet {
 namespace OPCUA {
 namespace Client {
 
+//@todo use a lds server in a client if no server is found
 class NamingServiceOpcUa : public INamingService, public std::enable_shared_from_this<NamingServiceOpcUa> {
  public:
   ConnectionAndNodeid getConnectionAndNodeIdByName(const std::string &serverName, const std::string &service) override;
@@ -26,8 +27,7 @@ class NamingServiceOpcUa : public INamingService, public std::enable_shared_from
 
   std::string getEndpointByName(const std::string serverName);
 
-  struct ConnectionAndThread
-  {
+  struct ConnectionAndThread {
     UaClientWithMutex_t::weakpType connection;
     std::thread *thread;
     std::shared_ptr<std::atomic_bool> pRun = std::make_shared<std::atomic_bool>(true);

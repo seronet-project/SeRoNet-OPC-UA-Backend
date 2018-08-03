@@ -13,7 +13,8 @@ namespace Utils {
 
 Component::Component(const std::string &componentName)
     : IComponent(componentName) {
-  config = UA_ServerConfig_new_default();
+  //TODO @xfl auslageren des Server in eigene Singelton klasse
+  config = UA_ServerConfig_new_default(); // TODO chnage Port Nr - for example
   config->mdnsServerName = UA_String_fromChars(componentName.c_str());
   config->applicationDescription.applicationName = UA_LOCALIZEDTEXT_ALLOC("", componentName.c_str());
   config->applicationDescription.applicationType = UA_APPLICATIONTYPE_SERVER;
@@ -31,7 +32,7 @@ Smart::StatusCode Component::run() {
   UA_Server_run(server, &running);
 }
 
-Smart::StatusCode Component::blocking(const bool b) {
+Smart::StatusCode Component::blocking(const bool /*b*/) {
   return Smart::StatusCode::SMART_OK;
 }
 Smart::ITimerManager *Component::getTimerManager() {

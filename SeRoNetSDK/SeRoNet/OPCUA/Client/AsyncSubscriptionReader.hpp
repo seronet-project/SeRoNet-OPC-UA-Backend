@@ -5,6 +5,7 @@
 #include <condition_variable>
 #include <memory>
 #include <iostream>
+#include "AsyncSubscription.hpp"
 #include "../../Exceptions/NoDataAvailableException.hpp"
 
 namespace SeRoNet {
