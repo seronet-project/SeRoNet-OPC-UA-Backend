@@ -37,8 +37,10 @@ class SendServer : public Smart::ISendServerPattern<DataType> {
       const UA_Variant *input,
       size_t outputSize,
       UA_Variant *output);
+
  protected:
   void serverInitiatedDisconnect() override;
+
  public:
 
   SendServer(Smart::IComponent *component, const std::string &service)
@@ -48,14 +50,14 @@ class SendServer : public Smart::ISendServerPattern<DataType> {
     DataType *inputCommObject = new DataType;
     open62541::UA_ArrayOfArgument
         inputArguments =
-        CommObjectToUaArgumentArray(CommunicationObjects::Description::SelfDescription(inputCommObject, "input").get());
+        CommObjectToUaArgumentArray(
+            CommunicationObjects::Description::SelfDescription(inputCommObject, "input").get());
 
-    UA_MethodAttributes helloAttr;
-    UA_MethodAttributes_init(&helloAttr);
-    helloAttr.description = UA_LOCALIZEDTEXT_ALLOC("en_US", "Component.Send");
-    helloAttr.displayName = UA_LOCALIZEDTEXT_ALLOC("en_US", service.c_str());
-    helloAttr.executable = true;
-    helloAttr.userExecutable = true;
+    UA_MethodAttributes methodAttibute;
+    UA_MethodAttributes_init(&methodAttibute);
+    methodAttibute.displayName = UA_LOCALIZEDTEXT_ALLOC("en_US", service.c_str());
+    methodAttibute.executable = true;
+    methodAttibute.userExecutable = true;
 
     std::stringstream ss;
     ss << "85." << service.c_str(); // @todo hier sollte eine besser dynamischer weg geunden werden.
@@ -65,8 +67,8 @@ class SendServer : public Smart::ISendServerPattern<DataType> {
         UA_NODEID_STRING_ALLOC(1, ss.str().c_str()),
         UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
         UA_NODEID_NUMERIC(0, UA_NS0ID_HASORDEREDCOMPONENT),
-        UA_QUALIFIEDNAME_ALLOC(1, service.c_str()),
-        helloAttr,
+        UA_QUALIFIEDNAME_ALLOC(1, service.c_str()), // TODO Magic Number Namespace
+        methodAttibute,
         &methodCallback,
         inputArguments.arraySize,
         inputArguments.arguments,
@@ -87,17 +89,17 @@ class SendServer : public Smart::ISendServerPattern<DataType> {
 
 template<typename DataType>
 inline UA_StatusCode SendServer<DataType>::methodCallback(
-    UA_Server *server,
-    const UA_NodeId *sessionId,
-    void *sessionContext,
-    const UA_NodeId *methodId,
+    UA_Server * /*server*/,
+    const UA_NodeId * /*sessionId*/,
+    void * /*sessionContext*/,
+    const UA_NodeId * /*methodId*/,
     void *methodContext,
-    const UA_NodeId *objectId,
-    void *objectContext,
+    const UA_NodeId */*objectId*/,
+    void */*objectContext*/,
     size_t inputSize,
     const UA_Variant *input,
-    size_t outputSize,
-    UA_Variant *output) {
+    size_t /*outputSize*/,
+    UA_Variant */*output*/) {
   SendServer<DataType> *friendThis = static_cast<SendServer<DataType> *>(methodContext);
 
   DataType request;
@@ -108,6 +110,7 @@ inline UA_StatusCode SendServer<DataType>::methodCallback(
   friendThis->notify_input(request);
   return UA_STATUSCODE_GOOD;
 }
+
 template<class DataType>
 void SendServer<DataType>::serverInitiatedDisconnect() {
   throw SeRoNet::Exceptions::NotImplementedException(__FUNCTION__);
