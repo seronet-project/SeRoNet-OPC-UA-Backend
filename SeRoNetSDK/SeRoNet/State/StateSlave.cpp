@@ -266,6 +266,7 @@ StateSlave::StateSlave(Smart::IComponent *comp, StateChangeHandler * hnd, const 
 //
 StateSlave::~StateSlave(void) throw()
 {
+  shutdown();
   //delete acceptor;
   delete query_handler;
   delete query_server;
@@ -282,6 +283,7 @@ void StateSlave::shutdown()
   std::unique_lock<decltype(mutex)> ul(mutex);
   running = false;
   stateUpdateThread.halt();
+  stateUpdateThread.stop(true);
 }
 
 //
@@ -685,7 +687,12 @@ void StateSlave::updateStateFromThread(void)
   }
   //</alexej>
 
-  stateQueue.push_front(desiredState);
+  if(stateQueue.size() == 0)
+  {
+    return;
+  }
+  desiredState = stateQueue.front();
+  stateQueue.pop_front();
   desired = desiredState.state;
 
   //

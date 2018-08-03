@@ -60,6 +60,8 @@ IDescription::shp_t SelfDescription(SeRoNet::State::CommStateRequest *obj, std::
           std::bind(&SeRoNet::State::CommStateRequest::setStateName, obj, std::placeholders::_1)
       )
   );
+
+  return ret;
 }
 
 }

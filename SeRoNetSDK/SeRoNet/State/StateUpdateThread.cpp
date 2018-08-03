@@ -51,10 +51,17 @@ void StateUpdateThread::sleep_for(const std::chrono::steady_clock::duration &rel
   std::this_thread::sleep_for(rel_time);
 }
 int StateUpdateThread::start() {
-  throw Exceptions::NotImplementedException(__FUNCTION__);
+  if (!m_thread.joinable()) {
+    m_thread = std::thread(&task_execution, this);
+  }
+  return 0;
 }
 int StateUpdateThread::stop(const bool wait_till_stopped) {
-  throw Exceptions::NotImplementedException(__FUNCTION__);
+  if (m_thread.joinable()) {
+    this->m_interruption_requested.store(true);
+    m_thread.join();
+  }
+  return 0;
 }
 
 }

@@ -27,6 +27,9 @@ namespace SeRoNet {
 
 namespace State {
 
+/// \FIXME Refactoring needed! Create classes for States (Attributes for predefined and other special cases!), Substates, ThreadSafe storing, Interaction (new StateSlave class)
+///         Do manimpulations of component* outside of this class (Use State Change handler)
+
 class StateSlave {
 
   friend class SmartComponent;

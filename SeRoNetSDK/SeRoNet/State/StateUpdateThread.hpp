@@ -6,6 +6,8 @@
 
 #pragma once
 
+#include <thread>
+#include <atomic>
 #include "../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIManagedTask.h"
 
 namespace SeRoNet {
@@ -36,6 +38,10 @@ class StateUpdateThread : public Smart::IManagedTask {
  public:
   int start() override;
   int stop(const bool wait_till_stopped) override;
+
+ protected:
+  std::thread m_thread;
+  std::atomic_bool m_interruption_requested = {false};
 };
 
 }

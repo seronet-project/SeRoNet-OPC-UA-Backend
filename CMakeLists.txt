@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 project(SeRoNetSDK)
+enable_testing()
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -25,12 +26,26 @@ set(PRJ_FILES
 		SeRoNetSDK/SeRoNet/State/StateSlave.cpp
 		SeRoNetSDK/SeRoNet/State/StateSlaveHandler.cpp
 		SeRoNetSDK/SeRoNet/State/StateUpdateThread.cpp
+		SeRoNetSDK/SeRoNet/OPCUA/Converter/CommObjArrayToTypeIndex.cpp
 		)
 add_library(SeRoNetSDK ${PRJ_FILES})
 set_target_properties(SeRoNetSDK PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(SeRoNetSDK PROPERTIES DEBUG_POSTFIX "d")
 target_link_libraries(SeRoNetSDK Open62541Cpp open62541)
+target_include_directories(SeRoNetSDK INTERFACE
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/SeRoNetSDK>
+		$<INSTALL_INTERFACE:include/>)
 
+# Options for GTest
+set(BUILD_GTEST ON CACHE BOOL "")
+set(INSTALL_GTEST OFF CACHE BOOL "")
+set(INSTALL_GMOCK OFF CACHE BOOL "")
+set(gtest_force_shared_crt ON CACHE BOOL "")
+set(gtest_hide_internal_symbols ON CACHE BOOL "")
+set(build_static_lib ON CACHE BOOL "")
+add_subdirectory(googletest)
+
+add_subdirectory(tests)
 
 include(GenerateExportHeader)
 set(SERONET_SDK_VERSION 0.1.0)
