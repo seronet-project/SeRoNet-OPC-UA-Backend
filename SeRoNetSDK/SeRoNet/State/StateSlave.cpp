@@ -4,6 +4,8 @@
 /// \date 30.07.2018
 ///
 
+/// From ACE Implementation
+
 #include "StateSlave.hpp"
 #include "CommObjsSelfDescription.hpp"
 #include <iostream>
@@ -921,6 +923,7 @@ Smart::StatusCode StateSlave::defineStates(const std::string& mainstate, const s
       // "nonneutral" substate.
       //
       countS = 0;
+      /// \TODO Use std::map for easier search!
       for (iterator=stateList.begin();iterator != stateList.end(); ++iterator) {
         if (iterator->name == "nonneutral") {
           substatePtr = iterator;
@@ -938,6 +941,7 @@ Smart::StatusCode StateSlave::defineStates(const std::string& mainstate, const s
         // mainstate is already contained
         //
         countM = 0;
+        /// \TODO Replace by std::map/ std::set for garantee unique entries
         for (mIterator = substatePtr->mainstates.begin(); mIterator != substatePtr->mainstates.end(); ++mIterator) {
           if (*mIterator == mainstate) countM++;
         }

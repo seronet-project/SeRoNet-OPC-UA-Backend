@@ -105,6 +105,7 @@ class ActiveQueueQueryServerHandlerDecoratorImpl
    */
   int stop(const bool wait_till_stopped = true) override {
     if (m_thread.joinable()) {
+      this->cancel_processing();
       this->m_interruption_requested.store(true);
       m_thread.join();
     }

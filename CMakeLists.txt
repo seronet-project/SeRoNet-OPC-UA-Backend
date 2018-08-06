@@ -33,11 +33,12 @@ set_target_properties(SeRoNetSDK PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(SeRoNetSDK PROPERTIES DEBUG_POSTFIX "d")
 target_link_libraries(SeRoNetSDK Open62541Cpp open62541)
 target_include_directories(SeRoNetSDK INTERFACE
-		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/SeRoNetSDK>
+		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/SeRoNetSDK/>
 		$<INSTALL_INTERFACE:include/>)
 
 # Options for GTest
 set(BUILD_GTEST ON CACHE BOOL "")
+set(BUILD_GMOCK ON CACHE BOOL "")
 set(INSTALL_GTEST OFF CACHE BOOL "")
 set(INSTALL_GMOCK OFF CACHE BOOL "")
 set(gtest_force_shared_crt ON CACHE BOOL "")

@@ -29,6 +29,7 @@ Component::Component(const std::string &componentName)
 
 Smart::StatusCode Component::run() {
   UA_Server_run(server, &running);
+  return Smart::StatusCode::SMART_OK;
 }
 
 Smart::StatusCode Component::blocking(const bool b) {
