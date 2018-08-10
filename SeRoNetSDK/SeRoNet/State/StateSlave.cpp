@@ -13,13 +13,15 @@
 namespace SeRoNet {
 namespace State {
 
-void StateSlave::hndSetMainState(StateSlave *ptr, queryServer_t *server, const QueryId &qid, const std::string &mainstate)
-{
-  StateSlave* lthis = (StateSlave *)ptr;
+void StateSlave::hndSetMainState(StateSlave *ptr,
+                                 queryServer_t *server,
+                                 const QueryId &qid,
+                                 const std::string &mainstate) {
+  StateSlave *lthis = (StateSlave *) ptr;
   SmartStateEntry entry;
   CommStateResponse reply;
 
-  entry.state  = mainstate;
+  entry.state = mainstate;
   entry.action = SSA_CHANGE_STATE;
   entry.server_proxy = server;
   entry.qid = qid;
@@ -34,15 +36,14 @@ void StateSlave::hndSetMainState(StateSlave *ptr, queryServer_t *server, const Q
 
     entry.server_proxy->answer(qid, reply);
     entry.server_proxy = 0;
-  } else if(
+  } else if (
       (mainstate == "Init") ||
           (mainstate == "init") ||
           (mainstate == "Alive") ||
           (mainstate == "alive") ||
           (mainstate == "FatalError") ||
           (mainstate == "fatalerror") ||
-          (mainstate == "fatalError") )
-  {
+          (mainstate == "fatalError")) {
 
     //
     // state is not allowed to be commanded from the outside
@@ -52,7 +53,7 @@ void StateSlave::hndSetMainState(StateSlave *ptr, queryServer_t *server, const Q
     entry.server_proxy->answer(qid, reply);
     entry.server_proxy = 0;
 
-  } else if(mainstate == "Shutdown") {
+  } else if (mainstate == "Shutdown") {
     //
     // enqueue the state change request
     //
@@ -60,8 +61,7 @@ void StateSlave::hndSetMainState(StateSlave *ptr, queryServer_t *server, const Q
     lthis->stateQueue.push_front(entry);
   } else {
 
-    if (lthis->currentState == "Init")
-    {
+    if (lthis->currentState == "Init") {
       //
       // state management not initialized yet, send immediately status
       //
@@ -69,7 +69,7 @@ void StateSlave::hndSetMainState(StateSlave *ptr, queryServer_t *server, const Q
       entry.server_proxy->answer(qid, reply);
       entry.server_proxy = 0;
 
-    } else if( (lthis->currentState == "Shutdown") || (lthis->currentState == "FatalError") ) {
+    } else if ((lthis->currentState == "Shutdown") || (lthis->currentState == "FatalError")) {
       //
       // state management not initialized yet, send immediately status
       //
@@ -87,9 +87,8 @@ void StateSlave::hndSetMainState(StateSlave *ptr, queryServer_t *server, const Q
 
 }
 
-Smart::StatusCode StateSlave::hndGetCurrentState(void *ptr, std::string &mainstate)
-{
-  StateSlave* lthis = (StateSlave *)ptr;
+Smart::StatusCode StateSlave::hndGetCurrentState(void *ptr, std::string &mainstate) {
+  StateSlave *lthis = (StateSlave *) ptr;
   Smart::StatusCode result;
 
   std::unique_lock<decltype(lthis->mutex)> ul(lthis->mutex);
@@ -107,12 +106,10 @@ Smart::StatusCode StateSlave::hndGetCurrentState(void *ptr, std::string &mainsta
   return result;
 }
 
-
-Smart::StatusCode StateSlave::hndGetMainStates(void *ptr, std::vector<std::string> &mainstates)
-{
-  StateSlave* lthis = (StateSlave *)ptr;
+Smart::StatusCode StateSlave::hndGetMainStates(void *ptr, std::vector<std::string> &mainstates) {
+  StateSlave *lthis = (StateSlave *) ptr;
   std::list<SmartSubStateEntry>::iterator iterator;
-  std::list<std::string>           stateResults;
+  std::list<std::string> stateResults;
   std::vector<std::string>::iterator mIterator;
 
   Smart::StatusCode result;
@@ -143,17 +140,16 @@ Smart::StatusCode StateSlave::hndGetMainStates(void *ptr, std::vector<std::strin
     //   Thus, the loop for all substates is not necessary!
     // </description>
     //</alexej>
-    for (iterator=lthis->stateList.begin(); iterator != lthis->stateList.end(); ++iterator) {
+    for (iterator = lthis->stateList.begin(); iterator != lthis->stateList.end(); ++iterator) {
       // if nonneutral is found -> break up loop
-      if(iterator->name == "nonneutral") break;
+      if (iterator->name == "nonneutral") break;
     }
 
-    if(iterator != lthis->stateList.end())
-    {
+    if (iterator != lthis->stateList.end()) {
       // nonneutral entry is found!
 
       // get all MainStates which are registered with the substate "nonneutral"
-      for (mIterator=iterator->mainstates.begin();mIterator!=iterator->mainstates.end();++mIterator) {
+      for (mIterator = iterator->mainstates.begin(); mIterator != iterator->mainstates.end(); ++mIterator) {
         mainstates.push_back(*mIterator);
       }
 
@@ -166,7 +162,7 @@ Smart::StatusCode StateSlave::hndGetMainStates(void *ptr, std::vector<std::strin
       //</alexej>
 
       result = Smart::SMART_OK;
-    }else{
+    } else {
       // nonneutral is not found (should not happen)
       result = Smart::SMART_ERROR;
     }
@@ -175,9 +171,10 @@ Smart::StatusCode StateSlave::hndGetMainStates(void *ptr, std::vector<std::strin
   return result;
 }
 
-Smart::StatusCode StateSlave::hndGetSubStates(void *ptr, const std::string &mainstate, std::vector<std::string> &substates)
-{
-  StateSlave* lthis = (StateSlave *)ptr;
+Smart::StatusCode StateSlave::hndGetSubStates(void *ptr,
+                                              const std::string &mainstate,
+                                              std::vector<std::string> &substates) {
+  StateSlave *lthis = (StateSlave *) ptr;
   std::list<SmartSubStateEntry>::iterator iterator;
   std::vector<std::string>::iterator mIterator;
   unsigned int count = 0;
@@ -211,7 +208,7 @@ Smart::StatusCode StateSlave::hndGetSubStates(void *ptr, const std::string &main
     // User defined MainStates contain at least the SubState "nonneutral" in addition to user-defined SubStates.
     count = 0;
     for (iterator = lthis->stateList.begin(); iterator != lthis->stateList.end(); ++iterator) {
-      for (mIterator=iterator->mainstates.begin();mIterator!=iterator->mainstates.end();++mIterator) {
+      for (mIterator = iterator->mainstates.begin(); mIterator != iterator->mainstates.end(); ++mIterator) {
         if (*mIterator == mainstate) {
           // found mainstate in this substate, therefore add substate to result list
           count++;
@@ -223,7 +220,7 @@ Smart::StatusCode StateSlave::hndGetSubStates(void *ptr, const std::string &main
       }
     }
 
-    if (count==0) {
+    if (count == 0) {
       // couldn't find the mainstate
       result = Smart::SMART_UNKNOWNSTATE;
     } else {
@@ -237,18 +234,19 @@ Smart::StatusCode StateSlave::hndGetSubStates(void *ptr, const std::string &main
 //
 // standard constructor
 //
-StateSlave::StateSlave(Smart::IComponent *comp, StateChangeHandler * hnd, const std::string& serviceName)
-    : running(false)
-    , component(comp)
-    , changeHandler(hnd)
-    , stateUpdateThread(comp)
-//  , query_server(comp, service, query_handler)
-{
+StateSlave::StateSlave(Smart::IComponent *comp, StateChangeHandler *hnd, const std::string &serviceName)
+    : running(false),
+      component(comp),
+      changeHandler(hnd),
+      stateUpdateThread(comp)
+      {
   Smart::StatusCode result = Smart::SMART_OK;
 
   std::unique_lock<decltype(mutex)> ul(mutex);
 
-  if(result != Smart::SMART_OK) throw(Exceptions::SeRoNetSDKException("CommPattern (stateServer): ERROR: Something went wrong during Acceptor initialization!\n"));
+  if (result != Smart::SMART_OK)
+    throw (Exceptions::SeRoNetSDKException(
+        "CommPattern (stateServer): ERROR: Something went wrong during Acceptor initialization!\n"));
 
   //<alexej date="2011-02-24">
   setUpInitialStateList();
@@ -266,8 +264,7 @@ StateSlave::StateSlave(Smart::IComponent *comp, StateChangeHandler * hnd, const 
 //
 // default destructor
 //
-StateSlave::~StateSlave(void) throw()
-{
+StateSlave::~StateSlave(void) throw() {
   shutdown();
   //delete acceptor;
   delete query_handler;
@@ -280,8 +277,7 @@ StateSlave::~StateSlave(void) throw()
 //
 // internal use only
 //
-void StateSlave::shutdown()
-{
+void StateSlave::shutdown() {
   std::unique_lock<decltype(mutex)> ul(mutex);
   running = false;
   stateUpdateThread.halt();
@@ -291,8 +287,7 @@ void StateSlave::shutdown()
 //
 // internal use only
 //
-void StateSlave::setUpInitialStateList()
-{
+void StateSlave::setUpInitialStateList() {
   std::unique_lock<decltype(mutex)> ul(mutex);
 
   // 1) set-up a base set of sub-states
@@ -342,11 +337,11 @@ void StateSlave::setUpInitialStateList()
 
   // 1.6) define nonneutral SubState
   SmartSubStateEntry nonneutral;
-  nonneutral.name   = "nonneutral";
+  nonneutral.name = "nonneutral";
   // no mainstates are assigned at the beginning
-  nonneutral.cnt    = 0;
+  nonneutral.cnt = 0;
   nonneutral.action = STATE_ACTION_NONE;
-  nonneutral.state  = STATE_DEACTIVATED;
+  nonneutral.state = STATE_DEACTIVATED;
 
   // 2) push all six substates on the state-list
   stateList.push_back(substate_init);
@@ -361,7 +356,7 @@ void StateSlave::setUpInitialStateList()
 
   // set desired state also to Init
   desiredState.action = SSA_UNDEFINED;
-  desiredState.state  = "Init";
+  desiredState.state = "Init";
   // the proxy and query id are not used at the beginning
   desiredState.server_proxy = 0;
   desiredState.qid = 0;
@@ -371,14 +366,12 @@ void StateSlave::setUpInitialStateList()
 
 }
 
-
 //
 // internal use only
 //
-void StateSlave::updateState(void)
-{
+void StateSlave::updateState(void) {
   std::list<SmartSubStateEntry>::iterator sIterator;
-  std::vector<std::string>::iterator        mIterator;
+  std::vector<std::string>::iterator mIterator;
 
   //<alexej date="2009-10-13">
   int currentFlag;
@@ -436,8 +429,8 @@ void StateSlave::updateState(void)
       // check whether requested main state is valid at all
       //
       validFlag = 0;
-      for (sIterator=stateList.begin();sIterator != stateList.end(); ++sIterator) {
-        for (mIterator=sIterator->mainstates.begin();mIterator!=sIterator->mainstates.end();++mIterator) {
+      for (sIterator = stateList.begin(); sIterator != stateList.end(); ++sIterator) {
+        for (mIterator = sIterator->mainstates.begin(); mIterator != sIterator->mainstates.end(); ++mIterator) {
           if (desiredState.state == *mIterator) {
             validFlag = 1;
           }
@@ -446,20 +439,20 @@ void StateSlave::updateState(void)
 
       //<alexej date="2010-09-22">
       // if ((validFlag == 1) || (desiredState.state == "neutral") || (desiredState.state == "deactivated")) {
-      if ( (validFlag == 1) || (desiredState.state == "deactivated") || (desiredState.state == "Deactivated") || (desiredState.state == "Alive") )
-      {
+      if ((validFlag == 1) || (desiredState.state == "deactivated") || (desiredState.state == "Deactivated")
+          || (desiredState.state == "Alive")) {
         //</alexej>
         //
         // required main state is valid and current state is different from desired state
         //
-        for (sIterator=stateList.begin();sIterator != stateList.end(); ++sIterator) {
+        for (sIterator = stateList.begin(); sIterator != stateList.end(); ++sIterator) {
           // check which substates belong to the current and to the desired main state
 
           sIterator->action = STATE_ACTION_NONE;
 
           desiredFlag = 0;
           currentFlag = 0;
-          for (mIterator=sIterator->mainstates.begin();mIterator!=sIterator->mainstates.end();++mIterator) {
+          for (mIterator = sIterator->mainstates.begin(); mIterator != sIterator->mainstates.end(); ++mIterator) {
             if (desiredState.state == *mIterator) {
               desiredFlag = 1;
             }
@@ -482,7 +475,7 @@ void StateSlave::updateState(void)
         // locked anymore
         //
         lockedFlag = 0;
-        for (sIterator=stateList.begin();sIterator != stateList.end(); ++sIterator) {
+        for (sIterator = stateList.begin(); sIterator != stateList.end(); ++sIterator) {
           if ((sIterator->action == STATE_ACTION_DEACTIVATE) && (sIterator->cnt != 0)) {
             lockedFlag = 1;
           }
@@ -491,7 +484,8 @@ void StateSlave::updateState(void)
         if (lockedFlag == 0) {
           // all substates to be released are not locked anymore,
           // therefore perform state change
-          if ( (desiredState.state == std::string("Deactivated")) || (desiredState.state == std::string("deactivated")) ) {
+          if ((desiredState.state == std::string("Deactivated"))
+              || (desiredState.state == std::string("deactivated"))) {
             //
             // check whether to reach the neutral state has been
             // enforced. If so, again allow acquiring states which
@@ -502,7 +496,7 @@ void StateSlave::updateState(void)
 
             component->blocking(true);
             desiredState.state = std::string("Neutral");
-          } else if( (desiredState.state == "Shutdown") || (desiredState.state == "FatalError") ) {
+          } else if ((desiredState.state == "Shutdown") || (desiredState.state == "FatalError")) {
             component->blocking(true);
           }
 
@@ -512,16 +506,16 @@ void StateSlave::updateState(void)
 
           std::cout << "Performing state change:" << currentState << "->" << desiredState.state << std::endl;
 
-          callQuitHandler  = 0;
+          callQuitHandler = 0;
           callEnterHandler = 0;
-          for (sIterator=stateList.begin();sIterator != stateList.end(); ++sIterator) {
+          for (sIterator = stateList.begin(); sIterator != stateList.end(); ++sIterator) {
             if (sIterator->action == STATE_ACTION_DEACTIVATE) {
               if (sIterator->name == "nonneutral") {
                 // save iterator for call AFTER every deactivation
                 hIterator = sIterator;
                 callQuitHandler = 1;
               } else {
-                if(changeHandler != NULL) changeHandler->handleQuitState(sIterator->name);
+                if (changeHandler != NULL) changeHandler->handleQuitState(sIterator->name);
                 sIterator->state = STATE_DEACTIVATED;
               }
             }
@@ -535,26 +529,26 @@ void StateSlave::updateState(void)
           }
 
           if (callQuitHandler == 1) {
-            if(changeHandler != NULL) changeHandler->handleQuitState(hIterator->name);
+            if (changeHandler != NULL) changeHandler->handleQuitState(hIterator->name);
             hIterator->state = STATE_DEACTIVATED;
           }
           if (callEnterHandler == 1) {
-            if(changeHandler != NULL) changeHandler->handleEnterState(hIterator->name);
+            if (changeHandler != NULL) changeHandler->handleEnterState(hIterator->name);
             hIterator->state = STATE_ACTIVATED;
           }
 
-          for (sIterator=stateList.begin();sIterator != stateList.end(); ++sIterator) {
+          for (sIterator = stateList.begin(); sIterator != stateList.end(); ++sIterator) {
             if (sIterator->action == STATE_ACTION_ACTIVATE) {
               if (sIterator->name == "nonneutral") {
                 // has already been called BEFORE every other activation
               } else {
-                if(changeHandler != NULL) changeHandler->handleEnterState(sIterator->name);
+                if (changeHandler != NULL) changeHandler->handleEnterState(sIterator->name);
                 sIterator->state = STATE_ACTIVATED;
               }
             }
           }
 
-          for (sIterator=stateList.begin();sIterator != stateList.end(); ++sIterator) {
+          for (sIterator = stateList.begin(); sIterator != stateList.end(); ++sIterator) {
             if (sIterator->state == STATE_ACTIVATED || desiredState.state == "Shutdown") {
               //
               // signal every blocking acquire that this substate is available now !
@@ -676,8 +670,7 @@ void StateSlave::updateState(void)
 //
 // internal use only
 //
-void StateSlave::updateStateFromThread(void)
-{
+void StateSlave::updateStateFromThread(void) {
   std::string desired;
 
   std::unique_lock<decltype(mutex)> ul(mutex);
@@ -689,8 +682,7 @@ void StateSlave::updateStateFromThread(void)
   }
   //</alexej>
 
-  if(stateQueue.size() == 0)
-  {
+  if (stateQueue.size() == 0) {
     return;
   }
   desiredState = stateQueue.front();
@@ -700,11 +692,10 @@ void StateSlave::updateStateFromThread(void)
   //
   // check whether to cancel waiting calls
   //
-  if ( (desired == "Deactivated") ||
+  if ((desired == "Deactivated") ||
       (desired == "Shutdown") ||
       (desired == "FatalError") ||
-      (desired == "deactivated") )
-  {
+      (desired == "deactivated")) {
     component->blocking(false);
   }
 
@@ -713,18 +704,16 @@ void StateSlave::updateStateFromThread(void)
   //
   updateState();
 
-  if(desired == "Shutdown") {
+  if (desired == "Shutdown") {
     //shutdown();
     stateUpdateThread.halt();
   }
 }
 
-
 //
 //
 //
-Smart::StatusCode StateSlave::setWaitState(const std::string & MainState)
-{
+Smart::StatusCode StateSlave::setWaitState(const std::string &MainState) {
   // Allowed transition table:
 
   // Init->Alive
@@ -740,20 +729,18 @@ Smart::StatusCode StateSlave::setWaitState(const std::string & MainState)
 
   std::unique_lock<decltype(mutex)> ul(mutex);
 
-  if(running == false) {
+  if (running == false) {
     // StatePatter is not activated yet
     result = Smart::SMART_NOTACTIVATED;
-  }else if( (MainState == "Alive") ||
+  } else if ((MainState == "Alive") ||
       (MainState == "FatalError") ||
-      (MainState == "Shutdown") )
-  {
+      (MainState == "Shutdown")) {
     // new MainState is allowed in principle to be set from the inside of the Pattern.
     // check if the transition is allowed according to the current MainState
-    if(currentState == "Init")
-    {
+    if (currentState == "Init") {
       // Allowed successor MainStates from Init are: Alive, Shutdown and FatalError
 
-      entry.state  = MainState;
+      entry.state = MainState;
       entry.action = SSA_CHANGE_STATE;
       entry.qid = 0;
       entry.server_proxy = NULL;
@@ -764,13 +751,13 @@ Smart::StatusCode StateSlave::setWaitState(const std::string & MainState)
       // wait on state-change to complete
       entry.cond->wait(ul);
 
-      if(MainState == "Shutdown") {
+      if (MainState == "Shutdown") {
         // because entry.cond->wait() released, the pattern is now in Shutdown MainState
         // shutdown procedure is commanded from within the updateState method
         result = Smart::SMART_OK;
-      } else if(MainState == "Alive") {
+      } else if (MainState == "Alive") {
         // set-up the initialy configured MainState
-        entry.state  = initialState;
+        entry.state = initialState;
         entry.action = SSA_CHANGE_STATE;
         entry.qid = 0;
         entry.server_proxy = NULL;
@@ -784,18 +771,17 @@ Smart::StatusCode StateSlave::setWaitState(const std::string & MainState)
 
       result = Smart::SMART_OK;
 
-    } else if(currentState == "Shutdown") {
-      if(MainState == "Shutdown") {
+    } else if (currentState == "Shutdown") {
+      if (MainState == "Shutdown") {
         result = Smart::SMART_OK;
       } else {
         // there is no transition possible out of the Shutdown state
         result = Smart::SMART_NOTALLOWED;
       }
-    } else if(currentState == "FatalError") {
+    } else if (currentState == "FatalError") {
       // The only allowed transition from FatalError is Shutdown
-      if(MainState == "Shutdown")
-      {
-        entry.state  = MainState;
+      if (MainState == "Shutdown") {
+        entry.state = MainState;
         entry.action = SSA_CHANGE_STATE;
         entry.qid = 0;
         entry.server_proxy = NULL;
@@ -810,7 +796,7 @@ Smart::StatusCode StateSlave::setWaitState(const std::string & MainState)
         // shutdown procedure is commanded from within the updateState method
         result = Smart::SMART_OK;
 
-      } else if(MainState == "FatalError") {
+      } else if (MainState == "FatalError") {
         // transition to the same state (allowed)
         result = Smart::SMART_OK;
       } else {
@@ -822,14 +808,14 @@ Smart::StatusCode StateSlave::setWaitState(const std::string & MainState)
       // the only other possibility is the Alive state which is a pseudo-state
       // and is not saved in the currentState variable.
 
-      if(MainState == "Alive") {
+      if (MainState == "Alive") {
         // we are already in Alive -> return OK
         result = Smart::SMART_OK;
       } else {
         // The new MainState can be only Shutdown or FatalError
         // on both cases simply change into the new MainState
 
-        entry.state  = MainState;
+        entry.state = MainState;
         entry.action = SSA_CHANGE_STATE;
         entry.qid = 0;
         entry.server_proxy = NULL;
@@ -846,7 +832,6 @@ Smart::StatusCode StateSlave::setWaitState(const std::string & MainState)
       }
     }
 
-
   } else {
     // desired MainState is not one of the generic lifecycle states and is thus not allowed to be changed by StateSlave
     result = Smart::SMART_NOTALLOWED;
@@ -860,8 +845,7 @@ Smart::StatusCode StateSlave::setWaitState(const std::string & MainState)
 //
 //
 
-Smart::StatusCode StateSlave::defineStates(const std::string& mainstate, const std::string& substate) throw()
-{
+Smart::StatusCode StateSlave::defineStates(const std::string &mainstate, const std::string &substate) throw() {
   std::list<SmartSubStateEntry>::iterator iterator;
   std::list<SmartSubStateEntry>::iterator substatePtr;
   SmartSubStateEntry newEntry;
@@ -875,7 +859,7 @@ Smart::StatusCode StateSlave::defineStates(const std::string& mainstate, const s
   if (running == true) {
     result = Smart::SMART_ACTIVATED;
   } else {
-    if(
+    if (
         (mainstate == "Init") ||
             (mainstate == "init") ||
             (mainstate == "Alive") ||
@@ -889,7 +873,6 @@ Smart::StatusCode StateSlave::defineStates(const std::string& mainstate, const s
             (mainstate == "fatalError") ||
             (mainstate == "deactivated") ||
             (mainstate == "Deactivated") ||
-
 
             (substate == "Init") ||
             (substate == "init") ||
@@ -905,8 +888,7 @@ Smart::StatusCode StateSlave::defineStates(const std::string& mainstate, const s
             (substate == "nonneutral") ||
             (substate == "nonNeutral") ||
             (substate == "NonNeutral")
-        )
-    {
+        ) {
       //
       // not allowed to change reserved states
       //
@@ -924,7 +906,7 @@ Smart::StatusCode StateSlave::defineStates(const std::string& mainstate, const s
       //
       countS = 0;
       /// \TODO Use std::map for easier search!
-      for (iterator=stateList.begin();iterator != stateList.end(); ++iterator) {
+      for (iterator = stateList.begin(); iterator != stateList.end(); ++iterator) {
         if (iterator->name == "nonneutral") {
           substatePtr = iterator;
           countS++;
@@ -981,7 +963,7 @@ Smart::StatusCode StateSlave::defineStates(const std::string& mainstate, const s
         // now check whether substate is already in list
         //
         countS = 0;
-        for (iterator=stateList.begin();iterator != stateList.end(); ++iterator) {
+        for (iterator = stateList.begin(); iterator != stateList.end(); ++iterator) {
           if (iterator->name == substate) {
             substatePtr = iterator;
             countS++;
@@ -991,12 +973,12 @@ Smart::StatusCode StateSlave::defineStates(const std::string& mainstate, const s
           //
           // substate does not yet exist, generate new entry
           //
-          newEntry.name   = substate;
+          newEntry.name = substate;
           //<alexej date="2010-09-08">
           //</alexej>
-          newEntry.cnt    = 0;
+          newEntry.cnt = 0;
           newEntry.action = STATE_ACTION_NONE;
-          newEntry.state  = STATE_DEACTIVATED;
+          newEntry.state = STATE_DEACTIVATED;
           newEntry.mainstates.push_back(mainstate);
 
           stateList.push_back(newEntry);
@@ -1044,12 +1026,10 @@ Smart::StatusCode StateSlave::defineStates(const std::string& mainstate, const s
   return result;
 }
 
-
 //
 //
 //
-Smart::StatusCode StateSlave::setUpInitialState(const std::string &MainState)
-{
+Smart::StatusCode StateSlave::setUpInitialState(const std::string &MainState) {
   std::list<SmartSubStateEntry>::iterator iterator;
   std::list<SmartSubStateEntry>::iterator substatePtr;
   int countS;
@@ -1059,15 +1039,14 @@ Smart::StatusCode StateSlave::setUpInitialState(const std::string &MainState)
 
   std::unique_lock<decltype(mutex)> ul(mutex);
 
-  if(MainState == "Neutral")
-  {
+  if (MainState == "Neutral") {
     // neutral state is OK to be set as the initial state
     initialState = MainState;
     result = Smart::SMART_OK;
   } else {
     // search for the "nonneutral" substate in stateList
     countS = 0;
-    for (iterator=stateList.begin();iterator != stateList.end(); ++iterator) {
+    for (iterator = stateList.begin(); iterator != stateList.end(); ++iterator) {
       if (iterator->name == "nonneutral") {
         substatePtr = iterator;
         countS++;
@@ -1102,9 +1081,7 @@ Smart::StatusCode StateSlave::setUpInitialState(const std::string &MainState)
   return result;
 }
 
-
-std::string StateSlave::getCurrentMainState() const
-{
+std::string StateSlave::getCurrentMainState() const {
   std::string retval = "";
 
   std::unique_lock<decltype(mutex)> ul(mutex);
@@ -1117,18 +1094,14 @@ std::string StateSlave::getCurrentMainState() const
   return retval;
 }
 
-
-Smart::StatusCode StateSlave::activate() throw()
-{
+Smart::StatusCode StateSlave::activate() throw() {
   std::unique_lock<decltype(mutex)> ul(mutex);
   running = true;
 
   return Smart::SMART_OK;
 }
 
-
-Smart::StatusCode StateSlave::acquire(const std::string& substate) throw()
-{
+Smart::StatusCode StateSlave::acquire(const std::string &substate) throw() {
   std::list<SmartSubStateEntry>::iterator iterator;
   std::list<SmartSubStateEntry>::iterator sIterator = stateList.end();
 
@@ -1244,9 +1217,7 @@ Smart::StatusCode StateSlave::acquire(const std::string& substate) throw()
   return result;
 }
 
-
-Smart::StatusCode StateSlave::tryAcquire(const std::string& substate) throw()
-{
+Smart::StatusCode StateSlave::tryAcquire(const std::string &substate) throw() {
   std::list<SmartSubStateEntry>::iterator iterator;
   std::list<SmartSubStateEntry>::iterator sIterator = stateList.end();
 
@@ -1267,7 +1238,7 @@ Smart::StatusCode StateSlave::tryAcquire(const std::string& substate) throw()
     //
     // first check whether substate is valid
     //
-    for (iterator=stateList.begin();iterator != stateList.end(); ++iterator) {
+    for (iterator = stateList.begin(); iterator != stateList.end(); ++iterator) {
       if (iterator->name == substate) {
         sIterator = iterator;
       }
@@ -1302,8 +1273,7 @@ Smart::StatusCode StateSlave::tryAcquire(const std::string& substate) throw()
         //
         //(sIterator->cnt)++;
 
-        if(sIterator->action == STATE_ACTION_NONE && sIterator->state == STATE_ACTIVATED )
-        {
+        if (sIterator->action == STATE_ACTION_NONE && sIterator->state == STATE_ACTIVATED) {
           //<alexej date="2011-03-30">
           // we can safely count up, because current substate is not affected by the current mainstate-change AND the substate was active before this mainstate-change
           (sIterator->cnt)++;
@@ -1352,8 +1322,7 @@ Smart::StatusCode StateSlave::tryAcquire(const std::string& substate) throw()
 //        indicating the components inactivity.)
 
 
-Smart::StatusCode StateSlave::release(const std::string& substate) throw()
-{
+Smart::StatusCode StateSlave::release(const std::string &substate) throw() {
   std::list<SmartSubStateEntry>::iterator iterator;
   std::list<SmartSubStateEntry>::iterator sIterator = stateList.end();
 
@@ -1374,7 +1343,7 @@ Smart::StatusCode StateSlave::release(const std::string& substate) throw()
     //
     // first check whether substate is valid
     //
-    for (iterator=stateList.begin();iterator != stateList.end(); ++iterator) {
+    for (iterator = stateList.begin(); iterator != stateList.end(); ++iterator) {
       if (iterator->name == substate) {
         sIterator = iterator;
       }

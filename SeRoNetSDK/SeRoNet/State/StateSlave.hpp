@@ -7,7 +7,7 @@
 #pragma once
 namespace SeRoNet {
 namespace State {
-  class StateSlave;
+class StateSlave;
 }
 }
 

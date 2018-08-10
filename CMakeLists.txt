@@ -21,6 +21,8 @@ set(PRJ_FILES
 		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/CommObjectToListOfPrimitivDescriptions.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/CommObjectBrowseToNodeIds.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Client/NamingServiceOpcUa.cpp
+		SeRoNetSDK/SeRoNet/OPCUA/Client/AsyncAnswerMethodCommObjectRequest.cpp
+		SeRoNetSDK/SeRoNet/State/CommObjsSelfDescription.cpp
 		SeRoNetSDK/SeRoNet/State/StateChangeHandler.cpp
 		SeRoNetSDK/SeRoNet/State/StateMaster.cpp
 		SeRoNetSDK/SeRoNet/State/StateSlave.cpp

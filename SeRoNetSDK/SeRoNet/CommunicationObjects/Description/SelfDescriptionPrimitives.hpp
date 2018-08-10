@@ -25,7 +25,7 @@ inline IDescription::shp_t SelfDescriptionPrimitive(PRIMITIVE_TYPE *ptr, std::st
 }
 
 #define CREATE_SELFDESCR_PRIMITIVE(TYPE) template<> \
-IDescription::shp_t SelfDescription(TYPE *ptr, std::string name) {\
+inline IDescription::shp_t SelfDescription(TYPE *ptr, std::string name) {\
   return internal::SelfDescriptionPrimitive<TYPE>(ptr, name);\
 }
 /*
