@@ -64,7 +64,7 @@ void AsyncAnswerMethodCommObjectRequest<T_RETURN>::processAnswer(
     this->setError(ss.str());
     return;
   }
-  Converter::UaVariantArrayToCommObject(*outputs, CommunicationObjects::Description::SelfDescription(&m_answer).get());
+  Converter::UaVariantArrayToCommObject(*outputs, CommunicationObjects::Description::SelfDescription(&m_answer, "").get());
   this->setHasAnswer();
 }
 

@@ -20,8 +20,7 @@ namespace internal {
 class ToCommObjArrayVisitor : public CommunicationObjects::Description::IVisitorDescription {
  public:
   ToCommObjArrayVisitor(
-      open62541::UA_Variant &variant,
-      CommunicationObjects::Description::ElementArray *arr)
+      CommunicationObjects::Description::ElementArray *arr, open62541::UA_Variant &variant)
       : m_variant(variant) {
 
     for (m_index = 0; m_index < variant.Variant->arrayLength; ++m_index) {
@@ -31,6 +30,7 @@ class ToCommObjArrayVisitor : public CommunicationObjects::Description::IVisitor
       arr->push_back(newEl);
     }
 
+    arr->setVector();
   }
 
   void visit(CommunicationObjects::Description::ComplexType *complexObject) override {
@@ -113,7 +113,7 @@ class ToCommObjArrayVisitor : public CommunicationObjects::Description::IVisitor
 VariantToCommObjArray::VariantToCommObjArray(
     CommunicationObjects::Description::ElementArray *arr,
     open62541::UA_Variant &variant) {
-
+  internal::ToCommObjArrayVisitor toCommObjArrayVisitor(arr, variant);
 }
 
 }
