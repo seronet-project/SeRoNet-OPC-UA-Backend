@@ -19,6 +19,7 @@ namespace SeRoNet {
 namespace CommunicationObjects {
 namespace Description {
 
+/// Interface Version of array Self description, without template argument!
 class ElementArray : public IDescription {
 
  public:
@@ -35,6 +36,10 @@ class ElementArray : public IDescription {
     visitor->visit(this);
   }
 
+  /// Copy the vector to the internal memory
+  virtual void acquireVector() = 0;
+  /// Write the internal vector to the source
+  virtual void setVector() = 0;
   virtual ArrayElement_t::shp_t getElement(std::size_t index) = 0;
   virtual ArrayElement_t::shp_t getNewElement() = 0;
   virtual void push_back(ArrayElement_t::shp_t) = 0;
@@ -42,6 +47,7 @@ class ElementArray : public IDescription {
   virtual std::size_t size() = 0;
 };
 
+/// Implementation with template argument, and std::vector
 template<typename TYPE>
 class ArrayOf : public ElementArray {
  public:
@@ -49,7 +55,10 @@ class ArrayOf : public ElementArray {
   typedef std::function<void(std::vector<TYPE>)> setter_t;
 
   ArrayOf(std::string name, getter_t getter, setter_t setter)
-      : ElementArray(name), m_set(setter), m_get(getter) {}
+      : ElementArray(name), m_set(setter), m_get(getter) {
+    // Read vector to memory
+    acquireVector();
+  }
 
   class ArrayElementOf : public ArrayElement_t {
    public:
@@ -94,8 +103,11 @@ class ArrayOf : public ElementArray {
     return m_vec.size();
   }
 
-  void set()
-  {
+  void acquireVector() override {
+    m_vec = m_get();
+  }
+
+  void setVector() override {
     m_set(m_vec);
   }
 

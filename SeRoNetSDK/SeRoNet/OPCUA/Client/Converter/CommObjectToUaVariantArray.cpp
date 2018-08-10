@@ -12,6 +12,7 @@
 #include "../../../CommunicationObjects/Description/ComplexType.hpp"
 #include "../../../CommunicationObjects/Description/ElementPrimitive.hpp"
 #include "../../../CommunicationObjects/Description/ElementArray.hpp"
+#include "../../Converter/CommObjArrayToValue.hpp"
 
 /// Internal Class
 class ToUaVariantArrayVisitor : public ::SeRoNet::CommunicationObjects::Description::IVisitorDescription {
@@ -58,7 +59,10 @@ class ToUaVariantArrayVisitor : public ::SeRoNet::CommunicationObjects::Descript
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementArray *elementArray) override {
-    throw SeRoNet::Exceptions::NotImplementedException(__FUNCTION__);
+    SeRoNet::OPCUA::Converter::CommObjArrayToValue commObjArrayToValue(elementArray);
+    auto variant = commObjArrayToValue.Value();
+    open62541::UA_Variant newEl(&variant);
+    Variants.push_back(newEl);
   }
 
   std::list<open62541::UA_Variant> Variants;

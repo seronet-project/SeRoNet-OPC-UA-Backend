@@ -5,12 +5,12 @@
 ///
 
 #include "CommObjArrayToValue.hpp"
-#include "SeRoNet/CommunicationObjects/Description/IVisitorDescription.hpp"
-#include "SeRoNet/CommunicationObjects/Description/ElementPrimitive.hpp"
-#include "SeRoNet/Exceptions/NotImplementedException.hpp"
+#include "../../CommunicationObjects/Description/IVisitorDescription.hpp"
+#include "../../CommunicationObjects/Description/ElementPrimitive.hpp"
+#include "../../Exceptions/NotImplementedException.hpp"
 namespace SeRoNet {
 namespace OPCUA {
-namespace Server {
+namespace Converter {
 
 class InitializeArrayVisitor : public CommunicationObjects::Description::IVisitorDescription {
  public:
@@ -30,6 +30,9 @@ class InitializeArrayVisitor : public CommunicationObjects::Description::IVisito
         m_size,
         &UA_TYPES[ua_type_index]
     );
+    m_pVariant->arrayDimensions = (UA_UInt32 *)UA_Array_new(1, &UA_TYPES[UA_TYPES_UINT32]);
+    m_pVariant->arrayDimensionsSize = 1;
+    m_pVariant->arrayDimensions[0] = m_size;
   }
 
   void visit(CommunicationObjects::Description::ComplexType *complexObject) override {
@@ -120,7 +123,8 @@ CommObjArrayToValue::CommObjArrayToValue(CommunicationObjects::Description::Elem
   UA_Variant_init(&m_variant);
   {
     InitializeArrayVisitor initVisitor(&m_variant, arr->size());
-    arr->accept(&initVisitor);
+    // Visit with an element once to determine the type
+    arr->getNewElement()->getDescription()->accept(&initVisitor);
   }
 
   {
@@ -136,6 +140,10 @@ CommObjArrayToValue::CommObjArrayToValue(CommunicationObjects::Description::Elem
 
 CommObjArrayToValue::~CommObjArrayToValue() {
   UA_Variant_deleteMembers(&m_variant);
+}
+
+UA_Variant CommObjArrayToValue::Value() {
+  return m_variant;
 }
 
 }

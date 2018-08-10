@@ -27,6 +27,8 @@ set(PRJ_FILES
 		SeRoNetSDK/SeRoNet/State/StateSlaveHandler.cpp
 		SeRoNetSDK/SeRoNet/State/StateUpdateThread.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Converter/CommObjArrayToTypeIndex.cpp
+		SeRoNetSDK/SeRoNet/OPCUA/Converter/CommObjArrayToValue.cpp
+		SeRoNetSDK/SeRoNet/OPCUA/Converter/VariantToCommObjArray.cpp
 		)
 add_library(SeRoNetSDK ${PRJ_FILES})
 set_target_properties(SeRoNetSDK PROPERTIES LINKER_LANGUAGE CXX)

@@ -6,12 +6,12 @@
 
 
 #include <open62541/open62541.h>
-#include "SeRoNet/CommunicationObjects/Description/ElementArray.hpp"
+#include "../../CommunicationObjects/Description/ElementArray.hpp"
 
 #pragma once
 namespace SeRoNet {
 namespace OPCUA {
-namespace Server {
+namespace Converter {
 
 class CommObjArrayToValue{
  public:

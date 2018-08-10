@@ -10,3 +10,7 @@ add_test(StateSlaveInstantiate Test_StateSlaveInstantiate)
 add_executable(Test_Query Test_Query.cpp)
 target_link_libraries(Test_Query SeRoNetSDK gtest gmock_main)
 add_test(Query Test_Query)
+
+add_executable(Test_Converter Test_Converter.cpp)
+target_link_libraries(Test_Converter SeRoNetSDK gtest_main)
+add_test(Converter Test_Converter)
