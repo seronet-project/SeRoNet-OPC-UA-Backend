@@ -21,7 +21,14 @@ set(PRJ_FILES
 		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/CommObjectBrowseToNodeIds.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Client/NamingServiceOpcUa.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Server/SendServerHandler.hpp
-		)
+        SeRoNetSDK/SeRoNet/OPCUA/Server/ParameterSlave.hpp
+        SeRoNetSDK/SeRoNet/OPCUA/Server/ParameterUpdateHandler.cpp
+        SeRoNetSDK/SeRoNet/Utils/HsUlm/smartProcessingPattern.hh
+        SeRoNetSDK/SeRoNet/Utils/smartMessageQueue.hh
+        SeRoNetSDK/SeRoNet/Utils/Semaphore.hpp
+        SeRoNetSDK/SeRoNet/OPCUA/Server/ParameterSlave.cpp
+        SeRoNetSDK/SeRoNet/OPCUA/Client/ParameterMaster.cpp SeRoNetSDK/SeRoNet/CommunicationObjects/DefaultObjects/ParameterResponse.cpp SeRoNetSDK/SeRoNet/CommunicationObjects/DefaultObjects/ParameterRequest.cpp SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterRequestDescription.h SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterResponseDescription.h)
+
 add_library(SeRoNetSDK ${PRJ_FILES})
 set_target_properties(SeRoNetSDK PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(SeRoNetSDK PROPERTIES DEBUG_POSTFIX "d")
