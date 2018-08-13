@@ -11,7 +11,7 @@
 #include "../../CommunicationObjects/ICommunicationObject.hpp"
 #include "../../CommunicationObjects/Description/SelfDescription.hpp"
 #include "NamingServiceOpcUa.hpp"
-#include <SeRoNetSDK/SeRoNet/OPCUA/Client/AsyncAnswerFactoryWithCommObject.hpp>
+#include "AsyncAnswerFactoryWithCommObject.hpp"
 
 #include <Open62541Cpp/UA_NodeId.hpp>
 #include <open62541/open62541.h>

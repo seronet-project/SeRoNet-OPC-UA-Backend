@@ -27,11 +27,12 @@ class QueryServerHandler : public Smart::IQueryServerHandler<T_REQUEST, T_ANSWER
 
   ~QueryServerHandler() = default;
 
+  /*
   virtual void handle_input(int id, Smart::ICommunicationObject *input) {
     auto request = static_cast<T_REQUEST *> (input);
     this->handleQuery(id, *request);
 
-  }
+  }*/
 
 };
 

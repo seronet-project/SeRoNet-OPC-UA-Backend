@@ -11,6 +11,8 @@
 #include <Open62541Cpp/UA_String.hpp>
 #include "../../../CommunicationObjects/Description/ComplexType.hpp"
 #include "../../../CommunicationObjects/Description/ElementPrimitive.hpp"
+#include "../../../CommunicationObjects/Description/ElementArray.hpp"
+#include "../../Converter/CommObjArrayToValue.hpp"
 
 /// Internal Class
 class ToUaVariantArrayVisitor : public ::SeRoNet::CommunicationObjects::Description::IVisitorDescription {
@@ -53,6 +55,13 @@ class ToUaVariantArrayVisitor : public ::SeRoNet::CommunicationObjects::Descript
     open62541::UA_Variant newEl;
     auto value = el->get();
     UA_Variant_setScalarCopy(newEl.Variant, open62541::UA_String(value).String, &UA_TYPES[UA_TYPES_STRING]);
+    Variants.push_back(newEl);
+  }
+
+  void visit(SeRoNet::CommunicationObjects::Description::ElementArray *elementArray) override {
+    SeRoNet::OPCUA::Converter::CommObjArrayToValue commObjArrayToValue(elementArray);
+    auto variant = commObjArrayToValue.Value();
+    open62541::UA_Variant newEl(&variant);
     Variants.push_back(newEl);
   }
 

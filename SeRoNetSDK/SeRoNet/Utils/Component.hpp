@@ -2,8 +2,7 @@
  * @author Sebastian Friedl
  * TODO create Constructor with argv,argc
  */
-#ifndef SMARTCOMPONENTHPP
-#define SMARTCOMPONENTHPP
+#pragma once
 
 #include <open62541.h>
 
@@ -33,9 +32,10 @@ class Component :
   Smart::StatusCode blocking(const bool b) override;
   Smart::ITimerManager *getTimerManager() override;
   inline UA_Server *getServer() { return server; }
+
+  /// \TODO remove
+  void stopRunning(){running = false;}
 };
 
 }
 }
-
-#endif

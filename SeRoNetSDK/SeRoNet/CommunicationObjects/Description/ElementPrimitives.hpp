@@ -10,6 +10,8 @@
 #include <cstdint>
 #include <string>
 
+#include "SelfDescriptionPrimitives.hpp"
+
 namespace SeRoNet {
 namespace CommunicationObjects {
 namespace Description {

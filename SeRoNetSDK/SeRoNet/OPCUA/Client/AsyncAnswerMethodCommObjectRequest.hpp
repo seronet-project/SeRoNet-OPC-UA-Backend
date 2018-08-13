@@ -64,21 +64,13 @@ void AsyncAnswerMethodCommObjectRequest<T_RETURN>::processAnswer(
     this->setError(ss.str());
     return;
   }
-  Converter::UaVariantArrayToCommObject(*outputs, CommunicationObjects::Description::SelfDescription(&m_answer).get());
+  Converter::UaVariantArrayToCommObject(*outputs, CommunicationObjects::Description::SelfDescription(&m_answer, "").get());
   this->setHasAnswer();
 }
 
 template<>
 void AsyncAnswerMethodCommObjectRequest<void *>::processAnswer(
-    UA_StatusCode result, open62541::UA_ArrayOfVariant */*outputs*/) {
-  std::cout << "syncAnswerMethodCommObjectRequest<void*>::processAnswer" << std::endl;
-  if (result != UA_STATUSCODE_GOOD) {
-    std::stringstream ss;
-    ss << "Receive nongood result: " << UA_StatusCode_name(result);
-    this->setError(ss.str());
-    return;
-  }
-}
+    UA_StatusCode result, open62541::UA_ArrayOfVariant *outputs);
 
 }
 }

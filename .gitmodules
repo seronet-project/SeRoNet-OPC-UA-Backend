@@ -1,3 +1,6 @@
 [submodule "SmartSoftComponentDeveloperAPIcpp"]
 	path = SmartSoftComponentDeveloperAPIcpp
 	url = https://github.com/Servicerobotics-Ulm/SmartSoftComponentDeveloperAPIcpp.git
+[submodule "googletest"]
+	path = googletest
+	url = https://github.com/google/googletest

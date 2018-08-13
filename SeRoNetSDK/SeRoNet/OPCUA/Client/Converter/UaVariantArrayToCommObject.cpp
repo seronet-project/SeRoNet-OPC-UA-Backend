@@ -12,6 +12,7 @@
 #include <Open62541Cpp/UA_String.hpp>
 #include "../../../CommunicationObjects/Description/ComplexType.hpp"
 #include "../../../CommunicationObjects/Description/ElementPrimitive.hpp"
+#include "../../Converter/VariantToCommObjArray.hpp"
 
 /// Internal Class
 class ToCommObjectVisitor : public ::SeRoNet::CommunicationObjects::Description::IVisitorDescription {
@@ -94,6 +95,13 @@ class ToCommObjectVisitor : public ::SeRoNet::CommunicationObjects::Description:
     open62541::UA_String tmp = open62541::UA_String(nextData.getDataAs<UA_String>());
 
     el->set(static_cast<std::string>(tmp));
+  }
+
+  void visit(SeRoNet::CommunicationObjects::Description::ElementArray *elementArray) override {
+    assert(m_srcVariants.VariantsSize > m_nextIndex); ///\todo throw exception instead
+    auto nextData = m_srcVariants[m_nextIndex];
+    SeRoNet::OPCUA::Converter::VariantToCommObjArray vartiTocommObjArray(elementArray, nextData);
+    ++m_nextIndex;
   }
 
   open62541::UA_ArrayOfVariant m_srcVariants;

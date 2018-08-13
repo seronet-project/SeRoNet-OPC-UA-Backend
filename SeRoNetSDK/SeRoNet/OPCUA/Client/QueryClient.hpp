@@ -31,7 +31,7 @@ class QueryClient :
   Smart::StatusCode connect(const std::string &server, const std::string &service) override;
 
  protected:
-  std::shared_ptr<AsyncAnswerFactoryWithCommObject<RequestType, AnswerType>> m_Factory;
+  std::shared_ptr<AsyncAnswerFactoryWithCommObject<AnswerType, RequestType>> m_Factory;
   std::shared_ptr<SeRoNet::OPCUA::Client::NamingServiceOpcUa> m_namingService;
   SeRoNet::OPCUA::Client::UaClientWithMutex_t::shpType m_pUaClientWithMutex;
 
@@ -77,7 +77,7 @@ Smart::StatusCode QueryClient<RequestType, AnswerType>::connect(const std::strin
   m_pUaClientWithMutex = retValue.connection;
   m_methodNodeId = retValue.nodeId;
   //FIXME use new Constructor for factory with only one element SeRoNet::OPCUA::Client::UaClientWithMutex_t
-  m_Factory = std::make_shared<AsyncAnswerFactoryWithCommObject<RequestType, AnswerType>>(m_pUaClientWithMutex->pClient,
+  m_Factory = std::make_shared<AsyncAnswerFactoryWithCommObject<AnswerType, RequestType>>(m_pUaClientWithMutex->pClient,
                                                                                           m_pUaClientWithMutex->opcuaMutex,
                                                                                           m_methodNodeId);
   return Smart::SMART_OK;

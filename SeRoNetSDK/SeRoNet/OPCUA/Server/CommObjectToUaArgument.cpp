@@ -6,10 +6,13 @@
 #include <list>
 #include <Open62541Cpp/UA_Argument.hpp>
 
+
 #include "CommObjectToUaArgument.hpp"
 #include "../../Exceptions/NotImplementedException.hpp"
 #include "../../CommunicationObjects/Description/ComplexType.hpp"
 #include "../../CommunicationObjects/Description/ElementPrimitive.hpp"
+#include "../../CommunicationObjects/Description/ElementArray.hpp"
+#include "../Converter/CommObjArrayToTypeIndex.hpp"
 
 /// Internal Class
 class ToUaArgumentArrayVisitor :
@@ -58,6 +61,16 @@ class ToUaArgumentArrayVisitor :
     newEl.argument->name = UA_STRING_ALLOC(el->getName().c_str());
     newEl.argument->dataType = UA_TYPES[UA_TYPES_STRING].typeId;
     newEl.argument->valueRank = -1;
+    arguments.push_back(newEl);
+  }
+
+  void visit(SeRoNet::CommunicationObjects::Description::ElementArray *elementArray) override {
+    auto tmpEl = elementArray->getNewElement();
+    SeRoNet::OPCUA::Converter::CommObjArrayToTypeIndex commObjToTypeIndex(tmpEl->getDescription().get());
+    open62541::UA_Argument newEl;
+    newEl.argument->name = UA_STRING_ALLOC(elementArray->getName().c_str());
+    newEl.argument->dataType = UA_TYPES[commObjToTypeIndex.Id()].typeId;
+    newEl.argument->valueRank = 1;
     arguments.push_back(newEl);
   }
 

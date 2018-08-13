@@ -114,6 +114,10 @@ class UpdateOpcuaServerVisitor :
     if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
   }
 
+  void visit(SeRoNet::CommunicationObjects::Description::ElementArray *elementArray) override {
+    throw SeRoNet::Exceptions::NotImplementedException(__FUNCTION__);
+  }
+
  private:
 
   open62541::UA_NodeId generateNodeId(const SeRoNet::CommunicationObjects::Description::IDescription *description)
