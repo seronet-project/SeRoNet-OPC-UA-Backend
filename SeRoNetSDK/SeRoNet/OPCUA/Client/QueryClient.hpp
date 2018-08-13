@@ -8,7 +8,7 @@
 #include "QClientOPCUA.hpp"
 #include "NamingServiceOpcUa.hpp"
 #include <open62541.h>
-#include <SeRoNetSDK/SeRoNet/OPCUA/Client/AsyncAnswerFactoryWithCommObject.hpp>
+#include "AsyncAnswerFactoryWithCommObject.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
