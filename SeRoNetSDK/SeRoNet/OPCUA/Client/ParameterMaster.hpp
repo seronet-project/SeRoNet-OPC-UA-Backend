@@ -7,8 +7,12 @@
 
 #include <mutex>
 #include "../../Utils/Component.hpp"
-#include "../../CommunicationObjects/DefaultObjects/ParameterRequest.h"
-#include "../../CommunicationObjects/DefaultObjects/ParameterResponse.h"
+#include "../../CommunicationObjects/DefaultObjects/ParameterRequest.hpp"
+#include "../../CommunicationObjects/DefaultObjects/ParameterResponse.hpp"
+
+#include "../../CommunicationObjects/Description/DefaultObjects/ParameterRequestDescription.hpp"
+#include "../../CommunicationObjects/Description/DefaultObjects/ParameterResponseDescription.hpp"
+
 #include "QueryClient.hpp"
 
 namespace SeRoNet {
@@ -34,7 +38,7 @@ class ParameterMaster {
   std::mutex mutex;
 
   /// management class of the component
-  SeRoNet::Utils::Component *component;
+  Smart::IComponent *component;
 
   SeRoNet::OPCUA::Client::QueryClient<SeRoNet::CommunicationObjects::DefaultObjects::CommParameterRequest,
                                       SeRoNet::CommunicationObjects::DefaultObjects::CommParameterResponse>
@@ -51,7 +55,7 @@ class ParameterMaster {
    *  (Currently exception not thrown)
    *
    */
-  explicit ParameterMaster(SeRoNet::Utils::Component *component);
+  explicit ParameterMaster(Smart::IComponent *component);
 
   /** Destructor.
    */

@@ -4,13 +4,13 @@
 
 #include "ParameterMaster.hpp"
 
-#include "../../CommunicationObjects/Description/DefaultObjects/ParameterRequestDescription.h"
-#include "../../CommunicationObjects/Description/DefaultObjects/ParameterResponseDescription.h"
+#include "../../CommunicationObjects/Description/DefaultObjects/ParameterRequestDescription.hpp"
+#include "../../CommunicationObjects/Description/DefaultObjects/ParameterResponseDescription.hpp"
 
 const std::string SMART_NONS = "NoNamingService"; //FIXME check why this const is needed
 
 
-SeRoNet::OPCUA::Client::ParameterMaster::ParameterMaster(SeRoNet::Utils::Component *component)
+SeRoNet::OPCUA::Client::ParameterMaster::ParameterMaster(Smart::IComponent *component)
     : mutex(), component(component), query_client(component) {
 
   _use_ns = component->getName().compare(SMART_NONS) == 0 ? false : true;

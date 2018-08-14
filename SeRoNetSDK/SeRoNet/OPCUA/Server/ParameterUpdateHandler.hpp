@@ -5,8 +5,8 @@
 #ifndef SERONETSDK_PARAMETERUPDATEHANDLER_HPP
 #define SERONETSDK_PARAMETERUPDATEHANDLER_HPP
 
-#include "../../CommunicationObjects/DefaultObjects/ParameterResponse.h"
-#include "../../CommunicationObjects/DefaultObjects/ParameterRequest.h"
+#include "../../CommunicationObjects/DefaultObjects/ParameterResponse.hpp"
+#include "../../CommunicationObjects/DefaultObjects/ParameterRequest.hpp"
 
 class ParameterSlave;
 

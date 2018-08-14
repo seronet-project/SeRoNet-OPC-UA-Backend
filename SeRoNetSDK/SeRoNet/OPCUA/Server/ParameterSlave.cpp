@@ -4,8 +4,8 @@
 
 #include "ParameterSlave.hpp"
 #include "QueryServer.hpp"
-#include "../../CommunicationObjects/Description/DefaultObjects/ParameterRequestDescription.h"
-#include "../../CommunicationObjects/Description/DefaultObjects/ParameterResponseDescription.h"
+#include "../../CommunicationObjects/Description/DefaultObjects/ParameterRequestDescription.hpp"
+#include "../../CommunicationObjects/Description/DefaultObjects/ParameterResponseDescription.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -29,7 +29,7 @@ void ParameterSlave::ParameterQueryHandler::handleQuery(const int &id,
   this->server->answer(id, answer);
 }
 
-ParameterSlave::ParameterSlave(SeRoNet::Utils::Component *comp,
+ParameterSlave::ParameterSlave(Smart::IComponent *comp,
                                ParameterUpdateHandler *hnd,
                                std::string slave_address)
     : component(comp),

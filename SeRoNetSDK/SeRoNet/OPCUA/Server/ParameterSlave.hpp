@@ -28,12 +28,15 @@
 
 #include <mutex>
 #include "../../Utils/Component.hpp"
-#include "../../CommunicationObjects/DefaultObjects/ParameterRequest.h"
-#include "../../CommunicationObjects/DefaultObjects/ParameterResponse.h"
+#include "../../CommunicationObjects/DefaultObjects/ParameterRequest.hpp"
+#include "../../CommunicationObjects/DefaultObjects/ParameterResponse.hpp"
+#include "../../CommunicationObjects/Description/DefaultObjects/ParameterRequestDescription.hpp"
+#include "../../CommunicationObjects/Description/DefaultObjects/ParameterResponseDescription.hpp"
+
 #include "QueryServerHandler.hpp"
 #include "ParameterUpdateHandler.hpp"
 
-#include "../../Utils/HsUlm/smartProcessingPattern.hh"
+#include "../../Utils/HsUlm/smartProcessingPattern.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -44,7 +47,7 @@ class ParameterSlave {
   std::mutex mutex;
 
   /// management class of the component
-  SeRoNet::Utils::Component *component;
+  Smart::IComponent *component;
 
   class ParameterQueryHandler
       : public QueryServerHandler<SeRoNet::CommunicationObjects::DefaultObjects::CommParameterRequest,
@@ -88,7 +91,7 @@ class ParameterSlave {
    *
    *  (Currently exception not thrown)
    */
-  ParameterSlave(SeRoNet::Utils::Component *comp,
+  ParameterSlave(Smart::IComponent *comp,
                  ParameterUpdateHandler *hnd,
                  std::string slave_address = "param"); //FIXME wieso hier diese Default?
 
