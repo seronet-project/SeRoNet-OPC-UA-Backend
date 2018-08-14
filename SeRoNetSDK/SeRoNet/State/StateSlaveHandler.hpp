@@ -27,13 +27,13 @@ namespace State {
    *  The wiring handler is called by the internally used query pattern
    *  and connects / disconnects a port with a server.
    */
- class StateSlaveHandler : public OPCUA::Server::QueryServerHandler<CommStateRequest, CommStateResponse> {
+class StateSlaveHandler : public OPCUA::Server::QueryServerHandler<CommStateRequest, CommStateResponse> {
  private:
   /// used to access the StateSlave from the handler
   StateSlave *stateSlave;
 
  public:
-   typedef int QueryId;
+  typedef int QueryId;
   /** Constructor.
    *
    * @param slave  <I>StateSlave</I> needed to access it from the handler

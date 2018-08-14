@@ -13,29 +13,25 @@ namespace SeRoNet {
 namespace State {
 
 StateMaster::StateMaster(void)
-    :  state_proxy(NULL)
-{
+    : state_proxy(NULL) {
   std::cerr << "CommPattern (state): ERROR: Entered default constructor StateMaster" << std::endl;
 
-  throw(Exceptions::SeRoNetSDKException("CommPattern (stateClient): ERROR: Entered default constructor StateMaster"));
+  throw (Exceptions::SeRoNetSDKException("CommPattern (stateClient): ERROR: Entered default constructor StateMaster"));
 }
 
-StateMaster::StateMaster(Smart::IComponent* m)
-    :  state_proxy(m)
-{
+StateMaster::StateMaster(Smart::IComponent *m)
+    : state_proxy(m) {
   // set the configuration flags approriately
-  statusConnected    = 0;
-  portname           = "";
-  component          = m;
+  statusConnected = 0;
+  portname = "";
+  component = m;
 }
 
-StateMaster::~StateMaster(void) throw()
-{
+StateMaster::~StateMaster(void) throw() {
 
 }
 
-Smart::StatusCode StateMaster::blocking(const bool b)
-{
+Smart::StatusCode StateMaster::blocking(const bool b) {
   Smart::StatusCode result = Smart::SMART_OK;
 
   state_proxy.blocking(b);
@@ -43,8 +39,9 @@ Smart::StatusCode StateMaster::blocking(const bool b)
   return result;
 }
 
-Smart::StatusCode StateMaster::setWaitState(const std::string& mainstate, const std::string& server, const std::string& service)
-{
+Smart::StatusCode StateMaster::setWaitState(const std::string &mainstate,
+                                            const std::string &server,
+                                            const std::string &service) {
   Smart::StatusCode status = Smart::SMART_ERROR;
 
   CommStateRequest request;
@@ -54,8 +51,7 @@ Smart::StatusCode StateMaster::setWaitState(const std::string& mainstate, const 
 
   status = state_proxy.connect(server, service);
 
-  if(status == Smart::SMART_OK)
-  {
+  if (status == Smart::SMART_OK) {
     // set request comm-obj
     request.setCommand(StateCommand::STATE_CMD_SET_STATE);
     request.setStateName(mainstate);
@@ -64,8 +60,7 @@ Smart::StatusCode StateMaster::setWaitState(const std::string& mainstate, const 
     status = state_proxy.query(request, response);
 
     // get the reply state
-    if(status == Smart::SMART_OK)
-    {
+    if (status == Smart::SMART_OK) {
       status = static_cast<Smart::StatusCode>(response.getStatus());
     }
     state_proxy.disconnect();
@@ -74,9 +69,9 @@ Smart::StatusCode StateMaster::setWaitState(const std::string& mainstate, const 
   return status;
 }
 
-
-Smart::StatusCode StateMaster::getCurrentMainState(std::string& mainstate, const std::string& server, const std::string& service)
-{
+Smart::StatusCode StateMaster::getCurrentMainState(std::string &mainstate,
+                                                   const std::string &server,
+                                                   const std::string &service) {
   Smart::StatusCode status = Smart::SMART_ERROR;
 
   CommStateRequest request;
@@ -86,7 +81,7 @@ Smart::StatusCode StateMaster::getCurrentMainState(std::string& mainstate, const
 
   status = state_proxy.connect(server, service);
 
-  if(status == Smart::SMART_OK) {
+  if (status == Smart::SMART_OK) {
     // set request comm-obj
     request.setCommand(StateCommand::STATE_CMD_GET_CURRENT_STATE);
 
@@ -111,9 +106,9 @@ Smart::StatusCode StateMaster::getCurrentMainState(std::string& mainstate, const
   return status;
 }
 
-
-Smart::StatusCode StateMaster::getAllMainStates(std::list<std::string>& mainstates, const std::string& server, const std::string& service)
-{
+Smart::StatusCode StateMaster::getAllMainStates(std::list<std::string> &mainstates,
+                                                const std::string &server,
+                                                const std::string &service) {
   Smart::StatusCode status = Smart::SMART_ERROR;
 
   CommStateRequest request;
@@ -123,26 +118,23 @@ Smart::StatusCode StateMaster::getAllMainStates(std::list<std::string>& mainstat
 
   status = state_proxy.connect(server, service);
 
-  if(status == Smart::SMART_OK)
-  {
+  if (status == Smart::SMART_OK) {
     // set request comm-obj
-    request.setCommand(StateCommand ::STATE_CMD_GET_MAIN_STATES);
+    request.setCommand(StateCommand::STATE_CMD_GET_MAIN_STATES);
 
     // perform the query
     status = state_proxy.query(request, response);
 
     // get the reply state
-    if(status == Smart::SMART_OK)
-    {
+    if (status == Smart::SMART_OK) {
       // get remote status
       status = static_cast<Smart::StatusCode>(response.getStatus());
 
       // copy received list back into mainstates-list
-      if(status == Smart::SMART_OK)
-      {
+      if (status == Smart::SMART_OK) {
         std::vector<std::string> stateList = response.getStateList();
         mainstates = std::list<std::string>(stateList.begin(), stateList.end());
-      }else{
+      } else {
         mainstates.clear();
       }
     }
@@ -152,9 +144,10 @@ Smart::StatusCode StateMaster::getAllMainStates(std::list<std::string>& mainstat
   return status;
 }
 
-
-Smart::StatusCode StateMaster::getSubStates(const std::string& mainstate,std::list<std::string>& substates, const std::string& server, const std::string& service)
-{
+Smart::StatusCode StateMaster::getSubStates(const std::string &mainstate,
+                                            std::list<std::string> &substates,
+                                            const std::string &server,
+                                            const std::string &service) {
   Smart::StatusCode status = Smart::SMART_ERROR;
 
   CommStateRequest request;
@@ -164,27 +157,24 @@ Smart::StatusCode StateMaster::getSubStates(const std::string& mainstate,std::li
 
   status = state_proxy.connect(server, service);
 
-  if(status == Smart::SMART_OK)
-  {
+  if (status == Smart::SMART_OK) {
     // set request comm-obj
-    request.setCommand(StateCommand ::STATE_CMD_GET_SUB_STATES);
+    request.setCommand(StateCommand::STATE_CMD_GET_SUB_STATES);
     request.setStateName(mainstate);
 
     // perform the query
     status = state_proxy.query(request, response);
 
     // get the reply state
-    if(status == Smart::SMART_OK)
-    {
+    if (status == Smart::SMART_OK) {
       // get remote status
       status = static_cast<Smart::StatusCode>(response.getStatus());
 
       // copy received list back into substates-list
-      if(status == Smart::SMART_OK)
-      {
+      if (status == Smart::SMART_OK) {
         std::vector<std::string> stateList = response.getStateList();
         substates = std::list<std::string>(stateList.begin(), stateList.end());
-      }else{
+      } else {
         substates.clear();
       }
     }

@@ -2,7 +2,7 @@
 // Created by ac120371 on 10.08.2018.
 //
 
-#include "ParameterResponse.h"
+#include "ParameterResponse.hpp"
 
 namespace SeRoNet {
 namespace CommunicationObjects {
@@ -14,6 +14,13 @@ Description::ComplexType::shp_t CommParameterResponse::getObjectDescription(std:
 }
 std::string CommParameterResponse::getName() const {
   return CommParameterResponse::identifier();
+}
+void CommParameterResponse::to_ostream(std::ostream &os) const {
+
+  os << "CommParameterResponse(";
+  os << getResponse();
+  os << ")";
+
 }
 
 }

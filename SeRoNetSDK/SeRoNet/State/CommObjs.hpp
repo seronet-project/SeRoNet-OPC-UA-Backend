@@ -23,7 +23,7 @@ enum StateCommand {
   STATE_CMD_GET_SUB_STATES
 };
 
-class CommStateRequest : public Smart::ICommunicationObject{
+class CommStateRequest : public Smart::ICommunicationObject {
  public:
   // internal data structure
   int command;
@@ -68,7 +68,7 @@ class CommStateRequest : public Smart::ICommunicationObject{
 //
 /////////////////////////////////////////////////////////////////////////
 
-class CommStateResponse : public Smart::ICommunicationObject{
+class CommStateResponse : public Smart::ICommunicationObject {
  public:
 
   std::string getName() const override {

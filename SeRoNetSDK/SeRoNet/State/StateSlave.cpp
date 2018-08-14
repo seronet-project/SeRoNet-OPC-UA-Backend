@@ -238,8 +238,7 @@ StateSlave::StateSlave(Smart::IComponent *comp, StateChangeHandler *hnd, const s
     : running(false),
       component(comp),
       changeHandler(hnd),
-      stateUpdateThread(comp)
-      {
+      stateUpdateThread(comp) {
   Smart::StatusCode result = Smart::SMART_OK;
 
   std::unique_lock<decltype(mutex)> ul(mutex);

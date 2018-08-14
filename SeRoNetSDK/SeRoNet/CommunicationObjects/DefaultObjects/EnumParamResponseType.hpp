@@ -5,7 +5,7 @@
 #ifndef SERONETSDK_ENUMPARAMRESPONSETYPE_H
 #define SERONETSDK_ENUMPARAMRESPONSETYPE_H
 
-#include "EnumParamResponseTypeBase.h"
+#include "EnumParamResponseTypeBase.hpp"
 #include <string>
 #include <ostream>
 

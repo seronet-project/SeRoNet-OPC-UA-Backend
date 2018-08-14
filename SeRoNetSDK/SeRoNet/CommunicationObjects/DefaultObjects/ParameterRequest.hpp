@@ -2,8 +2,7 @@
 // Created by ac120371 on 09.08.2018.
 //
 
-#ifndef SERONETSDK_PARAMETERREQUEST_H
-#define SERONETSDK_PARAMETERREQUEST_H
+#pragma  once
 
 #include <string>
 #include <list>
@@ -11,12 +10,9 @@
 #include <sstream>
 
 // include core class
-#include "CommParameterIDL/ParameterRequestIdl.h"
+#include "CommParameterIDL/ParameterRequestIdl.hpp"
 
 //SeRoNet class
-#include "../Description/SelfDescription.hpp"
-#include "../Description/ComplexType.hpp"
-#include "../Description/ElementPrimitives.hpp"
 #include "../ICommunicationObject.hpp"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartICommunicationObject.h"
 
@@ -162,20 +158,15 @@ class CommParameterRequest : public ICommunicationObject, public Smart::ICommuni
   }
 
   // helper method to easily implement output stream in derived classes
-  //void to_ostream(std::ostream &os = std::cout) const;
+  void to_ostream(std::ostream &os = std::cout) const;
 
 };
 
-/**
- * FIXME Test if the method ist needed
- * @param os
- * @param co
- * @return
 inline std::ostream &operator<<(std::ostream &os, const CommParameterRequest &co)
 {
   co.to_ostream(os);
   return os;
-}*/
+}
 
 
 template<class Value>
@@ -282,5 +273,3 @@ inline int CommParameterRequest::getList<std::string>(const std::string &key, st
 } // end namespace DefaultObject
 } // end namespace CommunicationObjects
 } // end namespace SeRoNet
-
-#endif //SERONETSDK_PARAMETERREQUEST_H

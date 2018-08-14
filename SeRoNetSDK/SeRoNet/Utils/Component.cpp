@@ -28,6 +28,8 @@ Component::Component(const std::string &componentName)
   m_nsIndex1 = UA_Server_addNamespace(server, "http://seronet-projekt.de/");
 };
 
+Component::Component(const std::string &componentName, int /*argc*/, char **/*argv*/) : Component(componentName) {}
+
 Smart::StatusCode Component::run() {
   UA_Server_run(server, &running);
   return Smart::StatusCode::SMART_OK;

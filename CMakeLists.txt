@@ -9,47 +9,56 @@ find_package(Open62541Cpp REQUIRED)
 
 
 set(PRJ_FILES
+        SeRoNetSDK/SeRoNet/CommunicationObjects/Description/ComplexType.cpp
+        SeRoNetSDK/SeRoNet/CommunicationObjects/DefaultObjects/ParameterResponse.cpp
+        SeRoNetSDK/SeRoNet/CommunicationObjects/DefaultObjects/ParameterRequest.cpp
+        SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterRequestDescription.cpp
+        SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterResponseDescription.cpp
+        SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterRequestIdlDescription.cpp
+        SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterResponseIdlDescription.cpp
+
 		SeRoNetSDK/SeRoNet/OPCUA/Client/IBlocking.cpp
-		SeRoNetSDK/SeRoNet/CommunicationObjects/Description/ComplexType.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/CommObjectToUaVariantArray.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/UaVariantArrayToCommObject.cpp
-        SeRoNetSDK/SeRoNet/OPCUA/Server/CommObjectToUaArgument.cpp
-		SeRoNetSDK/SeRoNet/OPCUA/Server/CommObjectToPushModell.cpp
-		SeRoNetSDK/SeRoNet/OPCUA/Server/PushServerUpdater.cpp
-		SeRoNetSDK/SeRoNet/Utils/Component.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/CommObjectToListOfPrimitivDescriptions.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/CommObjectBrowseToNodeIds.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Client/NamingServiceOpcUa.cpp
+        SeRoNetSDK/SeRoNet/OPCUA/Client/ParameterMaster.cpp
+        SeRoNetSDK/SeRoNet/OPCUA/Client/AsyncAnswerMethodCommObjectRequest.cpp
+
+        SeRoNetSDK/SeRoNet/OPCUA/Server/CommObjectToUaArgument.cpp
+        SeRoNetSDK/SeRoNet/OPCUA/Server/CommObjectToPushModell.cpp
+        SeRoNetSDK/SeRoNet/OPCUA/Server/PushServerUpdater.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Server/SendServerHandler.hpp
         SeRoNetSDK/SeRoNet/OPCUA/Server/ParameterSlave.hpp
         SeRoNetSDK/SeRoNet/OPCUA/Server/ParameterUpdateHandler.cpp
-        SeRoNetSDK/SeRoNet/Utils/HsUlm/smartProcessingPattern.hh
-        SeRoNetSDK/SeRoNet/Utils/smartMessageQueue.hh
-        SeRoNetSDK/SeRoNet/Utils/Semaphore.hpp
         SeRoNetSDK/SeRoNet/OPCUA/Server/ParameterSlave.cpp
-        SeRoNetSDK/SeRoNet/OPCUA/Client/ParameterMaster.cpp
-        SeRoNetSDK/SeRoNet/CommunicationObjects/DefaultObjects/ParameterResponse.cpp
-        SeRoNetSDK/SeRoNet/CommunicationObjects/DefaultObjects/ParameterRequest.cpp
-        SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterRequestDescription.h
-        SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterResponseDescription.h
-		SeRoNetSDK/SeRoNet/OPCUA/Client/AsyncAnswerMethodCommObjectRequest.cpp
-		SeRoNetSDK/SeRoNet/State/CommObjsSelfDescription.cpp
-		SeRoNetSDK/SeRoNet/State/StateChangeHandler.cpp
-		SeRoNetSDK/SeRoNet/State/StateMaster.cpp
-		SeRoNetSDK/SeRoNet/State/StateSlave.cpp
-		SeRoNetSDK/SeRoNet/State/StateSlaveHandler.cpp
-		SeRoNetSDK/SeRoNet/State/StateUpdateThread.cpp
-		SeRoNetSDK/SeRoNet/OPCUA/Converter/CommObjArrayToTypeIndex.cpp
-		SeRoNetSDK/SeRoNet/OPCUA/Converter/CommObjArrayToValue.cpp
-		SeRoNetSDK/SeRoNet/OPCUA/Converter/VariantToCommObjArray.cpp
-		)
+
+        SeRoNetSDK/SeRoNet/Utils/Component.cpp
+        SeRoNetSDK/SeRoNet/Utils/HsUlm/smartProcessingPattern.hpp
+        SeRoNetSDK/SeRoNet/Utils/smartMessageQueue.hpp
+        SeRoNetSDK/SeRoNet/Utils/Semaphore.hpp
+
+        SeRoNetSDK/SeRoNet/State/CommObjsSelfDescription.cpp
+        SeRoNetSDK/SeRoNet/State/StateChangeHandler.cpp
+        SeRoNetSDK/SeRoNet/State/StateMaster.cpp
+        SeRoNetSDK/SeRoNet/State/StateSlave.cpp
+        SeRoNetSDK/SeRoNet/State/StateSlaveHandler.cpp
+        SeRoNetSDK/SeRoNet/State/StateUpdateThread.cpp
+
+        SeRoNetSDK/SeRoNet/OPCUA/Converter/CommObjArrayToTypeIndex.cpp
+        SeRoNetSDK/SeRoNet/OPCUA/Converter/CommObjArrayToValue.cpp
+        SeRoNetSDK/SeRoNet/OPCUA/Converter/VariantToCommObjArray.cpp
+        )
+
+
 add_library(SeRoNetSDK ${PRJ_FILES})
 set_target_properties(SeRoNetSDK PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(SeRoNetSDK PROPERTIES DEBUG_POSTFIX "d")
 target_link_libraries(SeRoNetSDK Open62541Cpp open62541)
 target_include_directories(SeRoNetSDK INTERFACE
-		$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/SeRoNetSDK/>
-		$<INSTALL_INTERFACE:include/>)
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/SeRoNetSDK/>
+        $<INSTALL_INTERFACE:include/>)
 
 # Options for GTest
 set(BUILD_GTEST ON CACHE BOOL "")

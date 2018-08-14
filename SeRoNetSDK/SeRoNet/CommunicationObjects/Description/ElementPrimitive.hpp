@@ -14,7 +14,7 @@ namespace CommunicationObjects {
 namespace Description {
 
 /// Base Class for all Primitives, allow dynamic_cast checking for primitve types
-class ElementPrimitiveBase : public IDescription{
+class ElementPrimitiveBase : public IDescription {
   using IDescription::IDescription;
 };
 

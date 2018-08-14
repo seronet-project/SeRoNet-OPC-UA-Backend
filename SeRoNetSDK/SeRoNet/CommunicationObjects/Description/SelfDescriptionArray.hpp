@@ -14,9 +14,11 @@ namespace SeRoNet {
 namespace CommunicationObjects {
 namespace Description {
 
-template <typename TYPE>
+template<typename TYPE>
 IDescription::shp_t SelfDescription(std::vector<TYPE> *ptr, std::string name) {
-  auto ret = std::make_shared<ArrayOf<TYPE>>(name, [ptr](){return *ptr;}, [ptr](const std::vector<TYPE> &newEl){*ptr = newEl;});
+  auto ret = std::make_shared<ArrayOf<TYPE>>(name,
+                                             [ptr]() { return *ptr; },
+                                             [ptr](const std::vector<TYPE> &newEl) { *ptr = newEl; });
   return ret;
 }
 

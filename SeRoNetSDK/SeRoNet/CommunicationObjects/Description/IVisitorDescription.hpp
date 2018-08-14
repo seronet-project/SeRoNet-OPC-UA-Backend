@@ -21,7 +21,7 @@ class ElementArray;
 class IVisitorDescription {
  public:
   virtual void visit(ComplexType *complexObject) = 0;
-  virtual void visit (ElementArray *elementArray) = 0;
+  virtual void visit(ElementArray *elementArray) = 0;
   virtual void visit(ElementPrimitive<bool> *el) = 0;
 
   virtual void visit(ElementPrimitive<std::int32_t> *el) = 0;

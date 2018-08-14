@@ -5,7 +5,7 @@
 #ifndef SERONETSDK_PARAMETERRESPONSEIDL_H
 #define SERONETSDK_PARAMETERRESPONSEIDL_H
 
-#include "../EnumParamResponseType.h"
+#include "../EnumParamResponseType.hpp"
 
 namespace SeRoNet {
 namespace CommunicationObjects {

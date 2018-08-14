@@ -36,7 +36,7 @@
 
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIActiveQueueInputHandlerDecorator_T.h"
 
-#include "../smartMessageQueue.hh"
+#include "../smartMessageQueue.hpp"
 
 #include "../../OPCUA/Server/QueryServerHandler.hpp"
 #include "../Task.hpp"

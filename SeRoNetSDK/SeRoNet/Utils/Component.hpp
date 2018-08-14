@@ -1,6 +1,5 @@
 /**
  * @author Sebastian Friedl
- * TODO create Constructor with argv,argc
  */
 #pragma once
 
@@ -19,10 +18,12 @@ class Component :
   UA_Server *server;
   UA_Boolean running = true;
   UA_UInt16 m_nsIndex1;
-  const UA_UInt16 m_nsIndex0 = 0; // @TODO remove nsIndex0
+  const UA_UInt16 m_nsIndex0 = 0; /// @TODO remove nsIndex0
 
  public:
   explicit Component(const std::string &componentName);
+  Component(const std::string &componentName, int argc, char *argv[]);
+
 
   inline UA_UInt16 getNsIndex1() { return m_nsIndex1; };
   inline UA_UInt16 getNsIndex0() { return m_nsIndex0; };
@@ -34,7 +35,7 @@ class Component :
   inline UA_Server *getServer() { return server; }
 
   /// \TODO remove
-  void stopRunning(){running = false;}
+  void stopRunning() { running = false; }
 };
 
 }

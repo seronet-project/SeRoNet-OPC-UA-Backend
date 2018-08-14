@@ -3,7 +3,7 @@
 //
 
 #include <string>
-#include "ParameterRequest.h"
+#include "ParameterRequest.hpp"
 
 namespace SeRoNet {
 namespace CommunicationObjects {
@@ -45,6 +45,24 @@ Description::ComplexType::shp_t CommParameterRequest::getObjectDescription(std::
 
 std::string CommParameterRequest::getName() const {
   return CommParameterRequest::identifier();
+}
+
+void CommParameterRequest::to_ostream(std::ostream &os) const {
+  os << "CommParameterRequest(";
+
+  std::vector<CommParameterIDL::NameValue>::const_iterator
+      data_itemsIt;
+  for (data_itemsIt
+           = data.items.begin(); data_itemsIt
+      != data.items.end(); data_itemsIt++) {
+
+    os << "([" << (*data_itemsIt).key << "] ";
+    for (unsigned i = 0; i < data_itemsIt->values.size(); ++i) {
+      os << data_itemsIt->values[i] << " ";
+    }
+    os << ")";
+  }
+  os << ")";
 }
 
 } // end namespace DefaultObjects

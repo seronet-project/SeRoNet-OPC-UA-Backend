@@ -34,6 +34,7 @@ IDescription::shp_t SelfDescription(std::int32_t *ptr, std::string name) {
   return internal::SelfDescriptionPrimitive<std::int32_t>(ptr, name);
 }*/
 
+// TODO create other primitves
 CREATE_SELFDESCR_PRIMITIVE(std::int32_t);
 CREATE_SELFDESCR_PRIMITIVE(std::string);
 

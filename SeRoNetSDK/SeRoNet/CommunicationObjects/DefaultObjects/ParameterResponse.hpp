@@ -8,10 +8,10 @@
 #include <iostream>
 
 // include Message-Data-Struct
-#include "CommParameterIDL/ParameterResponseIdl.h"
+#include "CommParameterIDL/ParameterResponseIdl.hpp"
 
 // include enums
-#include "EnumParamResponseType.h"
+#include "EnumParamResponseType.hpp"
 #include "../ICommunicationObject.hpp"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartICommunicationObject.h"
 

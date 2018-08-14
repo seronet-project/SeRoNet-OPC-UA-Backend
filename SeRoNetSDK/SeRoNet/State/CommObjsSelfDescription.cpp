@@ -40,8 +40,8 @@ IDescription::shp_t SelfDescription(SeRoNet::State::CommStateRequest *obj, std::
   ret->add(
       std::make_shared<ElementInt32>(
           "command",
-          [obj](){return static_cast<int>(obj->getCommand());},
-          [obj](int v){obj->setCommand(static_cast<SeRoNet::State::StateCommand>(v));}
+          [obj]() { return static_cast<int>(obj->getCommand()); },
+          [obj](int v) { obj->setCommand(static_cast<SeRoNet::State::StateCommand>(v)); }
           //std::bind(&SeRoNet::State::CommStateRequest::getCommand, obj),
           //std::bind(&SeRoNet::State::CommStateRequest::setCommand, obj, std::placeholders::_1)
       )

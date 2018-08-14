@@ -17,25 +17,22 @@ namespace State {
 //
 //
 //
-void StateUpdateThread::init(StateSlave *ptr)
-{
+void StateUpdateThread::init(StateSlave *ptr) {
   is_running = true;
-  stateServer         = ptr;
+  stateServer = ptr;
 }
 
-int StateUpdateThread::on_execute()
-{
+int StateUpdateThread::on_execute() {
   //<alexej date="2010-08-10"/>
-  if(is_running) {
+  if (is_running) {
     stateServer->updateStateFromThread();
-  }else{
+  } else {
     return -1;
   }
   return 0;
 }
 
-void StateUpdateThread::halt()
-{
+void StateUpdateThread::halt() {
   is_running = false;
 }
 int StateUpdateThread::on_entry() {
