@@ -4,10 +4,12 @@
 /// \date 03.08.2018
 ///
 
+#include <open62541/open62541.h>
 #include "CommObjArrayToValue.hpp"
 #include "../../CommunicationObjects/Description/IVisitorDescription.hpp"
 #include "../../CommunicationObjects/Description/ElementPrimitive.hpp"
 #include "../../Exceptions/NotImplementedException.hpp"
+#include "../Client/Converter/CommObjectToUaVariantArray.hpp"
 namespace SeRoNet {
 namespace OPCUA {
 namespace Converter {
@@ -30,7 +32,7 @@ class InitializeArrayVisitor : public CommunicationObjects::Description::IVisito
         m_size,
         &UA_TYPES[ua_type_index]
     );
-    m_pVariant->arrayDimensions = (UA_UInt32 *)UA_Array_new(1, &UA_TYPES[UA_TYPES_UINT32]);
+    m_pVariant->arrayDimensions = (UA_UInt32 *) UA_Array_new(1, &UA_TYPES[UA_TYPES_UINT32]);
     m_pVariant->arrayDimensionsSize = 1;
     m_pVariant->arrayDimensions[0] = m_size;
   }
@@ -70,8 +72,7 @@ class SetArrayElementVisitor : public CommunicationObjects::Description::IVisito
 
   }
 
-  void setNextIndex(std::size_t index)
-  {
+  void setNextIndex(std::size_t index) {
     m_index = index;
   }
 
@@ -82,19 +83,23 @@ class SetArrayElementVisitor : public CommunicationObjects::Description::IVisito
  public:
   void visit(CommunicationObjects::Description::ComplexType *complexObject) override {
     ///\todo use CommToVariantArray
-    throw Exceptions::NotImplementedException("Set ComplexObj as Array Element");
+    auto variantArray = SeRoNet::OPCUA::Client::Converter::CommObjectToUaVariantArray(complexObject).getValue();
+    UA_Variant_setArrayCopy(m_pVariant, variantArray.Variants, variantArray.VariantsSize, &UA_TYPES[UA_TYPES_VARIANT]);
+    m_pVariant->arrayDimensions[0] = 1;
+    m_pVariant->arrayDimensionsSize = 1;
+    //throw Exceptions::NotImplementedException("Set ComplexObj as Array Element");
   }
 
   void visit(CommunicationObjects::Description::ElementArray *elementArray) override {
     ///\todo use CommObjArrayToValue
     CommObjArrayToValue co2Arr(elementArray);
-    UA_Variant *pVariant = reinterpret_cast<UA_Variant*> (m_pVariant->data);
+    UA_Variant *pVariant = reinterpret_cast<UA_Variant *> (m_pVariant->data);
     auto src = co2Arr.Value();
     UA_Variant_copy(&src, &pVariant[m_index]);
   }
 
   void visit(CommunicationObjects::Description::ElementPrimitive<bool> *el) override {
-    bool *pBool = reinterpret_cast<bool*> (m_pVariant->data);
+    bool *pBool = reinterpret_cast<bool *> (m_pVariant->data);
     pBool[m_index] = el->get();
   }
 

@@ -13,11 +13,11 @@ namespace SeRoNet {
 namespace OPCUA {
 namespace Converter {
 
-class CommObjArrayToValue{
+class CommObjArrayToValue {
  public:
-    CommObjArrayToValue(CommunicationObjects::Description::ElementArray * arr);
-    UA_Variant Value();
-    virtual ~CommObjArrayToValue();
+  CommObjArrayToValue(CommunicationObjects::Description::ElementArray *arr);
+  UA_Variant Value();
+  virtual ~CommObjArrayToValue();
  protected:
   UA_Variant m_variant;
 };
