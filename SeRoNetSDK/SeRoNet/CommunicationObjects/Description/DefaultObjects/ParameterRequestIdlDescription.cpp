@@ -1,14 +1,19 @@
 //
 // Created by ac120371 on 14.08.2018.
 //
-#include "ParameterRequestIdlDescription.hpp"
+
 #include "../ComplexType.hpp"
 #include "../ElementArray.hpp"
 #include "../ElementPrimitives.hpp"
+#include "../SelfDescriptionArray.hpp"
+#include "ParameterRequestIdlDescription.hpp"
+
+namespace SeRoNet {
+namespace CommunicationObjects {
+namespace Description {
 
 template<>
-SeRoNet::CommunicationObjects::Description::IDescription::shp_t SeRoNet::CommunicationObjects::Description::SelfDescription<
-    SeRoNet::CommunicationObjects::DefaultObjects::CommParameterIDL::NameValue>(
+CommunicationObjects::Description::IDescription::shp_t SeRoNet::CommunicationObjects::Description::SelfDescription(
     SeRoNet::CommunicationObjects::DefaultObjects::CommParameterIDL::NameValue *obj,
     std::string name) {
 
@@ -57,4 +62,8 @@ SeRoNet::CommunicationObjects::Description::IDescription::shp_t SeRoNet::Communi
       SelfDescription(&obj->items, "items")
   );
   return ret;
+}
+
+}
+}
 }

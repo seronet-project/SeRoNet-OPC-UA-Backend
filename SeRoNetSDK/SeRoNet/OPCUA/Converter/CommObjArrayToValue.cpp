@@ -7,6 +7,7 @@
 #include <open62541/open62541.h>
 #include "CommObjArrayToValue.hpp"
 #include "../../CommunicationObjects/Description/IVisitorDescription.hpp"
+#include "../../CommunicationObjects/Description/ComplexType.hpp"
 #include "../../CommunicationObjects/Description/ElementPrimitive.hpp"
 #include "../../Exceptions/NotImplementedException.hpp"
 #include "../Client/Converter/CommObjectToUaVariantArray.hpp"
@@ -84,9 +85,10 @@ class SetArrayElementVisitor : public CommunicationObjects::Description::IVisito
   void visit(CommunicationObjects::Description::ComplexType *complexObject) override {
     ///\todo use CommToVariantArray
     auto variantArray = SeRoNet::OPCUA::Client::Converter::CommObjectToUaVariantArray(complexObject).getValue();
-    UA_Variant_setArrayCopy(m_pVariant, variantArray.Variants, variantArray.VariantsSize, &UA_TYPES[UA_TYPES_VARIANT]);
-    m_pVariant->arrayDimensions[0] = 1;
-    m_pVariant->arrayDimensionsSize = 1;
+    UA_Variant_setArrayCopy(&m_pVariant[m_index], variantArray.Variants, variantArray.VariantsSize, &UA_TYPES[UA_TYPES_VARIANT]);
+    m_pVariant[m_index].arrayDimensions = (UA_UInt32 *)UA_Array_new(2, &UA_TYPES[UA_TYPES_UINT32]);
+    m_pVariant[m_index].arrayDimensions[0] = 1;
+    m_pVariant[m_index].arrayDimensionsSize = 1;
     //throw Exceptions::NotImplementedException("Set ComplexObj as Array Element");
   }
 

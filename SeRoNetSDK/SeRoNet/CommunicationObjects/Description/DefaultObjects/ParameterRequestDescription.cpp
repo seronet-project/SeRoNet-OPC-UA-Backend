@@ -3,6 +3,7 @@
 //
 
 #include "ParameterRequestDescription.hpp"
+#include "ParameterRequestIdlDescription.hpp"
 
 template<>
 SeRoNet::CommunicationObjects::Description::IDescription::shp_t SeRoNet::CommunicationObjects::Description::SelfDescription<

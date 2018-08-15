@@ -6,7 +6,7 @@
 
 #pragma once
 
-#include "ComplexType.hpp"
+#include "IDescription.hpp"
 
 namespace SeRoNet {
 namespace CommunicationObjects {

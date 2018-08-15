@@ -8,6 +8,7 @@
 #include "../../Exceptions/NotImplementedException.hpp"
 #include "../../Exceptions/InvalidConversion.hpp"
 #include "../../CommunicationObjects/Description/IVisitorDescription.hpp"
+#include "../../CommunicationObjects/Description/ComplexType.hpp"
 #include "../Client/Converter/UaVariantArrayToCommObject.hpp"
 #include "../../CommunicationObjects/Description/ElementPrimitive.hpp"
 

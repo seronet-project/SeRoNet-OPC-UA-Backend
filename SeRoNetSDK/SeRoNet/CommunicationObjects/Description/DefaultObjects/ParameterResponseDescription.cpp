@@ -2,13 +2,18 @@
 // Created by ac120371 on 14.08.2018.
 //
 #include "ParameterResponseDescription.hpp"
+#include "ParameterResponseIdlDescription.hpp"
 #include "../ComplexType.hpp"
 
+namespace SeRoNet {
+namespace CommunicationObjects {
+namespace Description {
+
 template<>
-SeRoNet::CommunicationObjects::Description::IDescription::shp_t SeRoNet::CommunicationObjects::Description::SelfDescription<
-    SeRoNet::CommunicationObjects::DefaultObjects::CommParameterResponse>(
-    SeRoNet::CommunicationObjects::DefaultObjects::CommParameterResponse *obj,
-    std::string name) {
+CommunicationObjects::Description::IDescription::shp_t SelfDescription(
+        CommunicationObjects::DefaultObjects::CommParameterResponse *obj,
+        std::string name
+    ) {
 
   SeRoNet::CommunicationObjects::Description::ComplexType::shp_t ret(
       new SeRoNet::CommunicationObjects::Description::ComplexType(name)
@@ -20,4 +25,8 @@ SeRoNet::CommunicationObjects::Description::IDescription::shp_t SeRoNet::Communi
   );
 
   return ret;
+}
+
+}
+}
 }

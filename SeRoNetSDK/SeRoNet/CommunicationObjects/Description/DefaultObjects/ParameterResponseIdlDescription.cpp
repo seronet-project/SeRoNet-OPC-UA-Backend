@@ -4,15 +4,20 @@
 #include "ParameterResponseIdlDescription.hpp"
 #include "../SelfDescriptionArray.hpp"
 #include "../SelfDescriptionPrimitives.hpp"
+#include "../ComplexType.hpp"
+
+namespace SeRoNet {
+namespace CommunicationObjects {
+namespace Description {
 
 template<>
-SeRoNet::CommunicationObjects::Description::IDescription::shp_t SeRoNet::CommunicationObjects::Description::SelfDescription<
-    SeRoNet::CommunicationObjects::DefaultObjects::CommParameterIDL::CommParameterResponse>(
-    SeRoNet::CommunicationObjects::DefaultObjects::CommParameterIDL::CommParameterResponse *obj,
-    std::string name) {
+CommunicationObjects::Description::IDescription::shp_t SelfDescription(
+    CommunicationObjects::DefaultObjects::CommParameterIDL::CommParameterResponse *obj,
+    std::string name)
+    {
 
-  SeRoNet::CommunicationObjects::Description::ComplexType::shp_t ret(
-      new SeRoNet::CommunicationObjects::Description::ComplexType(name)
+  CommunicationObjects::Description::ComplexType::shp_t ret(
+      new ComplexType(name)
   );
 
   // Add Members
@@ -20,4 +25,8 @@ SeRoNet::CommunicationObjects::Description::IDescription::shp_t SeRoNet::Communi
       SelfDescription(&obj->response, "response")
   );
   return ret;
+}
+
+}
+}
 }

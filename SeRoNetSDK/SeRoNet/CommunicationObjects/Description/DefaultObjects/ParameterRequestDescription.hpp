@@ -6,7 +6,7 @@
 #include "../../DefaultObjects/ParameterRequest.hpp"
 #include "../../DefaultObjects/CommParameterIDL/ParameterRequestIdl.hpp"
 
-#include "ParameterRequestIdlDescription.hpp"
+#include "../SelfDescription.hpp"
 
 namespace SeRoNet {
 namespace CommunicationObjects {
