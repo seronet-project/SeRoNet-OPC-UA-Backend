@@ -13,7 +13,7 @@ namespace CommunicationObjects {
 namespace Description {
 
 template<>
-CommunicationObjects::Description::IDescription::shp_t SeRoNet::CommunicationObjects::Description::SelfDescription(
+IDescription::shp_t SelfDescription(
     SeRoNet::CommunicationObjects::DefaultObjects::CommParameterIDL::NameValue *obj,
     std::string name) {
 
@@ -48,7 +48,7 @@ CommunicationObjects::Description::IDescription::shp_t SeRoNet::CommunicationObj
 }
 
 template<>
-SeRoNet::CommunicationObjects::Description::IDescription::shp_t SeRoNet::CommunicationObjects::Description::SelfDescription<
+IDescription::shp_t SelfDescription<
     SeRoNet::CommunicationObjects::DefaultObjects::CommParameterIDL::CommParameterRequest>(
     SeRoNet::CommunicationObjects::DefaultObjects::CommParameterIDL::CommParameterRequest *obj,
     std::string name) {

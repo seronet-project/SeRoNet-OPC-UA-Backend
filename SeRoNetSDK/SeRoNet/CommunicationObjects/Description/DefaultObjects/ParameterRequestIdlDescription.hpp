@@ -14,14 +14,14 @@ namespace CommunicationObjects {
 namespace Description {
 
 template<>
-CommunicationObjects::Description::IDescription::shp_t SeRoNet::CommunicationObjects::Description::SelfDescription
+IDescription::shp_t SelfDescription
 <SeRoNet::CommunicationObjects::DefaultObjects::CommParameterIDL::NameValue>
 (
     SeRoNet::CommunicationObjects::DefaultObjects::CommParameterIDL::NameValue *obj,
     std::string name);
 
 template<>
-CommunicationObjects::Description::IDescription::shp_t SeRoNet::CommunicationObjects::Description::SelfDescription<
+IDescription::shp_t SelfDescription<
     CommunicationObjects::DefaultObjects::CommParameterIDL::CommParameterRequest>(
     CommunicationObjects::DefaultObjects::CommParameterIDL::CommParameterRequest *obj,
     std::string name);
