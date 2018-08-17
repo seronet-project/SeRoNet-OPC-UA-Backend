@@ -60,6 +60,16 @@ class CommStateRequest : public Smart::ICommunicationObject {
   inline std::string getStateName(void) const {
     return state_name;
   }
+
+  bool operator==(const CommStateRequest &rhs) const {
+    return
+        command == rhs.command &&
+        state_name == rhs.state_name;
+  }
+
+  bool operator!=(const CommStateRequest &rhs) const {
+    return !(rhs == *this);
+  }
 };
 
 /////////////////////////////////////////////////////////////////////////

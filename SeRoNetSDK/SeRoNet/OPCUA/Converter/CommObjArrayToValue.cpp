@@ -83,17 +83,15 @@ class SetArrayElementVisitor : public CommunicationObjects::Description::IVisito
 
  public:
   void visit(CommunicationObjects::Description::ComplexType *complexObject) override {
-    ///\todo use CommToVariantArray
+    UA_Variant *pVariant = &(reinterpret_cast<UA_Variant *> (m_pVariant->data)[m_index]);
     auto variantArray = SeRoNet::OPCUA::Client::Converter::CommObjectToUaVariantArray(complexObject).getValue();
-    UA_Variant_setArrayCopy(&m_pVariant[m_index], variantArray.Variants, variantArray.VariantsSize, &UA_TYPES[UA_TYPES_VARIANT]);
-    m_pVariant[m_index].arrayDimensions = (UA_UInt32 *)UA_Array_new(2, &UA_TYPES[UA_TYPES_UINT32]);
-    m_pVariant[m_index].arrayDimensions[0] = 1;
-    m_pVariant[m_index].arrayDimensionsSize = 1;
-    //throw Exceptions::NotImplementedException("Set ComplexObj as Array Element");
+    UA_Variant_setArrayCopy(pVariant, variantArray.Variants, variantArray.VariantsSize, &UA_TYPES[UA_TYPES_VARIANT]);
+    pVariant->arrayDimensions = (UA_UInt32 *)UA_Array_new(1, &UA_TYPES[UA_TYPES_UINT32]);
+    pVariant->arrayDimensions[0] = variantArray.VariantsSize;
+    pVariant->arrayDimensionsSize = 1;
   }
 
   void visit(CommunicationObjects::Description::ElementArray *elementArray) override {
-    ///\todo use CommObjArrayToValue
     CommObjArrayToValue co2Arr(elementArray);
     UA_Variant *pVariant = reinterpret_cast<UA_Variant *> (m_pVariant->data);
     auto src = co2Arr.Value();

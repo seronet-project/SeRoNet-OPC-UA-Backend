@@ -61,7 +61,7 @@ class ToUaVariantArrayVisitor : public ::SeRoNet::CommunicationObjects::Descript
   void visit(SeRoNet::CommunicationObjects::Description::ElementArray *elementArray) override {
     SeRoNet::OPCUA::Converter::CommObjArrayToValue commObjArrayToValue(elementArray);
     auto variant = commObjArrayToValue.Value();
-    open62541::UA_Variant newEl(&variant);
+    open62541::UA_Variant newEl(&variant, false);
     Variants.push_back(newEl);
   }
 

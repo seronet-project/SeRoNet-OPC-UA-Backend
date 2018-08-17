@@ -25,11 +25,20 @@ struct NameValue {
   NameValue_values_type getValues() const { return this->values; }
   void setValues(NameValue_values_type values) { this->values = values; }
 
+  bool operator==(const NameValue &other) const {
+    return this->key == other.key
+        && this->values == other.values;
+  }
+
 };
 
 typedef std::vector<NameValue> CommParameterRequest_items_type;
 
 struct CommParameterRequest {
+  bool operator==(const CommParameterRequest &other) const {
+    return this->items == other.items;
+  }
+
   CommParameterRequest_items_type items;
 };
 
