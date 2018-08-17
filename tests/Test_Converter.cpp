@@ -20,7 +20,7 @@
 #include <SeRoNet/State/CommObjs.hpp>
 #include <SeRoNet/State/CommObjsSelfDescription.hpp>
 
-TEST(Converer, ObjArrayToVariant) {
+TEST(Converter, ObjArrayToVariant) {
   std::vector<std::int32_t> testVal = {1, 2, 3};
   auto pSelfDesc = SeRoNet::CommunicationObjects::Description::SelfDescription(&testVal, "");
   auto pArraySelfDesc = std::dynamic_pointer_cast<SeRoNet::CommunicationObjects::Description::ElementArray>(pSelfDesc);
