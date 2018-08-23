@@ -45,10 +45,12 @@ set(PRJ_FILES
         SeRoNetSDK/SeRoNet/CommunicationObjects/Description/ComplexType.cpp
         SeRoNetSDK/SeRoNet/CommunicationObjects/DefaultObjects/ParameterResponse.cpp
         SeRoNetSDK/SeRoNet/CommunicationObjects/DefaultObjects/ParameterRequest.cpp
-        SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterRequestDescription.cpp
+		SeRoNetSDK/SeRoNet/CommunicationObjects/DefaultObjects/WiringCommObject.cpp
+		SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterRequestDescription.cpp
         SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterResponseDescription.cpp
         SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterRequestIdlDescription.cpp
-        SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterResponseIdlDescription.cpp
+		SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterResponseIdlDescription.cpp
+		SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/WiringCommObjectDescription.cpp
 
 		SeRoNetSDK/SeRoNet/OPCUA/Client/IBlocking.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/CommObjectToUaVariantArray.cpp
@@ -66,6 +68,7 @@ set(PRJ_FILES
         SeRoNetSDK/SeRoNet/OPCUA/Server/ParameterSlave.hpp
         SeRoNetSDK/SeRoNet/OPCUA/Server/ParameterUpdateHandler.cpp
         SeRoNetSDK/SeRoNet/OPCUA/Server/ParameterSlave.cpp
+		SeRoNetSDK/SeRoNet/OPCUA/Server/WiringSlave.cpp
 
         SeRoNetSDK/SeRoNet/Utils/Component.cpp
         SeRoNetSDK/SeRoNet/Utils/HsUlm/smartProcessingPattern.hpp
