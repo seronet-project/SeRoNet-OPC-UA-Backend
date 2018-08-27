@@ -37,3 +37,28 @@ TEST(State, QueryStates) {
   comp_server_thread.join();
 
 }
+
+TEST(State, Acquire) {
+  SeRoNet::Utils::Component compSlave("Test_StateSlave");
+  auto stateSlave = std::make_shared<SeRoNet::State::StateSlave>(&compSlave);
+  std::string subStateName = "TestSubState";
+  std::string mainStateName = "TestState";
+  EXPECT_EQ(Smart::StatusCode::SMART_OK, stateSlave->defineStates("TestState", subStateName));
+
+  stateSlave->activate();
+  stateSlave->setWaitState("Alive");
+  SeRoNet::Utils::Component compMaster("Test_StateMaster");
+  auto stateMaster = std::make_shared<SeRoNet::State::StateMaster>(&compMaster);
+
+  std::thread comp_server_thread(&decltype(compSlave)::run, &compSlave);
+
+  EXPECT_EQ(Smart::StatusCode::SMART_OK, stateMaster->setWaitState(mainStateName, compSlave.getName()));
+
+  EXPECT_EQ(stateSlave->tryAcquire(subStateName), Smart::StatusCode::SMART_OK);
+  EXPECT_EQ(stateSlave->release(subStateName), Smart::StatusCode::SMART_OK);
+
+  stateSlave = nullptr;
+  compSlave.stopRunning();
+  comp_server_thread.join();
+
+}
