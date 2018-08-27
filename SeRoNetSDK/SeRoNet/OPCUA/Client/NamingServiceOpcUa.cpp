@@ -161,6 +161,7 @@ void NamingServiceOpcUa::opcUaBackgroudTask(std::promise<shpUA_Client_t> promise
       l_opcUA.lock();
       UA_Client_run_iterate(pClient.get(), 10);
       l_opcUA.unlock();
+      std::this_thread::yield();
       std::this_thread::sleep_for(std::chrono::microseconds(10));
     }
   }
