@@ -18,12 +18,14 @@ class WiringCommObject {
   std::string slaveport = "";
   std::string servercomponent = "";
   std::string serverservice = "";
-  std::int32_t status;
+  std::int32_t status = 0;
 
  public:
   std::string getCommandType() { return this->commandType; }
 
-  void setCommandType(std::string commandType);
+  void setCommandType(std::string commandType) {
+    this->commandType = commandType;
+  };
 
   std::string getSlaveport() const {
     return this->slaveport;
@@ -60,7 +62,7 @@ class WiringCommObject {
   WiringCommObject() = default;
   virtual ~WiringCommObject() = default;
 
-  static inline std::string identifier(void) {
+  static inline std::string identifier() {
     return "SmartACE::smartWiring";
   };
 
@@ -74,7 +76,7 @@ class WiringCommObject {
                   std::string &servercomponent,
                   std::string &serverservice) const;
 
-  void setStatus(const Smart::StatusCode status) { this->setStatus(status); };
+  void setStatus(const Smart::StatusCode status) { this->status = status; };
   void getStatus(Smart::StatusCode &status) { status = (Smart::StatusCode) this->getStatus(); };
 
 };

@@ -12,6 +12,8 @@
 #include "../../CommunicationObjects/Description/SelfDescription.hpp"
 #include "NamingServiceOpcUa.hpp"
 #include "AsyncAnswerFactoryWithCommObject.hpp"
+#include "WiringHandler.hpp"
+#include "../Server/WiringSlave.hpp"
 
 #include <Open62541Cpp/UA_NodeId.hpp>
 #include <open62541/open62541.h>
@@ -31,14 +33,23 @@ class SendClient :
   Smart::StatusCode connect(const std::string &server, const std::string &service) override;
 
   Smart::StatusCode disconnect() override {
+    //TODO disconnect client from Server
     return Smart::SMART_OK;
   }
+
+  Smart::StatusCode add(Server::WiringSlave *slave, const std::string &portName);
+  Smart::StatusCode remove();
+
   Smart::StatusCode blocking(const bool blocking) override {
+    //TODO implement blocking
     return Smart::SMART_OK;
   }
+
   Smart::StatusCode send(const DataType &data);
 
  protected:
+
+  WiringHandler<SendClient> m_wiringHandler;
   SeRoNet::OPCUA::Client::UaClientWithMutex_t::shpType m_pUaClientWithMutex;
   std::shared_ptr<SeRoNet::OPCUA::Client::NamingServiceOpcUa> m_namingService;
   open62541::UA_NodeId m_methodNodeId;
@@ -51,7 +62,9 @@ template<class DataType>
 SendClient<DataType>::SendClient(Smart::IComponent *pComponent)
     : Smart::ISendClientPattern<DataType>::ISendClientPattern(pComponent),
       m_namingService(std::make_shared<SeRoNet::OPCUA::Client::NamingServiceOpcUa>()),
-      m_pUaClientWithMutex(nullptr) {
+      m_pUaClientWithMutex(nullptr),
+      m_wiringHandler(this) {
+  ;
 }
 
 template<class DataType>
@@ -71,6 +84,15 @@ Smart::StatusCode SendClient<DataType>::send(const DataType &data) {
   typename QClientOPCUA<DataType, void *>::QueryIDtype::element_type::shpAsyncAnswer_t
       ans(m_Factory->call(data));
   return ans != nullptr ? Smart::StatusCode::SMART_OK : Smart::StatusCode::SMART_ERROR;
+}
+
+template<class DataType>
+Smart::StatusCode SendClient<DataType>::add(Server::WiringSlave *slave, const std::string &portName) {
+  return m_wiringHandler.add(slave,
+                             portName,
+                             std::bind(&SendClient<DataType>::connect, this,
+                                       std::placeholders::_1, std::placeholders::_2),
+                             std::bind(&SendClient<DataType>::disconnect, this));
 }
 
 } // namespace client
