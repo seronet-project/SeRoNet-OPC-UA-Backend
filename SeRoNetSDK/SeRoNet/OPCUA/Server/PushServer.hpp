@@ -17,6 +17,7 @@
 #include "PushServerUpdater.hpp"
 #include "../../CommunicationObjects/Description/SelfDescription.hpp"
 #include "../../Exceptions/NotImplementedException.hpp"
+#include "OpcuaServer.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -94,9 +95,9 @@ inline PushServer<T_AnswerType>::PushServer(SeRoNet::Utils::Component *component
 
   CommObjectToPushModell(
       CommunicationObjects::Description::SelfDescription(CommObject, serviceName).get(),
-      server,
+      OpcUaServer::instance().getServer(),
       objectsFolderNodeId,
-      component->getNsIndex1());
+      OpcUaServer::instance().getNsIndex1());
 
 }
 
@@ -108,9 +109,9 @@ Smart::StatusCode PushServer<T_AnswerType>::put(const T_AnswerType &d) {
 
   PushServerUpdater(
       CommunicationObjects::Description::SelfDescription(&a, this->serviceName).get(),
-      localComponent->getServer(),
+      OpcUaServer::instance().getServer(),
       objectsFolderNodeId,
-      localComponent->getNsIndex1());
+      OpcUaServer::instance().getNsIndex1());
 
   return Smart::SMART_OK;
 }

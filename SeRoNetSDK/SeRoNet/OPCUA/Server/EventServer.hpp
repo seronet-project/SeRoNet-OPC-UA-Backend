@@ -21,6 +21,7 @@
 #include "CommObjectToPushModell.hpp"
 #include "../Client/Converter/UaVariantArrayToCommObject.hpp"
 #include "../../Exceptions/NoDataAvailableException.hpp"
+#include "OpcuaServer.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -210,7 +211,7 @@ inline EventServer<T_ParameterType,
     T_IdentificationType>(component, serviceName, eventTestHandler),
       m_service(serviceName),
       opc_Component(component) {
-  UA_Server *server = component->getServer();
+  UA_Server *server = OpcUaServer::instance().getServer();
   //UA_NodeId objectsFolderNodeId(component->getNsIndex0(), UA_NS0ID_OBJECTSFOLDER);
   UA_NodeId objectsFolderNodeId = UA_NODEID_NUMERIC(component->getNsIndex0(), UA_NS0ID_OBJECTSFOLDER);
 
@@ -291,7 +292,7 @@ put(const T_StatusType &newState) {
 
   if (!m_EventInfos.empty()) {
     for (auto it = m_EventInfos.begin(); it != m_EventInfos.end(); ++it) {
-      UA_Server *server = opc_Component->getServer();
+      UA_Server *server = OpcUaServer::instance().getServer();
       T_ResultType result;
       T_StatusType s(newState);
       open62541::UA_NodeId m_NodeId = it->first;
@@ -300,7 +301,7 @@ put(const T_StatusType &newState) {
       if (this->testHandler->testEvent(m_param, result, s)) {
         //write the new status into all result nodes
         PushServerUpdater(CommunicationObjects::Description::SelfDescription(&s, this->serviceName).get(),
-                          server, m_NodeId, opc_Component->getNsIndex1());
+                          server, m_NodeId, OpcUaServer::instance().getNsIndex1());
       } else {
         //FIXME set all values to NULL
         //PushServerUpdater(CommunicationObjects::Description::SelfDescription(NULL, this->serviceName).get(),

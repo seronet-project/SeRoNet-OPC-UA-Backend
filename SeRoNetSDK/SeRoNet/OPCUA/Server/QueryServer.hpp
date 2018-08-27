@@ -30,6 +30,7 @@
 #include "../Client/Converter/UaVariantArrayToCommObject.hpp"
 #include "CommObjectToUaArgument.hpp"
 #include "QueryServerHandler.hpp"
+#include "OpcuaServer.hpp"
 #include "../../Exceptions/NotImplementedException.hpp"
 #include "../../CommunicationObjects/Description/SelfDescription.hpp"
 
@@ -148,7 +149,7 @@ inline QueryServer<T_REQUEST, T_ANSWER>::QueryServer(
     Smart::IQueryServerPattern<T_REQUEST, T_ANSWER, int>::IQueryServerPattern(component, service),
     m_component(component),
     m_service(service) {
-  UA_Server *server = dynamic_cast<Utils::Component *>(component)->getServer();
+  UA_Server *server = OpcUaServer::instance().getServer();
 
   T_REQUEST *inputCommObject = new T_REQUEST;
   OPEN_65241_CPP_NAMESPACE::UA_ArrayOfArgument
