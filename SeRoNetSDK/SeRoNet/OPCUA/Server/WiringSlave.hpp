@@ -5,6 +5,8 @@
 #ifndef SERONETSDK_WIRINGSLAVE_HPP
 #define SERONETSDK_WIRINGSLAVE_HPP
 
+#include <functional>
+#include <map>
 #include "../../CommunicationObjects/DefaultObjects/WiringCommObject.hpp"
 #include "QueryServerHandler.hpp"
 #include "../../Utils/HsUlm/smartProcessingPattern.hpp"
@@ -22,24 +24,24 @@ class WiringSlave;
    *  The wiring handler is called by the internally used query pattern
    *  and connects / disconnects a port with a server.
    */
-class WiringHandler : public QueryServerHandler<CommunicationObjects::DefaultObjects::WiringCommObject,
-                                                CommunicationObjects::DefaultObjects::WiringCommObject> {
+class WiringQueryHandler : public QueryServerHandler<CommunicationObjects::DefaultObjects::WiringCommObject,
+                                                     CommunicationObjects::DefaultObjects::WiringCommObject> {
  private:
   /// used to access the WiringSlave from the handler
   WiringSlave *wiringSlave = nullptr;
 
  public:
   /// default constructor
-  WiringHandler() = delete;
+  WiringQueryHandler() = delete;
 
   /** Constructor.
    *
    * @param slave  <I>WiringSlave</I> needed to access it from the handler
    */
-  explicit WiringHandler(WiringSlave *slave) noexcept;
+  explicit WiringQueryHandler(WiringSlave *slave) noexcept;
 
   /// Destructor
-  ~WiringHandler() override = default;
+  ~WiringQueryHandler() override = default;
 
   /// handle query method of query handler class
   void handleQuery(const int &id,
@@ -71,19 +73,15 @@ class WiringHandler : public QueryServerHandler<CommunicationObjects::DefaultObj
 
 // TODO @xfl check if handler and threadHandler realy need to be pointer
 class WiringSlave {
-  friend class WiringHandler;
+  friend class WiringQueryHandler;
  private:
 
   struct PortElement {
     std::string portName;
-    void *tPtr;
     bool operator==(const PortElement &rhs) const;
     bool operator!=(const PortElement &rhs) const;
-    // voided <this> pointer of client object
-    Smart::StatusCode (*connectFunction)(void *,
-                                         const std::string &,
-                                         const std::string &); // ptr to internalConnect method  //TODO use std:function
-    Smart::StatusCode (*disconnectFunction)(void *);                                       // ptr to internalDisconnect method //TODO use std:function
+    std::function<Smart::StatusCode(const std::string &, const std::string &)> connectFunction;
+    std::function<Smart::StatusCode()> disconnectFunction;
   };
 
   std::map<std::string, PortElement> ports;
@@ -94,7 +92,7 @@ class WiringSlave {
   Smart::IComponent *component{};
 
   ///
-  WiringHandler *handler{};
+  WiringQueryHandler *handler{};
 
   /// Decorator for WiringHandler
   SeRoNet::Utils::HsUlm::ThreadQueueQueryHandler<CommunicationObjects::DefaultObjects::WiringCommObject,
@@ -140,9 +138,8 @@ class WiringSlave {
    *    - SMART_ERROR            : something went wrong
    */
   Smart::StatusCode add(const std::string &portName,
-                        void *tPtr,
-                        Smart::StatusCode (*cPtr)(void *, const std::string &, const std::string &),
-                        Smart::StatusCode (*dPtr)(void *));
+                        std::function<Smart::StatusCode(const std::string &, const std::string &)> connectFunction,
+                        std::function<Smart::StatusCode()> disconnectFunction);
 
   /** @internal Remove port.
    *

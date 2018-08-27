@@ -73,7 +73,7 @@ IDescription::shp_t SelfDescription(DefaultObjects::WiringCommObject *obj,
       )
   );
 
-  return IDescription::shp_t();
+  return ret;
 }
 
 } // end namespace Description

@@ -9,12 +9,13 @@ namespace SeRoNet {
 namespace OPCUA {
 namespace Server {
 
-WiringHandler::WiringHandler(WiringSlave *slave) noexcept
+WiringQueryHandler::WiringQueryHandler(WiringSlave *slave) noexcept
     : QueryServerHandler<CommunicationObjects::DefaultObjects::WiringCommObject,
                          CommunicationObjects::DefaultObjects::WiringCommObject>(slave->wiring),
       wiringSlave(slave) {}
 
-void WiringHandler::handleQuery(const int &id, const CommunicationObjects::DefaultObjects::WiringCommObject &request) {
+void WiringQueryHandler::handleQuery(const int &id,
+                                     const CommunicationObjects::DefaultObjects::WiringCommObject &request) {
   CommunicationObjects::DefaultObjects::WiringCommObject answer;
 
   answer = wiringSlave->handleWiring(request);
@@ -25,6 +26,7 @@ void WiringHandler::handleQuery(const int &id, const CommunicationObjects::Defau
 WiringSlave::WiringSlave(Smart::IComponent *component, std::string slaveaddress)
     : component(component) {
   {
+
     const std::string SMART_NONS = "NoNamingService"; //FIXME check why this const is needed
 
     // added functionality to work without NamingService
@@ -46,7 +48,7 @@ WiringSlave::WiringSlave(Smart::IComponent *component, std::string slaveaddress)
                                CommunicationObjects::DefaultObjects::WiringCommObject>(component, "wiring");
     }
 
-    handler = new WiringHandler(this);
+    handler = new WiringQueryHandler(this);
 
     // Handling is done in separate thread, otherwise blocking of main thread occures!
     threadHandler =
@@ -76,7 +78,7 @@ CommunicationObjects::DefaultObjects::WiringCommObject WiringSlave::handleWiring
       //
       // portName known, now call the connect method of the client object
       //
-      status = (it->second.connectFunction)(it->second.tPtr, servername, servicename);
+      status = it->second.connectFunction(servername, servicename);
 
       answer.setStatus(status);
     } else {
@@ -93,7 +95,7 @@ CommunicationObjects::DefaultObjects::WiringCommObject WiringSlave::handleWiring
       //
       // portName known, now call the disconnect method of the client object
       //
-      status = (it->second.disconnectFunction)(it->second.tPtr);
+      status = it->second.disconnectFunction();
 
       answer.setStatus(status);
     } else {
@@ -107,9 +109,9 @@ CommunicationObjects::DefaultObjects::WiringCommObject WiringSlave::handleWiring
 }
 
 Smart::StatusCode WiringSlave::add(const std::string &portName,
-                                   void *tPtr,
-                                   Smart::StatusCode (*cPtr)(void *, const std::string &, const std::string &),
-                                   Smart::StatusCode (*dPtr)(void *)) {
+                                   std::function<Smart::StatusCode(const std::string &,
+                                                                   const std::string &)> connectFunction,
+                                   std::function<Smart::StatusCode()> disconnectFunction) {
   if (wiring == nullptr) {
     std::cout
         << "<WiringSlave> Warning: wiring slave is not initialized properly. "
@@ -118,7 +120,8 @@ Smart::StatusCode WiringSlave::add(const std::string &portName,
   }
 
   std::unique_lock<decltype(mutex)> lock(mutex);
-  auto ret = ports.insert(std::pair<std::string, PortElement>(portName, PortElement{portName, tPtr, cPtr, dPtr}));
+  PortElement tmp{portName, connectFunction, disconnectFunction};
+  auto ret = ports.insert(std::pair<std::string, PortElement>(portName, tmp));
   return ret.second ? Smart::SMART_OK : Smart::SMART_PORTALREADYUSED;
 }
 
