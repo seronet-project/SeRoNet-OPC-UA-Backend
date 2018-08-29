@@ -14,6 +14,7 @@ namespace Utils {
 
 Component::Component(const std::string &componentName)
     : IComponent(componentName) {
+
 };
 
 Component::Component(const std::string &componentName, int /*argc*/, char **/*argv*/) : Component(componentName) {}

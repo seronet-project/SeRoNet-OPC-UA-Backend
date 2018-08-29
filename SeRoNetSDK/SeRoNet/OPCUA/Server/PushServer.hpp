@@ -12,7 +12,7 @@
 #include "../../Utils/Component.hpp"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartStatusCode.h"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIPushServerPattern_T.h"
-#include "CommObjectToPushModell.hpp"
+#include "CommObjectToPushModel.hpp"
 #include "../Client/Converter/CommObjectToUaVariantArray.hpp"
 #include "PushServerUpdater.hpp"
 #include "../../CommunicationObjects/Description/SelfDescription.hpp"
@@ -88,30 +88,28 @@ inline PushServer<T_AnswerType>::PushServer(SeRoNet::Utils::Component *component
                                             const std::string &serviceName) :
     Smart::IPushServerPattern<T_AnswerType>::IPushServerPattern(component, serviceName),
     m_service(serviceName) {
-  UA_Server *server = component->getServer();
-  OPEN_65241_CPP_NAMESPACE::UA_NodeId objectsFolderNodeId(component->getNsIndex0(), UA_NS0ID_OBJECTSFOLDER);
+  SeRoNet::OPCUA::Server::OpcUaServer::instance().initServer(component->getName());
+  OPEN_65241_CPP_NAMESPACE::UA_NodeId
+      objectsFolderNodeId(SeRoNet::OPCUA::Server::OpcUaServer::instance().getNsIndex0(), UA_NS0ID_OBJECTSFOLDER);
 
   T_AnswerType *CommObject = new T_AnswerType;
 
-  CommObjectToPushModell(
+  CommObjectToPushModel(
       CommunicationObjects::Description::SelfDescription(CommObject, serviceName).get(),
-      OpcUaServer::instance().getServer(),
-      objectsFolderNodeId,
-      OpcUaServer::instance().getNsIndex1());
+      SeRoNet::OPCUA::Server::OpcUaServer::instance().getServer(),
+      objectsFolderNodeId);
 
 }
 
 template<class T_AnswerType>
 Smart::StatusCode PushServer<T_AnswerType>::put(const T_AnswerType &d) {
   T_AnswerType a(d);
-  OPEN_65241_CPP_NAMESPACE::UA_NodeId objectsFolderNodeId((UA_UInt16) 0, UA_NS0ID_OBJECTSFOLDER);
-  auto localComponent = dynamic_cast<SeRoNet::Utils::Component *>(this->icomponent);
+  OPEN_65241_CPP_NAMESPACE::UA_NodeId
+      objectsFolderNodeId(SeRoNet::OPCUA::Server::OpcUaServer::instance().getNsIndex0(), UA_NS0ID_OBJECTSFOLDER);
 
   PushServerUpdater(
       CommunicationObjects::Description::SelfDescription(&a, this->serviceName).get(),
-      OpcUaServer::instance().getServer(),
-      objectsFolderNodeId,
-      OpcUaServer::instance().getNsIndex1());
+      objectsFolderNodeId);
 
   return Smart::SMART_OK;
 }

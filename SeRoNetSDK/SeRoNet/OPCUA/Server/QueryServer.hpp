@@ -149,7 +149,7 @@ inline QueryServer<T_REQUEST, T_ANSWER>::QueryServer(
     Smart::IQueryServerPattern<T_REQUEST, T_ANSWER, int>::IQueryServerPattern(component, service),
     m_component(component),
     m_service(service) {
-  UA_Server *server = OpcUaServer::instance().getServer();
+  SeRoNet::OPCUA::Server::OpcUaServer::instance().initServer(component->getName());
 
   T_REQUEST *inputCommObject = new T_REQUEST;
   OPEN_65241_CPP_NAMESPACE::UA_ArrayOfArgument
@@ -171,8 +171,8 @@ inline QueryServer<T_REQUEST, T_ANSWER>::QueryServer(
   ss << "85." << this->m_service.c_str(); //TODO use a own function to create nodeIds
 
   UA_Server_addMethodNode(
-      server,
-      UA_NODEID_STRING_ALLOC(1, ss.str().c_str()),
+      OpcUaServer::instance().getServer(),
+      UA_NODEID_STRING_ALLOC(OpcUaServer::instance().getNsIndex1(), ss.str().c_str()),
       UA_NODEID_NUMERIC(0, UA_NS0ID_OBJECTSFOLDER),
       UA_NODEID_NUMERIC(0, UA_NS0ID_HASORDEREDCOMPONENT),
       UA_QUALIFIEDNAME_ALLOC(1, this->m_service.c_str()),

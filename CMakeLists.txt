@@ -62,13 +62,14 @@ set(PRJ_FILES
         SeRoNetSDK/SeRoNet/OPCUA/Client/AsyncAnswerMethodCommObjectRequest.cpp
 
         SeRoNetSDK/SeRoNet/OPCUA/Server/CommObjectToUaArgument.cpp
-        SeRoNetSDK/SeRoNet/OPCUA/Server/CommObjectToPushModell.cpp
+        SeRoNetSDK/SeRoNet/OPCUA/Server/CommObjectToPushModel.cpp
         SeRoNetSDK/SeRoNet/OPCUA/Server/PushServerUpdater.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Server/SendServerHandler.hpp
         SeRoNetSDK/SeRoNet/OPCUA/Server/ParameterSlave.hpp
         SeRoNetSDK/SeRoNet/OPCUA/Server/ParameterUpdateHandler.cpp
         SeRoNetSDK/SeRoNet/OPCUA/Server/ParameterSlave.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Server/WiringSlave.cpp
+        SeRoNetSDK/SeRoNet/OPCUA/Server/OpcuaServer.cpp
 
         SeRoNetSDK/SeRoNet/Utils/Component.cpp
         SeRoNetSDK/SeRoNet/Utils/HsUlm/smartProcessingPattern.hpp

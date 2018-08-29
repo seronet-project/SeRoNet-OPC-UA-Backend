@@ -25,9 +25,7 @@ class OpcUaServer {
     return m_serverName;
   }
 
-  void setServerName(const std::string &m_name) {
-    OpcUaServer::m_serverName = m_name;
-  }
+  void initServer(const std::string &m_name);
 
   UA_Server *getServer() const;
 
@@ -37,12 +35,18 @@ class OpcUaServer {
 
   UA_StatusCode run();
 
+  bool isRunning() { return m_isRunning; };
+
+  void stopRunning() {
+    m_isRunning = false; // TODO check if all server should be stopping
+  }
+
  private:
 
   std::string m_serverName = "";
   UA_ServerConfig *m_Config;
   UA_Server *m_Server;
-  UA_Boolean m_isRunning = true;
+  UA_Boolean m_isRunning = false;
 
   UA_UInt16 m_nsIndex1;
   const UA_UInt16 m_nsIndex0 = 0; /// @TODO remove nsIndex0

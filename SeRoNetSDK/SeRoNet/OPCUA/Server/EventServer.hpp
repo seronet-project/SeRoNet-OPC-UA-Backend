@@ -18,10 +18,11 @@
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIEventClientPattern_T.h"
 #include "CommObjectToUaArgument.hpp"
 #include "../../Exceptions/NotImplementedException.hpp"
-#include "CommObjectToPushModell.hpp"
+#include "CommObjectToPushModel.hpp"
 #include "../Client/Converter/UaVariantArrayToCommObject.hpp"
 #include "../../Exceptions/NoDataAvailableException.hpp"
 #include "OpcuaServer.hpp"
+
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -130,7 +131,7 @@ UA_StatusCode EventServer<T_ParameterType, T_ResultType, T_StatusType, T_Identif
   //UA_UInt16 nsIndex = rand();
 
   UA_ObjectAttributes actvAtrr = UA_ObjectAttributes_default;
-  actvAtrr.displayName = UA_LOCALIZEDTEXT("en-Us", "Activation");
+  actvAtrr.displayName = UA_LOCALIZEDTEXT_ALLOC("en-Us", "Activation");
 
   //return the value of the assigned Id to store it and identify the activation later
   open62541::UA_NodeId m_NodeId;
@@ -142,11 +143,10 @@ UA_StatusCode EventServer<T_ParameterType, T_ResultType, T_StatusType, T_Identif
                           UA_NODEID_NUMERIC(0, UA_NS0ID_BASEOBJECTTYPE),
                           actvAtrr, nullptr, m_NodeId.NodeId);
 
-  CommObjectToPushModell(
+  CommObjectToPushModel(
       CommunicationObjects::Description::SelfDescription(ResultObj, friendThis->serviceName).get(),
       server,
-      m_NodeId,
-      friendThis->opc_Component->getNsIndex1());
+      m_NodeId);
 
   //store the information and id
   T_ParameterType m_param;
@@ -213,7 +213,7 @@ inline EventServer<T_ParameterType,
       opc_Component(component) {
   UA_Server *server = OpcUaServer::instance().getServer();
   //UA_NodeId objectsFolderNodeId(component->getNsIndex0(), UA_NS0ID_OBJECTSFOLDER);
-  UA_NodeId objectsFolderNodeId = UA_NODEID_NUMERIC(component->getNsIndex0(), UA_NS0ID_OBJECTSFOLDER);
+  UA_NodeId objectsFolderNodeId = UA_NODEID_NUMERIC(OpcUaServer::instance().getNsIndex0(), UA_NS0ID_OBJECTSFOLDER);
 
 
   //create the object node to manage the result nodes
@@ -237,18 +237,18 @@ inline EventServer<T_ParameterType,
   //the assigned id of the created node as output parameter
   UA_Argument outputArgument;
   UA_Argument_init(&outputArgument);
-  outputArgument.description = UA_LOCALIZEDTEXT("en-US", "The assigned id");
+  outputArgument.description = UA_LOCALIZEDTEXT_ALLOC("en-US", "The assigned id");
   outputArgument.name = UA_STRING("The assigned id");
   outputArgument.dataType = UA_TYPES[UA_TYPES_NODEID].typeId;
   outputArgument.valueRank = -2;
 
   UA_MethodAttributes activateAttr = UA_MethodAttributes_default;
-  activateAttr.description = UA_LOCALIZEDTEXT("en-US", "Activates an event by a Client");
-  activateAttr.displayName = UA_LOCALIZEDTEXT("en-US", "Activation method");
+  activateAttr.description = UA_LOCALIZEDTEXT_ALLOC("en-US", "Activates an event by a Client");
+  activateAttr.displayName = UA_LOCALIZEDTEXT_ALLOC("en-US", "Activation method");
   activateAttr.executable = true;
   activateAttr.userExecutable = true;
   UA_Server_addMethodNode(server,
-                          UA_NODEID_STRING(1, "Activation method"),
+                          UA_NODEID_STRING_ALLOC(1, "Activation method"),
                           *m_objNodeId.NodeId,
                           UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT),
                           UA_QUALIFIEDNAME_ALLOC(1, "Event activation Method"),
@@ -301,7 +301,7 @@ put(const T_StatusType &newState) {
       if (this->testHandler->testEvent(m_param, result, s)) {
         //write the new status into all result nodes
         PushServerUpdater(CommunicationObjects::Description::SelfDescription(&s, this->serviceName).get(),
-                          server, m_NodeId, OpcUaServer::instance().getNsIndex1());
+                          server, m_NodeId);
       } else {
         //FIXME set all values to NULL
         //PushServerUpdater(CommunicationObjects::Description::SelfDescription(NULL, this->serviceName).get(),

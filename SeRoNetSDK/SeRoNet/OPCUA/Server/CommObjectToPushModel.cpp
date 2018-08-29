@@ -12,13 +12,15 @@
 #include <Open62541Cpp/Exceptions/OpcUaErrorException.hpp>
 #include <open62541/open62541.h>
 #include <iostream>
+#include <cstdint>
 
 //#include <open62541.h>
 //#include <open62541/open62541.h>
-#include "CommObjectToPushModell.hpp"
+#include "CommObjectToPushModel.hpp"
 #include "../../Exceptions/NotImplementedException.hpp"
 #include "../../CommunicationObjects/Description/ComplexType.hpp"
 #include "../../CommunicationObjects/Description/ElementPrimitive.hpp"
+#include "OpcuaServer.hpp"
 //#include "../../CommunicationObjects/Description/IVisitableDescription.hpp"
 //#include "../../Exceptions/NotImplementedException.hpp"
 
@@ -27,10 +29,9 @@ class ToPushModellVisitor :
     public ::SeRoNet::CommunicationObjects::Description::IVisitorDescription {
  public:
 
-  ToPushModellVisitor(UA_Server *pServer, const OPEN_65241_CPP_NAMESPACE::UA_NodeId &parent, UA_UInt16 nsIndex)
+  ToPushModellVisitor(UA_Server *pServer, const OPEN_65241_CPP_NAMESPACE::UA_NodeId &parent)
       : m_pServer(pServer),
-        m_parent(parent),
-        m_nsIndex(nsIndex) {}
+        m_parent(parent) {}
 
   /// WARNING this Methode is untested
   void visit(SeRoNet::CommunicationObjects::Description::ComplexType *complexObject) override {
@@ -42,15 +43,15 @@ class ToPushModellVisitor :
         m_pServer,
         *ownNodeId.NodeId,
         *m_parent.NodeId,
-        UA_NODEID_NUMERIC(ns0, UA_NS0ID_ORGANIZES),
-        UA_QUALIFIEDNAME_ALLOC(m_nsIndex, complexObject->getName().c_str()),
-        UA_NODEID_NUMERIC(ns0, UA_NS0ID_BASEOBJECTTYPE),
+        UA_NODEID_NUMERIC(SeRoNet::OPCUA::Server::OpcUaServer::instance().getNsIndex0(), UA_NS0ID_ORGANIZES),
+        UA_QUALIFIEDNAME_ALLOC(SeRoNet::OPCUA::Server::OpcUaServer::instance().getNsIndex1(),
+                               complexObject->getName().c_str()),
+        UA_NODEID_NUMERIC(SeRoNet::OPCUA::Server::OpcUaServer::instance().getNsIndex0(), UA_NS0ID_BASEOBJECTTYPE),
         attr, nullptr, nullptr);
 
     if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
 
-
-    ToPushModellVisitor visitor(m_pServer, ownNodeId, m_nsIndex);
+    ToPushModellVisitor visitor(m_pServer, ownNodeId);
     for (auto &el: *complexObject) {
       el->accept(&visitor);
     }
@@ -74,9 +75,12 @@ class ToPushModellVisitor :
     retVal = UA_Server_addVariableNode(m_pServer,
                                        *myNodeId.NodeId,
                                        *m_parent.NodeId,
-                                       UA_NODEID_NUMERIC(ns0, UA_NS0ID_HASCOMPONENT),
-                                       UA_QUALIFIEDNAME_ALLOC(m_nsIndex, el->getName().c_str()),
-                                       UA_NODEID_NUMERIC(ns0, UA_NS0ID_BASEDATAVARIABLETYPE),
+                                       UA_NODEID_NUMERIC(SeRoNet::OPCUA::Server::OpcUaServer::instance().getNsIndex0(),
+                                                         UA_NS0ID_HASCOMPONENT),
+                                       UA_QUALIFIEDNAME_ALLOC(SeRoNet::OPCUA::Server::OpcUaServer::instance().getNsIndex1(),
+                                                              el->getName().c_str()),
+                                       UA_NODEID_NUMERIC(SeRoNet::OPCUA::Server::OpcUaServer::instance().getNsIndex0(),
+                                                         UA_NS0ID_BASEDATAVARIABLETYPE),
                                        attr,
                                        nullptr, nullptr);
     if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
@@ -86,7 +90,7 @@ class ToPushModellVisitor :
     createPrimitive(el, UA_TYPES_BOOLEAN);
   }
 
-  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<int32_t> *el) override {
+  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<std::int32_t> *el) override {
     createPrimitive(el, UA_TYPES_INT32);
   }
 
@@ -122,12 +126,11 @@ class ToPushModellVisitor :
     }
 
     ss << description->getName();
-    open62541::UA_NodeId ownNodeId = open62541::UA_NodeId(1, ss.str()); // FIXME use generic Namespace
+    open62541::UA_NodeId
+        ownNodeId = open62541::UA_NodeId(SeRoNet::OPCUA::Server::OpcUaServer::instance().getNsIndex1(), ss.str());
     return ownNodeId;
   }
 
-  const UA_UInt16 ns0 = 0;
-  const UA_UInt16 m_nsIndex;
   UA_Server *m_pServer;
   OPEN_65241_CPP_NAMESPACE::UA_NodeId m_parent;
 };
@@ -136,12 +139,11 @@ namespace SeRoNet {
 namespace OPCUA {
 namespace Server {
 
-CommObjectToPushModell::CommObjectToPushModell(
+CommObjectToPushModel::CommObjectToPushModel(
     CommunicationObjects::Description::IVisitableDescription *description,
     UA_Server *pServer,
-    const OPEN_65241_CPP_NAMESPACE::UA_NodeId &parent,
-    UA_UInt16 nsIndex) : m_pServer(pServer), m_nsIndex(nsIndex) {
-  ToPushModellVisitor visitor(pServer, parent, nsIndex);
+    const OPEN_65241_CPP_NAMESPACE::UA_NodeId &parent) : m_pServer(pServer) {
+  ToPushModellVisitor visitor(pServer, parent);
   description->accept(&visitor);
 }
 

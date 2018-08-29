@@ -15,29 +15,27 @@
 //#include <open62541.h>
 #include <Open62541Cpp/UA_Variant.hpp>
 #include <iostream>
+#include <cstdint>
 
 #include "PushServerUpdater.hpp"
 
 #include "../../Exceptions/NotImplementedException.hpp"
 #include "../../CommunicationObjects/Description/ComplexType.hpp"
-#include "../../CommunicationObjects/Description/ElementPrimitive.hpp"
-//#include "../../CommunicationObjects/Description/IVisitableDescription.hpp"
-//#include "../../Exceptions/NotImplementedException.hpp"
+#include "../../CommunicationObjects/Description/ElementPrimitives.hpp"
+#include "OpcuaServer.hpp"
 
 /// Internal Class
 class UpdateOpcuaServerVisitor :
     public ::SeRoNet::CommunicationObjects::Description::IVisitorDescription {
  public:
 
-  UpdateOpcuaServerVisitor(UA_Server *pServer, const OPEN_65241_CPP_NAMESPACE::UA_NodeId &parent, UA_UInt16 nsIndex)
-      : m_pServer(pServer),
-        m_parent(parent),
-        m_nsIndex(nsIndex) {}
+  explicit UpdateOpcuaServerVisitor(const OPEN_65241_CPP_NAMESPACE::UA_NodeId &parent)
+      : m_parent(parent) {}
 
   void visit(SeRoNet::CommunicationObjects::Description::ComplexType *complexObject) override {
     open62541::UA_NodeId ownNodeId = generateNodeId(complexObject);
 
-    UpdateOpcuaServerVisitor visitor(m_pServer, ownNodeId, m_nsIndex);
+    UpdateOpcuaServerVisitor visitor(ownNodeId);
     for (auto &el: *complexObject) {
       el->accept(&visitor);
     }
@@ -53,11 +51,13 @@ class UpdateOpcuaServerVisitor :
     retVal = UA_Variant_setScalarCopy(myVariant.Variant, &value, &UA_TYPES[UA_TYPES_BOOLEAN]);
     if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
 
-    retVal = UA_Server_writeValue(m_pServer, *myNodeId.NodeId, *myVariant.Variant);
+    retVal = UA_Server_writeValue(SeRoNet::OPCUA::Server::OpcUaServer::instance().getServer(),
+                                  *myNodeId.NodeId,
+                                  *myVariant.Variant);
     if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
   }
 
-  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<int32_t> *el) override {
+  void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<std::int32_t> *el) override {
     UA_StatusCode retVal;
 
     auto myNodeId = generateNodeId(el);
@@ -67,7 +67,9 @@ class UpdateOpcuaServerVisitor :
     retVal = UA_Variant_setScalarCopy(myVariant.Variant, &value, &UA_TYPES[UA_TYPES_INT32]);
     if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
 
-    retVal = UA_Server_writeValue(m_pServer, *myNodeId.NodeId, *myVariant.Variant);
+    retVal = UA_Server_writeValue(SeRoNet::OPCUA::Server::OpcUaServer::instance().getServer(),
+                                  *myNodeId.NodeId,
+                                  *myVariant.Variant);
     if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
   }
 
@@ -81,7 +83,9 @@ class UpdateOpcuaServerVisitor :
     retVal = UA_Variant_setScalarCopy(myVariant.Variant, &value, &UA_TYPES[UA_TYPES_FLOAT]);
     if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
 
-    retVal = UA_Server_writeValue(m_pServer, *myNodeId.NodeId, *myVariant.Variant);
+    retVal = UA_Server_writeValue(SeRoNet::OPCUA::Server::OpcUaServer::instance().getServer(),
+                                  *myNodeId.NodeId,
+                                  *myVariant.Variant);
     if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
   }
 
@@ -95,7 +99,9 @@ class UpdateOpcuaServerVisitor :
     retVal = UA_Variant_setScalarCopy(myVariant.Variant, &value, &UA_TYPES[UA_TYPES_DOUBLE]);
     if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
 
-    retVal = UA_Server_writeValue(m_pServer, *myNodeId.NodeId, *myVariant.Variant);
+    retVal = UA_Server_writeValue(SeRoNet::OPCUA::Server::OpcUaServer::instance().getServer(),
+                                  *myNodeId.NodeId,
+                                  *myVariant.Variant);
     if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
   }
 
@@ -110,7 +116,9 @@ class UpdateOpcuaServerVisitor :
     retVal = UA_Variant_setScalarCopy(myVariant.Variant, tmp.String, &UA_TYPES[UA_TYPES_STRING]);
     if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
 
-    retVal = UA_Server_writeValue(m_pServer, *myNodeId.NodeId, *myVariant.Variant);
+    retVal = UA_Server_writeValue(SeRoNet::OPCUA::Server::OpcUaServer::instance().getServer(),
+                                  *myNodeId.NodeId,
+                                  *myVariant.Variant);
     if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
   }
 
@@ -133,13 +141,11 @@ class UpdateOpcuaServerVisitor :
     }
 
     ss << description->getName();
-    open62541::UA_NodeId ownNodeId = open62541::UA_NodeId(1, ss.str());// FIXME use generic Namespace
+    open62541::UA_NodeId
+        ownNodeId = open62541::UA_NodeId(SeRoNet::OPCUA::Server::OpcUaServer::instance().getNsIndex1(), ss.str());
     return ownNodeId;
   }
 
-  const UA_UInt16 ns0 = 0;
-  const UA_UInt16 m_nsIndex;
-  UA_Server *m_pServer;
   OPEN_65241_CPP_NAMESPACE::UA_NodeId m_parent;
 };
 
@@ -150,10 +156,8 @@ namespace Server {
 /// @TODO (Sebastian Friedl) add Status Message for Error Handling
 PushServerUpdater::PushServerUpdater(
     CommunicationObjects::Description::IVisitableDescription *description,
-    UA_Server *pServer,
-    const OPEN_65241_CPP_NAMESPACE::UA_NodeId &parent,
-    UA_UInt16 nsIndex) : m_pServer(pServer), m_nsIndex(nsIndex) {
-  UpdateOpcuaServerVisitor visitor(pServer, parent, nsIndex);
+    const OPEN_65241_CPP_NAMESPACE::UA_NodeId &parent) {
+  UpdateOpcuaServerVisitor visitor(parent);
   description->accept(&visitor);
 }
 

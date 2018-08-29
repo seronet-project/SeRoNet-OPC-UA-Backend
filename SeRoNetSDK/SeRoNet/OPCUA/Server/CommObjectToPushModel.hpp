@@ -15,16 +15,14 @@ namespace OPCUA {
 namespace Server {
 
 ///\todo define base class for conversion <TARGET_TYPE, INPUT_TYPES ...> (Allow multi argument input)
-class CommObjectToPushModell {
+class CommObjectToPushModel {
  public:
-  CommObjectToPushModell(CommunicationObjects::Description::IVisitableDescription *description,
-                         UA_Server *pServer,
-                         const OPEN_65241_CPP_NAMESPACE::UA_NodeId &parent,
-                         UA_UInt16 nsIndex);
-  virtual ~CommObjectToPushModell() = default;
+  CommObjectToPushModel(CommunicationObjects::Description::IVisitableDescription *description,
+                        UA_Server *pServer,
+                        const open62541::UA_NodeId &parent);
+  virtual ~CommObjectToPushModel() = default;
 
  private:
-  UA_UInt16 m_nsIndex;
   UA_Server *m_pServer;
 };
 

@@ -18,14 +18,8 @@ namespace Server {
 class PushServerUpdater {
  public:
   PushServerUpdater(CommunicationObjects::Description::IVisitableDescription *description,
-                    UA_Server *pServer,
-                    const OPEN_65241_CPP_NAMESPACE::UA_NodeId &parent,
-                    UA_UInt16 nsIndex);
+                    const OPEN_65241_CPP_NAMESPACE::UA_NodeId &parent);
   virtual ~PushServerUpdater() = default;
-
- private:
-  UA_UInt16 m_nsIndex;
-  UA_Server *m_pServer;
 };
 
 } //  namespace Server
