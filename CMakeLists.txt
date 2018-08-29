@@ -86,7 +86,7 @@ set(PRJ_FILES
 
         SeRoNetSDK/SeRoNet/OPCUA/Converter/CommObjArrayToTypeIndex.cpp
         SeRoNetSDK/SeRoNet/OPCUA/Converter/CommObjArrayToValue.cpp
-        SeRoNetSDK/SeRoNet/OPCUA/Converter/VariantToCommObjArray.cpp
+        SeRoNetSDK/SeRoNet/OPCUA/Converter/UaVariantToCommObjArray.cpp
         )
 
 
