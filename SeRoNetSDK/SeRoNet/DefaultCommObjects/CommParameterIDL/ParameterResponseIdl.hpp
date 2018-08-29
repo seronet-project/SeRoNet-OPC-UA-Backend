@@ -8,17 +8,16 @@
 #include "../EnumParamResponseType.hpp"
 
 namespace SeRoNet {
-namespace CommunicationObjects {
-namespace DefaultObjects {
+namespace DefaultCommObjects {
 namespace CommParameterIDL {
 
+
 struct CommParameterResponse {
-  ENUM_ParamResponseType response;
+  SeRoNet::DefaultCommObjects::ENUM_ParamResponseType response;
 };
 
 } // end namespace CommParameterIDL
-} // end namespace DefaultObjects
-} // end namespace CommunicationObjects
+} // end namespace DefaultCommObjects
 } // end namespace SeRoNet
 
 #endif //SERONETSDK_PARAMETERRESPONSEIDL_H

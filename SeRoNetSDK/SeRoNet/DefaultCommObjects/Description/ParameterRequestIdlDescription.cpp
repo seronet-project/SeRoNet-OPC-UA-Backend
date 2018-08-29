@@ -2,19 +2,15 @@
 // Created by ac120371 on 14.08.2018.
 //
 
-#include "../ComplexType.hpp"
-#include "../ElementArray.hpp"
-#include "../ElementPrimitives.hpp"
-#include "../SelfDescriptionArray.hpp"
+#include "../../CommunicationObjects/Description/ComplexType.hpp"
+#include "../../CommunicationObjects/Description/ElementArray.hpp"
+#include "../../CommunicationObjects/Description/ElementPrimitives.hpp"
+#include "../../CommunicationObjects/Description/SelfDescriptionArray.hpp"
 #include "ParameterRequestIdlDescription.hpp"
 
-namespace SeRoNet {
-namespace CommunicationObjects {
-namespace Description {
-
 template<>
-IDescription::shp_t SelfDescription(
-    SeRoNet::CommunicationObjects::DefaultObjects::CommParameterIDL::NameValue *obj,
+SeRoNet::CommunicationObjects::Description::IDescription::shp_t SeRoNet::CommunicationObjects::Description::SelfDescription(
+    SeRoNet::DefaultCommObjects::CommParameterIDL::NameValue *obj,
     std::string name) {
 
   SeRoNet::CommunicationObjects::Description::ComplexType::shp_t ret(
@@ -26,8 +22,8 @@ IDescription::shp_t SelfDescription(
       SeRoNet::CommunicationObjects::Description::IDescription::shp_t(
           new SeRoNet::CommunicationObjects::Description::ElementPrimitive<std::string>(
               "key",
-              std::bind(&SeRoNet::CommunicationObjects::DefaultObjects::CommParameterIDL::NameValue::getKey, obj),
-              std::bind(&SeRoNet::CommunicationObjects::DefaultObjects::CommParameterIDL::NameValue::setKey,
+              std::bind(&SeRoNet::DefaultCommObjects::CommParameterIDL::NameValue::getKey, obj),
+              std::bind(&SeRoNet::DefaultCommObjects::CommParameterIDL::NameValue::setKey,
                         obj,
                         std::placeholders::_1)
           )
@@ -36,8 +32,8 @@ IDescription::shp_t SelfDescription(
       SeRoNet::CommunicationObjects::Description::IDescription::shp_t(
           new SeRoNet::CommunicationObjects::Description::ArrayOf<std::string>(
               "value",
-              std::bind(&SeRoNet::CommunicationObjects::DefaultObjects::CommParameterIDL::NameValue::getValues, obj),
-              std::bind(&SeRoNet::CommunicationObjects::DefaultObjects::CommParameterIDL::NameValue::setValues,
+              std::bind(&SeRoNet::DefaultCommObjects::CommParameterIDL::NameValue::getValues, obj),
+              std::bind(&SeRoNet::DefaultCommObjects::CommParameterIDL::NameValue::setValues,
                         obj,
                         std::placeholders::_1)
           )
@@ -47,10 +43,11 @@ IDescription::shp_t SelfDescription(
   return ret;
 }
 
+
 template<>
-IDescription::shp_t SelfDescription<
-    SeRoNet::CommunicationObjects::DefaultObjects::CommParameterIDL::CommParameterRequest>(
-    SeRoNet::CommunicationObjects::DefaultObjects::CommParameterIDL::CommParameterRequest *obj,
+SeRoNet::CommunicationObjects::Description::IDescription::shp_t SeRoNet::CommunicationObjects::Description::SelfDescription<
+    SeRoNet::DefaultCommObjects::CommParameterIDL::CommParameterRequest>(
+    SeRoNet::DefaultCommObjects::CommParameterIDL::CommParameterRequest *obj,
     std::string name) {
 
   SeRoNet::CommunicationObjects::Description::ComplexType::shp_t ret(
@@ -64,6 +61,3 @@ IDescription::shp_t SelfDescription<
   return ret;
 }
 
-}
-}
-}

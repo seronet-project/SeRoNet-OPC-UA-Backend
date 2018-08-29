@@ -13,9 +13,9 @@
 #include <SeRoNet/OPCUA/Client/Converter/CommObjectToUaVariantArray.hpp>
 #include <SeRoNet/OPCUA/Client/Converter/UaVariantArrayToCommObject.hpp>
 
-#include <SeRoNet/CommunicationObjects/DefaultObjects/ParameterRequest.hpp>
-#include <SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterRequestDescription.hpp>
-#include <SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterRequestIdlDescription.hpp>
+#include <SeRoNet/DefaultCommObjects/ParameterRequest.hpp>
+#include <SeRoNet/DefaultCommObjects/Description/ParameterRequestDescription.hpp>
+#include <SeRoNet/DefaultCommObjects/Description/ParameterRequestIdlDescription.hpp>
 
 #include <SeRoNet/State/CommObjs.hpp>
 #include <SeRoNet/State/CommObjsSelfDescription.hpp>
@@ -57,7 +57,7 @@ TEST(Converter, VariantToObjArray) {
 }
 
 TEST(Converter, ParameterRequest) {
-  SeRoNet::CommunicationObjects::DefaultObjects::CommParameterRequest inputVal;
+  SeRoNet::DefaultCommObjects::CommParameterRequest inputVal;
   inputVal.setString("abc", "value");
 
   auto pSelfDescInput = SeRoNet::CommunicationObjects::Description::SelfDescription(&inputVal, "");
@@ -73,7 +73,7 @@ TEST(Converter, ParameterRequest) {
 }
 
 TEST(Converter, Parameter_NameValue) {
-  SeRoNet::CommunicationObjects::DefaultObjects::CommParameterIDL::NameValue inputVal;
+  SeRoNet::DefaultCommObjects::CommParameterIDL::NameValue inputVal;
   inputVal.key = "abc";
   inputVal.values = {"a1", "b2", "c3"};
 
@@ -90,7 +90,7 @@ TEST(Converter, Parameter_NameValue) {
 }
 
 TEST(Converter, Parameter_CommParameterRequest) {
-  SeRoNet::CommunicationObjects::DefaultObjects::CommParameterIDL::CommParameterRequest inputVal;
+  SeRoNet::DefaultCommObjects::CommParameterIDL::CommParameterRequest inputVal;
   inputVal.items = {
       {"abc", {"a1", "b2", "c3"}}/*,
       {"abcd", {"a11", "b22", "c33"}}*/

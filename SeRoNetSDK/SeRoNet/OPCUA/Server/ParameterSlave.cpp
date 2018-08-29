@@ -4,25 +4,25 @@
 
 #include "ParameterSlave.hpp"
 #include "QueryServer.hpp"
-#include "../../CommunicationObjects/Description/DefaultObjects/ParameterRequestDescription.hpp"
-#include "../../CommunicationObjects/Description/DefaultObjects/ParameterResponseDescription.hpp"
+#include "../../DefaultCommObjects/Description/ParameterRequestDescription.hpp"
+#include "../../DefaultCommObjects/Description/ParameterResponseDescription.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
 namespace Server {
 
-ParameterSlave::ParameterQueryHandler::ParameterQueryHandler(QueryServer<SeRoNet::CommunicationObjects::DefaultObjects::CommParameterRequest,
-                                                                         SeRoNet::CommunicationObjects::DefaultObjects::CommParameterResponse> *server,
+ParameterSlave::ParameterQueryHandler::ParameterQueryHandler(QueryServer<DefaultCommObjects::CommParameterRequest,
+                                                                         DefaultCommObjects::CommParameterResponse> *server,
                                                              ParameterUpdateHandler *param_handler) noexcept
     : param_handler(param_handler),
-      QueryServerHandler<CommunicationObjects::DefaultObjects::CommParameterRequest,
-                         CommunicationObjects::DefaultObjects::CommParameterResponse>(server) {
+      QueryServerHandler<DefaultCommObjects::CommParameterRequest,
+                         DefaultCommObjects::CommParameterResponse>(server) {
 
 }
 void ParameterSlave::ParameterQueryHandler::handleQuery(const int &id,
-                                                        const SeRoNet::CommunicationObjects::DefaultObjects::CommParameterRequest &request) noexcept {
+                                                        const DefaultCommObjects::CommParameterRequest &request) noexcept {
 
-  SeRoNet::CommunicationObjects::DefaultObjects::CommParameterResponse answer;
+  SeRoNet::DefaultCommObjects::CommParameterResponse answer;
 
   answer = param_handler->handleParameter(request);
 

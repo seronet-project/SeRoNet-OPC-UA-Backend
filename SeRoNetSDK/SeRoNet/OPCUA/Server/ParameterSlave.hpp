@@ -28,10 +28,10 @@
 
 #include <mutex>
 #include "../../Utils/Component.hpp"
-#include "../../CommunicationObjects/DefaultObjects/ParameterRequest.hpp"
-#include "../../CommunicationObjects/DefaultObjects/ParameterResponse.hpp"
-#include "../../CommunicationObjects/Description/DefaultObjects/ParameterRequestDescription.hpp"
-#include "../../CommunicationObjects/Description/DefaultObjects/ParameterResponseDescription.hpp"
+#include "../../DefaultCommObjects/ParameterRequest.hpp"
+#include "../../DefaultCommObjects/ParameterResponse.hpp"
+#include "../../DefaultCommObjects/Description/ParameterRequestDescription.hpp"
+#include "../../DefaultCommObjects/Description/ParameterResponseDescription.hpp"
 
 #include "QueryServerHandler.hpp"
 #include "ParameterUpdateHandler.hpp"
@@ -50,8 +50,8 @@ class ParameterSlave {
   Smart::IComponent *component;
 
   class ParameterQueryHandler
-      : public QueryServerHandler<SeRoNet::CommunicationObjects::DefaultObjects::CommParameterRequest,
-                                  SeRoNet::CommunicationObjects::DefaultObjects::CommParameterResponse> {
+      : public QueryServerHandler<SeRoNet::DefaultCommObjects::CommParameterRequest,
+                                  SeRoNet::DefaultCommObjects::CommParameterResponse> {
    private:
     /// used to access the ParameterSlave from the handler
     ParameterUpdateHandler *param_handler;
@@ -62,8 +62,8 @@ class ParameterSlave {
      * @param slave  <I>ParameterSlave</I> needed to access it from the handler
      */
     ParameterQueryHandler(
-        QueryServer<SeRoNet::CommunicationObjects::DefaultObjects::CommParameterRequest,
-                    SeRoNet::CommunicationObjects::DefaultObjects::CommParameterResponse> *server,
+        QueryServer<SeRoNet::DefaultCommObjects::CommParameterRequest,
+                    SeRoNet::DefaultCommObjects::CommParameterResponse> *server,
         ParameterUpdateHandler *param_handler) noexcept;
 
     /// Destructor
@@ -71,19 +71,19 @@ class ParameterSlave {
 
     /// handle query method of query handler class
     void handleQuery(const int &id,
-                     const SeRoNet::CommunicationObjects::DefaultObjects::CommParameterRequest &request) noexcept final;
+                     const SeRoNet::DefaultCommObjects::CommParameterRequest &request) noexcept final;
   }; // end class ParameterQueryHandler
 
   /// query server part
-  QueryServer<SeRoNet::CommunicationObjects::DefaultObjects::CommParameterRequest,
-              SeRoNet::CommunicationObjects::DefaultObjects::CommParameterResponse> query_server;
+  QueryServer<SeRoNet::DefaultCommObjects::CommParameterRequest,
+              SeRoNet::DefaultCommObjects::CommParameterResponse> query_server;
 
   ///
   ParameterQueryHandler query_handler;
 
   /// Decorator for ParameterHandler
-  SeRoNet::Utils::HsUlm::ThreadQueueQueryHandler<SeRoNet::CommunicationObjects::DefaultObjects::CommParameterRequest,
-                                                 SeRoNet::CommunicationObjects::DefaultObjects::CommParameterResponse>
+  SeRoNet::Utils::HsUlm::ThreadQueueQueryHandler<SeRoNet::DefaultCommObjects::CommParameterRequest,
+                                                 SeRoNet::DefaultCommObjects::CommParameterResponse>
       thread_handler;
 
  public:

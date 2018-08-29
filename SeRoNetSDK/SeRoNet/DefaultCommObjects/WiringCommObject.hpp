@@ -8,8 +8,7 @@
 #include <string>
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartStatusCode.h"
 namespace SeRoNet {
-namespace CommunicationObjects {
-namespace DefaultObjects {
+namespace DefaultCommObjects {
 
 class WiringCommObject {
 
@@ -81,8 +80,7 @@ class WiringCommObject {
 
 };
 
-} // end namespace DefaultObjects
-} // end namespace CommunicationObjects
+} // end namespace DefaultCommObjects
 } // end namespace SeRoNet
 
 

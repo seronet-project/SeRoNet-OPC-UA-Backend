@@ -7,8 +7,8 @@
 
 template<>
 SeRoNet::CommunicationObjects::Description::IDescription::shp_t SeRoNet::CommunicationObjects::Description::SelfDescription<
-    SeRoNet::CommunicationObjects::DefaultObjects::CommParameterRequest>(
-    SeRoNet::CommunicationObjects::DefaultObjects::CommParameterRequest *obj,
+    SeRoNet::DefaultCommObjects::CommParameterRequest>(
+    SeRoNet::DefaultCommObjects::CommParameterRequest *obj,
     std::string name) {
 
   SeRoNet::CommunicationObjects::Description::ComplexType::shp_t ret(

@@ -7,7 +7,7 @@
 
 #include <functional>
 #include <map>
-#include "../../CommunicationObjects/DefaultObjects/WiringCommObject.hpp"
+#include "../../DefaultCommObjects/WiringCommObject.hpp"
 #include "QueryServerHandler.hpp"
 #include "../../Utils/HsUlm/smartProcessingPattern.hpp"
 
@@ -24,8 +24,8 @@ class WiringSlave;
    *  The wiring handler is called by the internally used query pattern
    *  and connects / disconnects a port with a server.
    */
-class WiringQueryHandler : public QueryServerHandler<CommunicationObjects::DefaultObjects::WiringCommObject,
-                                                     CommunicationObjects::DefaultObjects::WiringCommObject> {
+class WiringQueryHandler : public QueryServerHandler<DefaultCommObjects::WiringCommObject,
+                                                     DefaultCommObjects::WiringCommObject> {
  private:
   /// used to access the WiringSlave from the handler
   WiringSlave *wiringSlave = nullptr;
@@ -45,7 +45,7 @@ class WiringQueryHandler : public QueryServerHandler<CommunicationObjects::Defau
 
   /// handle query method of query handler class
   void handleQuery(const int &id,
-                   const CommunicationObjects::DefaultObjects::WiringCommObject &request) override; //TODO @xfl int durch QueryID ersetztn
+                   const DefaultCommObjects::WiringCommObject &request) override; //TODO @xfl int durch QueryID ersetztn
 };
 
 
@@ -95,13 +95,13 @@ class WiringSlave {
   WiringQueryHandler *handler{};
 
   /// Decorator for WiringHandler
-  SeRoNet::Utils::HsUlm::ThreadQueueQueryHandler<CommunicationObjects::DefaultObjects::WiringCommObject,
-                                                 CommunicationObjects::DefaultObjects::WiringCommObject> *threadHandler
+  SeRoNet::Utils::HsUlm::ThreadQueueQueryHandler<DefaultCommObjects::WiringCommObject,
+                                                 DefaultCommObjects::WiringCommObject> *threadHandler
       {};
 
   /// query server part
-  QueryServer<CommunicationObjects::DefaultObjects::WiringCommObject,
-              CommunicationObjects::DefaultObjects::WiringCommObject> *wiring{};
+  QueryServer<DefaultCommObjects::WiringCommObject,
+              DefaultCommObjects::WiringCommObject> *wiring{};
 
  public:
   ///
@@ -121,7 +121,7 @@ class WiringSlave {
   /**
    *
    */
-  CommunicationObjects::DefaultObjects::WiringCommObject handleWiring(const CommunicationObjects::DefaultObjects::WiringCommObject &request);
+  DefaultCommObjects::WiringCommObject handleWiring(const DefaultCommObjects::WiringCommObject &request);
 
   /** @internal Add client to the set of ports.
    *

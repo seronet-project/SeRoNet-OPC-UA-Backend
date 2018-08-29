@@ -4,8 +4,8 @@
 
 #include "ParameterMaster.hpp"
 
-#include "../../CommunicationObjects/Description/DefaultObjects/ParameterRequestDescription.hpp"
-#include "../../CommunicationObjects/Description/DefaultObjects/ParameterResponseDescription.hpp"
+#include "../../DefaultCommObjects/Description/ParameterRequestDescription.hpp"
+#include "../../DefaultCommObjects/Description/ParameterResponseDescription.hpp"
 
 const std::string SMART_NONS = "NoNamingService"; //FIXME check why this const is needed
 
@@ -16,8 +16,8 @@ SeRoNet::OPCUA::Client::ParameterMaster::ParameterMaster(Smart::IComponent *comp
   _use_ns = component->getName().compare(SMART_NONS) == 0 ? false : true;
 }
 
-Smart::StatusCode SeRoNet::OPCUA::Client::ParameterMaster::sendParameterWait(const SeRoNet::CommunicationObjects::DefaultObjects::CommParameterRequest &request,
-                                                                             SeRoNet::CommunicationObjects::DefaultObjects::CommParameterResponse &response,
+Smart::StatusCode SeRoNet::OPCUA::Client::ParameterMaster::sendParameterWait(const SeRoNet::DefaultCommObjects::CommParameterRequest &request,
+                                                                             SeRoNet::DefaultCommObjects::CommParameterResponse &response,
                                                                              const std::string &comp_name,
                                                                              const std::string &service_name) {
   std::unique_lock<decltype(mutex)> lock(mutex);

@@ -13,14 +13,13 @@
 #include "CommParameterIDL/ParameterRequestIdl.hpp"
 
 //SeRoNet class
-#include "../ICommunicationObject.hpp"
+#include "../CommunicationObjects/ICommunicationObject.hpp"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartICommunicationObject.h"
 
 namespace SeRoNet {
-namespace CommunicationObjects {
-namespace DefaultObjects {
+namespace DefaultCommObjects {
 
-class CommParameterRequest : public ICommunicationObject, public Smart::ICommunicationObject {
+class CommParameterRequest : public CommunicationObjects::ICommunicationObject, public Smart::ICommunicationObject {
  public:
   CommParameterIDL::CommParameterRequest data;
 
@@ -44,7 +43,7 @@ class CommParameterRequest : public ICommunicationObject, public Smart::ICommuni
   // add your customized interface here
   //
   int remove(const std::string &key);
-  Description::ComplexType::shp_t getObjectDescription(std::string name) override;
+  SeRoNet::CommunicationObjects::Description::ComplexType::shp_t getObjectDescription(std::string name) override;
 
   // getTag returns the string value for the top level tag
   std::string getTag() const;
@@ -270,6 +269,5 @@ inline int CommParameterRequest::getList<std::string>(const std::string &key, st
   return -1;
 }
 
-} // end namespace DefaultObject
-} // end namespace CommunicationObjects
+} // end namespace DefaultCommObjects
 } // end namespace SeRoNet

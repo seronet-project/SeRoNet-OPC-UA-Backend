@@ -3,15 +3,13 @@
 //
 #include "ParameterResponseDescription.hpp"
 #include "ParameterResponseIdlDescription.hpp"
-#include "../ComplexType.hpp"
+#include "../../CommunicationObjects/Description/ComplexType.hpp"
 
-namespace SeRoNet {
-namespace CommunicationObjects {
-namespace Description {
+
 
 template<>
-CommunicationObjects::Description::IDescription::shp_t SelfDescription(
-        CommunicationObjects::DefaultObjects::CommParameterResponse *obj,
+SeRoNet::CommunicationObjects::Description::IDescription::shp_t SeRoNet::CommunicationObjects::Description::SelfDescription(
+        SeRoNet::DefaultCommObjects::CommParameterResponse *obj,
         std::string name
     ) {
 
@@ -27,6 +25,3 @@ CommunicationObjects::Description::IDescription::shp_t SelfDescription(
   return ret;
 }
 
-}
-}
-}

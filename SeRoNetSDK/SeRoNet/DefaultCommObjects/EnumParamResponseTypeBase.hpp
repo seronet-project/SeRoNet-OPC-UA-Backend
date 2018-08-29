@@ -6,8 +6,7 @@
 #define SERONETSDK_ENUMPARAMRESPONSETYPEBASE_H
 
 namespace SeRoNet {
-namespace CommunicationObjects {
-namespace DefaultObjects {
+namespace DefaultCommObjects {
 
 enum ENUM_INTERNAL_ParamResponseType {
   LITERAL_BUSY,
@@ -16,8 +15,7 @@ enum ENUM_INTERNAL_ParamResponseType {
 };
 typedef int ENUM_ParamResponseType;
 
-} // end namespace DefaultObjects
-} // end namespace CommunicationObjects
+} // end namespace DefaultCommObjects
 } // end namespace SeRoNet
 
 #endif //SERONETSDK_ENUMPARAMRESPONSETYPEBASE_H

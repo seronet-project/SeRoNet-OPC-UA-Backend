@@ -12,14 +12,13 @@
 
 // include enums
 #include "EnumParamResponseType.hpp"
-#include "../ICommunicationObject.hpp"
+#include "../CommunicationObjects/ICommunicationObject.hpp"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartICommunicationObject.h"
 
 namespace SeRoNet {
-namespace CommunicationObjects {
-namespace DefaultObjects {
+namespace DefaultCommObjects {
 
-class CommParameterResponse : public ICommunicationObject, Smart::ICommunicationObject {
+class CommParameterResponse : public SeRoNet::CommunicationObjects::ICommunicationObject, Smart::ICommunicationObject {
  public:
   CommParameterIDL::CommParameterResponse data;
  private:
@@ -31,7 +30,7 @@ class CommParameterResponse : public ICommunicationObject, Smart::ICommunication
       data(obj) {
   }
 
-  Description::ComplexType::shp_t getObjectDescription(std::string name) override;
+  SeRoNet::CommunicationObjects::Description::ComplexType::shp_t getObjectDescription(std::string name) override;
 
   virtual ~CommParameterResponse() = default;
 
@@ -63,8 +62,7 @@ inline std::ostream &operator<<(std::ostream &os, const CommParameterResponse &c
   return os;
 }
 
-} // end namespace DefaultObjects
-} // end namespace CommunicationObjects
+} // end namespace DefaultCommObjects
 } // end namespace SeRoNet
 
 #endif //SERONETSDK_PARAMETERRESPONSE_H

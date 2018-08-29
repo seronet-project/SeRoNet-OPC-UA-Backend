@@ -10,8 +10,7 @@
 #include <ostream>
 
 namespace SeRoNet {
-namespace CommunicationObjects {
-namespace DefaultObjects {
+namespace DefaultCommObjects {
 
 class ParamResponseType {
  public:
@@ -69,8 +68,7 @@ inline std::ostream &operator<<(std::ostream &os, const ParamResponseType &e) {
   return os;
 }
 
-} // end namespace DefaultObjects
-} // end namespace CommunicationObjects
+} // end namespace DefaultCommObjects
 } // end namespace SeRoNet
 
 #endif //SERONETSDK_ENUMPARAMRESPONSETYPE_H

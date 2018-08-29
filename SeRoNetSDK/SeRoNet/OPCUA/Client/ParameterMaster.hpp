@@ -7,11 +7,11 @@
 
 #include <mutex>
 #include "../../Utils/Component.hpp"
-#include "../../CommunicationObjects/DefaultObjects/ParameterRequest.hpp"
-#include "../../CommunicationObjects/DefaultObjects/ParameterResponse.hpp"
+#include "../../DefaultCommObjects/ParameterRequest.hpp"
+#include "../../DefaultCommObjects/ParameterResponse.hpp"
 
-#include "../../CommunicationObjects/Description/DefaultObjects/ParameterRequestDescription.hpp"
-#include "../../CommunicationObjects/Description/DefaultObjects/ParameterResponseDescription.hpp"
+#include "../../DefaultCommObjects/Description/ParameterRequestDescription.hpp"
+#include "../../DefaultCommObjects/Description/ParameterResponseDescription.hpp"
 
 #include "QueryClient.hpp"
 
@@ -40,8 +40,8 @@ class ParameterMaster {
   /// management class of the component
   Smart::IComponent *component;
 
-  SeRoNet::OPCUA::Client::QueryClient<SeRoNet::CommunicationObjects::DefaultObjects::CommParameterRequest,
-                                      SeRoNet::CommunicationObjects::DefaultObjects::CommParameterResponse>
+  SeRoNet::OPCUA::Client::QueryClient<SeRoNet::DefaultCommObjects::CommParameterRequest,
+                                      SeRoNet::DefaultCommObjects::CommParameterResponse>
       query_client;
 
   /// internal state variable detecting disabled NamingService
@@ -101,8 +101,8 @@ class ParameterMaster {
    *    - SMART_ERROR               : something went completely wrong, see <I>SMART_ERROR_COMMUNICATION</I>
    */
   Smart::StatusCode sendParameterWait(
-      const SeRoNet::CommunicationObjects::DefaultObjects::CommParameterRequest &request,
-      SeRoNet::CommunicationObjects::DefaultObjects::CommParameterResponse &response,
+      const SeRoNet::DefaultCommObjects::CommParameterRequest &request,
+      SeRoNet::DefaultCommObjects::CommParameterResponse &response,
       const std::string &comp_name, const std::string &service_name = "param");
 
 };

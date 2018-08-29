@@ -5,16 +5,17 @@
 #include "ParameterResponse.hpp"
 
 namespace SeRoNet {
-namespace CommunicationObjects {
-namespace DefaultObjects {
+namespace DefaultCommObjects {
 
-Description::ComplexType::shp_t CommParameterResponse::getObjectDescription(std::string name) {
+CommunicationObjects::Description::ComplexType::shp_t CommParameterResponse::getObjectDescription(std::string name) {
   return
       SeRoNet::CommunicationObjects::Description::ComplexType::shp_t();
 }
+
 std::string CommParameterResponse::getName() const {
   return CommParameterResponse::identifier();
 }
+
 void CommParameterResponse::to_ostream(std::ostream &os) const {
 
   os << "CommParameterResponse(";
@@ -23,6 +24,5 @@ void CommParameterResponse::to_ostream(std::ostream &os) const {
 
 }
 
-}
-}
-}
+} // end namespace DefaultCommObjects
+} // end namespace SeRoNet

@@ -5,8 +5,7 @@
 #include "WiringCommObject.hpp"
 
 namespace SeRoNet {
-namespace CommunicationObjects {
-namespace DefaultObjects {
+namespace DefaultCommObjects {
 
 void WiringCommObject::setCommand(const std::string commandType,
                                   const std::string slaveport,
@@ -29,6 +28,5 @@ void WiringCommObject::getCommand(std::string &commandType,
   serverservice = this->serverservice;
 }
 
-} // end namespace DefaultObjects
+} // end namespace DefaultCommObjects
 } // end namespace CommunicationObjects
-} // end namespace SeRoNet

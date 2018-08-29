@@ -3,6 +3,7 @@ project(SeRoNetSDK)
 
 set(CMAKE_CXX_STANDARD 14)
 enable_testing()
+set(ENABLE_CODECOVERAGE OFF CACHE BOOL "Enables the codecoverage")
 
 find_package(open62541 REQUIRED)
 find_package(Open62541Cpp REQUIRED)
@@ -41,16 +42,16 @@ if ( ENABLE_CODECOVERAGE )
 
 endif (ENABLE_CODECOVERAGE )
 
-
 set(PRJ_FILES
         SeRoNetSDK/SeRoNet/CommunicationObjects/Description/ComplexType.cpp
-        SeRoNetSDK/SeRoNet/CommunicationObjects/DefaultObjects/ParameterResponse.cpp
-        SeRoNetSDK/SeRoNet/CommunicationObjects/DefaultObjects/ParameterRequest.cpp
-		SeRoNetSDK/SeRoNet/CommunicationObjects/DefaultObjects/WiringCommObject.cpp
-        SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterResponseDescription.cpp
-        SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterRequestIdlDescription.cpp
-        SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterResponseIdlDescription.cpp
-		SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/WiringCommObjectDescription.cpp
+        SeRoNetSDK/SeRoNet/DefaultCommObjects/ParameterResponse.cpp
+        SeRoNetSDK/SeRoNet/DefaultCommObjects/ParameterRequest.cpp
+        SeRoNetSDK/SeRoNet/DefaultCommObjects/WiringCommObject.cpp
+        SeRoNetSDK/SeRoNet/DefaultCommObjects/Description/ParameterResponseDescription.cpp
+        SeRoNetSDK/SeRoNet/DefaultCommObjects/Description/ParameterRequestDescription.cpp
+        SeRoNetSDK/SeRoNet/DefaultCommObjects/Description/ParameterRequestIdlDescription.cpp
+        SeRoNetSDK/SeRoNet/DefaultCommObjects/Description/ParameterResponseIdlDescription.cpp
+        SeRoNetSDK/SeRoNet/DefaultCommObjects/Description/WiringCommObjectDescription.cpp
 
 		SeRoNetSDK/SeRoNet/OPCUA/Client/IBlocking.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/CommObjectToUaVariantArray.cpp

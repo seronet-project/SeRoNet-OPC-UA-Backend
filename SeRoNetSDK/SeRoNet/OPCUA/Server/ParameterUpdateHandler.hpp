@@ -5,8 +5,8 @@
 #ifndef SERONETSDK_PARAMETERUPDATEHANDLER_HPP
 #define SERONETSDK_PARAMETERUPDATEHANDLER_HPP
 
-#include "../../CommunicationObjects/DefaultObjects/ParameterResponse.hpp"
-#include "../../CommunicationObjects/DefaultObjects/ParameterRequest.hpp"
+#include "../../DefaultCommObjects/ParameterResponse.hpp"
+#include "../../DefaultCommObjects/ParameterRequest.hpp"
 
 class ParameterSlave;
 
@@ -18,7 +18,7 @@ class ParameterUpdateHandler {
  public:
   ParameterUpdateHandler() = default;
   virtual ~ParameterUpdateHandler() = default;
-  virtual SeRoNet::CommunicationObjects::DefaultObjects::CommParameterResponse handleParameter(const SeRoNet::CommunicationObjects::DefaultObjects::CommParameterRequest &request)=0;
+  virtual SeRoNet::DefaultCommObjects::CommParameterResponse handleParameter(const SeRoNet::DefaultCommObjects::CommParameterRequest &request)=0;
 };
 
 }

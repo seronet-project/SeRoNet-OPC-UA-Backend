@@ -6,8 +6,7 @@
 #include "ParameterRequest.hpp"
 
 namespace SeRoNet {
-namespace CommunicationObjects {
-namespace DefaultObjects {
+namespace DefaultCommObjects {
 
 int CommParameterRequest::getString(const std::string &key, std::string &value) const {
   return get(key, value);
@@ -39,7 +38,7 @@ void CommParameterRequest::setTag(const std::string &value) {
   setString("slot", value);
 }
 
-Description::ComplexType::shp_t CommParameterRequest::getObjectDescription(std::string name) {
+SeRoNet::CommunicationObjects::Description::ComplexType::shp_t CommParameterRequest::getObjectDescription(std::string name) {
   return SeRoNet::CommunicationObjects::Description::ComplexType::shp_t();
 }
 
@@ -65,6 +64,5 @@ void CommParameterRequest::to_ostream(std::ostream &os) const {
   os << ")";
 }
 
-} // end namespace DefaultObjects
-} // end namespace CommunicationObjects
+} // end namespace DefaultCommObjects
 } // end SeRoNet

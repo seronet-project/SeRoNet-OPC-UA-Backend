@@ -8,8 +8,7 @@
 #include <functional>
 
 namespace SeRoNet {
-namespace CommunicationObjects {
-namespace DefaultObjects {
+namespace DefaultCommObjects {
 namespace CommParameterIDL {
 
 typedef std::vector<std::string> NameValue_values_type;
@@ -42,7 +41,6 @@ struct CommParameterRequest {
   CommParameterRequest_items_type items;
 };
 
-} // end namespcae CommParameterIDL
-} // end namespace DefaultObjects
-} // end namespace CommunicationObjects
+} // end namespace CommParameterIDL
+} // end namespace DefaultCommObjects
 } // end namespace SeRoNet

@@ -3,20 +3,20 @@
 //
 
 #include "WiringSlave.hpp"
-#include "../../CommunicationObjects/Description/DefaultObjects/WiringCommObjectDescription.hpp"
+#include "../../DefaultCommObjects/Description/WiringCommObjectDescription.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
 namespace Server {
 
 WiringQueryHandler::WiringQueryHandler(WiringSlave *slave) noexcept
-    : QueryServerHandler<CommunicationObjects::DefaultObjects::WiringCommObject,
-                         CommunicationObjects::DefaultObjects::WiringCommObject>(slave->wiring),
+    : QueryServerHandler<DefaultCommObjects::WiringCommObject,
+                         DefaultCommObjects::WiringCommObject>(slave->wiring),
       wiringSlave(slave) {}
 
 void WiringQueryHandler::handleQuery(const int &id,
-                                     const CommunicationObjects::DefaultObjects::WiringCommObject &request) {
-  CommunicationObjects::DefaultObjects::WiringCommObject answer;
+                                     const DefaultCommObjects::WiringCommObject &request) {
+  DefaultCommObjects::WiringCommObject answer;
 
   answer = wiringSlave->handleWiring(request);
 
@@ -40,27 +40,27 @@ WiringSlave::WiringSlave(Smart::IComponent *component, std::string slaveaddress)
       } else {
         // Slaveaddress has to contain a propper "ip:portnr" string for WiringSlave.
         // This "ip:portnr" will be used by WiringMaster to connect to WiringSlave!
-        wiring = new QueryServer<CommunicationObjects::DefaultObjects::WiringCommObject,
-                                 CommunicationObjects::DefaultObjects::WiringCommObject>(component, slaveaddress);
+        wiring = new QueryServer<DefaultCommObjects::WiringCommObject,
+                                 DefaultCommObjects::WiringCommObject>(component, slaveaddress);
       }
     } else {
-      wiring = new QueryServer<CommunicationObjects::DefaultObjects::WiringCommObject,
-                               CommunicationObjects::DefaultObjects::WiringCommObject>(component, "wiring");
+      wiring = new QueryServer<DefaultCommObjects::WiringCommObject,
+                               DefaultCommObjects::WiringCommObject>(component, "wiring");
     }
 
     handler = new WiringQueryHandler(this);
 
     // Handling is done in separate thread, otherwise blocking of main thread occures!
     threadHandler =
-        new SeRoNet::Utils::HsUlm::ThreadQueueQueryHandler<CommunicationObjects::DefaultObjects::WiringCommObject,
-                                                           CommunicationObjects::DefaultObjects::WiringCommObject>(
+        new SeRoNet::Utils::HsUlm::ThreadQueueQueryHandler<DefaultCommObjects::WiringCommObject,
+                                                           DefaultCommObjects::WiringCommObject>(
             component,
             handler);
   }
 }
 
-CommunicationObjects::DefaultObjects::WiringCommObject WiringSlave::handleWiring(const CommunicationObjects::DefaultObjects::WiringCommObject &request) {
-  CommunicationObjects::DefaultObjects::WiringCommObject answer;
+DefaultCommObjects::WiringCommObject WiringSlave::handleWiring(const DefaultCommObjects::WiringCommObject &request) {
+  DefaultCommObjects::WiringCommObject answer;
   Smart::StatusCode status;
   std::string command, portName, servername, servicename;
 
