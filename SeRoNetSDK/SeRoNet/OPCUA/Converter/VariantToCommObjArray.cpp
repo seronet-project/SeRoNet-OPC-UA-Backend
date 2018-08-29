@@ -9,7 +9,7 @@
 #include "../../Exceptions/InvalidConversion.hpp"
 #include "../../CommunicationObjects/Description/IVisitorDescription.hpp"
 #include "../../CommunicationObjects/Description/ComplexType.hpp"
-#include "../Client/Converter/UaVariantArrayToCommObject.hpp"
+#include "UaVariantArrayToCommObject.hpp"
 #include "../../CommunicationObjects/Description/ElementPrimitive.hpp"
 
 namespace SeRoNet {
@@ -44,7 +44,7 @@ class ToCommObjArrayVisitor : public CommunicationObjects::Description::IVisitor
     }
     open62541::UA_ArrayOfVariant
         ua_arrayOfVariant(reinterpret_cast<UA_Variant *> (pData[m_index].data), pData[m_index].arrayLength);
-    Client::Converter::UaVariantArrayToCommObject uaVariantArrayToCommObject(ua_arrayOfVariant, complexObject);
+    Converter::UaVariantArrayToCommObject uaVariantArrayToCommObject(ua_arrayOfVariant, complexObject);
   }
 
   void visit(CommunicationObjects::Description::ElementArray *elementArray) override {
@@ -117,6 +117,6 @@ VariantToCommObjArray::VariantToCommObjArray(
   internal::ToCommObjArrayVisitor toCommObjArrayVisitor(arr, variant);
 }
 
-}
-}
-}
+} //  namespace Converter
+} //  namespace OPCUA
+} //  namespace SeRoNet

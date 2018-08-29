@@ -6,13 +6,12 @@
 
 #include "CommObjectBrowseToNodeIds.hpp"
 #include <Open62541Cpp/UA_String.hpp>
-#include "../../../CommunicationObjects/Description/ElementPrimitive.hpp"
-#include "../../../CommunicationObjects/Description/ComplexType.hpp"
+#include "../../CommunicationObjects/Description/ElementPrimitive.hpp"
+#include "../../CommunicationObjects/Description/ComplexType.hpp"
 #include <open62541/open62541.h>
 
 namespace SeRoNet {
 namespace OPCUA {
-namespace Client {
 namespace Converter {
 
 CommObjectBrowseToNodeIds::CommObjectBrowseToNodeIds(
@@ -107,7 +106,6 @@ CommunicationObjects::Description::IDescription::shp_t CommObjectBrowseToNodeIds
   return nullptr;
 }
 
-}
-}
-}
-}
+}  // namespace Converter
+}  // namespace OPCUA
+}  // namespace SeRoNet

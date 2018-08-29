@@ -7,11 +7,10 @@
 #pragma once
 
 #include <Open62541Cpp/UA_ArrayOfVariant.hpp>
-#include "../../../CommunicationObjects/Description/IVisitableDescription.hpp"
+#include "../../CommunicationObjects/Description/IVisitableDescription.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
-namespace Client {
 namespace Converter {
 
 ///\todo define base class for conversion <TARGET_TYPE, INPUT_TYPES ...> (Allow multi argument input)
@@ -26,7 +25,6 @@ class CommObjectToUaVariantArray {
   open62541::UA_ArrayOfVariant m_convertedValue;
 };
 
-}
-}
-}
-}
+} //  namespace Converter
+} //  namespace OPCUA
+} //  namespace SeRoNet

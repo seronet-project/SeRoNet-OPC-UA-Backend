@@ -7,14 +7,10 @@
 #pragma once
 
 #include <Open62541Cpp/UA_ArrayOfVariant.hpp>
-#include "../../../CommunicationObjects/Description/IVisitableDescription.hpp"
-
-#include <Open62541Cpp/UA_ArrayOfVariant.hpp>
-#include "../../../CommunicationObjects/Description/IVisitableDescription.hpp"
+#include "../../CommunicationObjects/Description/IVisitableDescription.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
-namespace Client {
 namespace Converter {
 
 
@@ -26,9 +22,6 @@ class UaVariantArrayToCommObject {
 
 };
 
-}
-}
-}
-}
-
-
+} //  namespace Converter
+} //  namespace OPCUA
+} //  namespace SeRoNet

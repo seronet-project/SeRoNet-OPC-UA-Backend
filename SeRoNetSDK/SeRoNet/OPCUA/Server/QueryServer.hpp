@@ -26,9 +26,9 @@
 
 #include "../../Utils/Component.hpp"
 #include "../../CommunicationObjects/ICommunicationObject.hpp"
-#include "../Client/Converter/CommObjectToUaVariantArray.hpp"
-#include "../Client/Converter/UaVariantArrayToCommObject.hpp"
-#include "CommObjectToUaArgument.hpp"
+#include "../Converter/CommObjectToUaVariantArray.hpp"
+#include "../Converter/UaVariantArrayToCommObject.hpp"
+#include "../Converter/CommObjectToUaArgument.hpp"
 #include "QueryServerHandler.hpp"
 #include "OpcuaServer.hpp"
 #include "../../Exceptions/NotImplementedException.hpp"
@@ -119,7 +119,7 @@ UA_StatusCode QueryServer<T_REQUEST, T_ANSWER>::methodCallback(
 
   T_REQUEST request;
 
-  OPCUA::Client::Converter::UaVariantArrayToCommObject
+  OPCUA::Converter::UaVariantArrayToCommObject
       conv(open62541::UA_ArrayOfVariant(input, inputSize),
            CommunicationObjects::Description::SelfDescription(&request, "").get());
 
@@ -129,7 +129,7 @@ UA_StatusCode QueryServer<T_REQUEST, T_ANSWER>::methodCallback(
   while (friendThis->m_answers.find(id) == friendThis->m_answers.end()) {
     std::this_thread::yield();
   }
-  auto tmp = static_cast<open62541::UA_ArrayOfVariant> (Client::Converter::CommObjectToUaVariantArray
+  auto tmp = static_cast<open62541::UA_ArrayOfVariant> (Converter::CommObjectToUaVariantArray
       (CommunicationObjects::Description::SelfDescription(&friendThis->m_answers.at(id), "").get()));
 
   ///\todo use UA_Variant_setArrayCopy()!
@@ -154,11 +154,11 @@ inline QueryServer<T_REQUEST, T_ANSWER>::QueryServer(
   T_REQUEST *inputCommObject = new T_REQUEST;
   OPEN_65241_CPP_NAMESPACE::UA_ArrayOfArgument
       inputArguments =
-      CommObjectToUaArgumentArray(CommunicationObjects::Description::SelfDescription(inputCommObject, "input").get());
+      Converter::CommObjectToUaArgumentArray(CommunicationObjects::Description::SelfDescription(inputCommObject, "input").get());
   T_ANSWER *outputCommObject = new T_ANSWER;
   OPEN_65241_CPP_NAMESPACE::UA_ArrayOfArgument
       outputArguments =
-      CommObjectToUaArgumentArray(CommunicationObjects::Description::SelfDescription(outputCommObject, "output").get());
+      Converter::CommObjectToUaArgumentArray(CommunicationObjects::Description::SelfDescription(outputCommObject, "output").get());
 
   UA_MethodAttributes helloAttr;
   UA_MethodAttributes_init(&helloAttr);

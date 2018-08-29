@@ -8,8 +8,8 @@
 
 #include "AsyncAnswerMethod.hpp"
 #include "InstanceStorage.hpp"
-#include "Converter/CommObjectToUaVariantArray.hpp"
-#include "Converter/UaVariantArrayToCommObject.hpp"
+#include "../Converter/CommObjectToUaVariantArray.hpp"
+#include "../Converter/UaVariantArrayToCommObject.hpp"
 #include "../../CommunicationObjects/Description/IDescription.hpp"
 #include "../../CommunicationObjects/Description/SelfDescription.hpp"
 #include <sstream>

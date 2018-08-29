@@ -12,8 +12,8 @@
 #include "../../Utils/Component.hpp"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartStatusCode.h"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIPushServerPattern_T.h"
-#include "CommObjectToPushModel.hpp"
-#include "../Client/Converter/CommObjectToUaVariantArray.hpp"
+#include "SeRoNet/OPCUA/Converter/CommObjectToPushModel.hpp"
+#include "SeRoNet/OPCUA/Converter/CommObjectToUaVariantArray.hpp"
 #include "PushServerUpdater.hpp"
 #include "../../CommunicationObjects/Description/SelfDescription.hpp"
 #include "../../Exceptions/NotImplementedException.hpp"
@@ -94,7 +94,7 @@ inline PushServer<T_AnswerType>::PushServer(SeRoNet::Utils::Component *component
 
   T_AnswerType *CommObject = new T_AnswerType;
 
-  CommObjectToPushModel(
+  Converter::CommObjectToPushModel(
       CommunicationObjects::Description::SelfDescription(CommObject, serviceName).get(),
       SeRoNet::OPCUA::Server::OpcUaServer::instance().getServer(),
       objectsFolderNodeId);

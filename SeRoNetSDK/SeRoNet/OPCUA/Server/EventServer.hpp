@@ -13,10 +13,10 @@
 #include "../../CommunicationObjects/Description/SelfDescription.hpp"
 #include "PushServerUpdater.hpp"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIEventClientPattern_T.h"
-#include "CommObjectToUaArgument.hpp"
+#include "SeRoNet/OPCUA/Converter/CommObjectToUaArgument.hpp"
 #include "../../Exceptions/NotImplementedException.hpp"
-#include "CommObjectToPushModel.hpp"
-#include "../Client/Converter/UaVariantArrayToCommObject.hpp"
+#include "SeRoNet/OPCUA/Converter/CommObjectToPushModel.hpp"
+#include "SeRoNet/OPCUA/Converter/UaVariantArrayToCommObject.hpp"
 #include "../../Exceptions/NoDataAvailableException.hpp"
 #include "OpcuaServer.hpp"
 

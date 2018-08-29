@@ -20,7 +20,7 @@
 #include "../../Exceptions/NotImplementedException.hpp"
 #include "../../CommunicationObjects/Description/ComplexType.hpp"
 #include "../../CommunicationObjects/Description/ElementPrimitive.hpp"
-#include "OpcuaServer.hpp"
+#include "../Server/OpcuaServer.hpp"
 //#include "../../CommunicationObjects/Description/IVisitableDescription.hpp"
 //#include "../../Exceptions/NotImplementedException.hpp"
 
@@ -137,7 +137,7 @@ class ToPushModellVisitor :
 
 namespace SeRoNet {
 namespace OPCUA {
-namespace Server {
+namespace Converter {
 
 CommObjectToPushModel::CommObjectToPushModel(
     CommunicationObjects::Description::IVisitableDescription *description,
@@ -147,6 +147,6 @@ CommObjectToPushModel::CommObjectToPushModel(
   description->accept(&visitor);
 }
 
-}
-}
-}
+}  // namespace Converter
+}  // namespace OPCUA
+}  // namespace SeRoNet

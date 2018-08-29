@@ -12,7 +12,7 @@
 #include "../../CommunicationObjects/Description/ComplexType.hpp"
 #include "../../CommunicationObjects/Description/ElementPrimitive.hpp"
 #include "../../CommunicationObjects/Description/ElementArray.hpp"
-#include "../Converter/CommObjArrayToTypeIndex.hpp"
+#include "CommObjArrayToTypeIndex.hpp"
 
 /// Internal Class
 class ToUaArgumentArrayVisitor :
@@ -79,7 +79,7 @@ class ToUaArgumentArrayVisitor :
 
 namespace SeRoNet {
 namespace OPCUA {
-namespace Server {
+namespace Converter {
 
 CommObjectToUaArgumentArray::CommObjectToUaArgumentArray(
     CommunicationObjects::Description::IVisitableDescription *description
@@ -97,6 +97,6 @@ CommObjectToUaArgumentArray::CommObjectToUaArgumentArray(
   }
 }
 
-}
-}
-}
+} //  namespace Converter
+} //  namespace OPCUA
+} //  namespace SeRoNet

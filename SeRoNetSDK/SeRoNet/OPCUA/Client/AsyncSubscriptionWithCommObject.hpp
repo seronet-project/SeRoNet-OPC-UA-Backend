@@ -8,9 +8,9 @@
 
 #include "AsyncSubscriptionOpcUa.hpp"
 #include <Open62541Cpp/UA_NodeId.hpp>
-#include "Converter/CommObjectBrowseToNodeIds.hpp"
-#include "Converter/CommObjectToListOfPrimitivDescriptions.hpp"
-#include "Converter/UaVariantArrayToCommObject.hpp"
+#include "SeRoNet/OPCUA/Converter/CommObjectBrowseToNodeIds.hpp"
+#include "SeRoNet/OPCUA/Converter/CommObjectToListOfPrimitivDescriptions.hpp"
+#include "SeRoNet/OPCUA/Converter/UaVariantArrayToCommObject.hpp"
 #include "../../CommunicationObjects/Description/SelfDescription.hpp"
 
 #include <map>

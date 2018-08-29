@@ -20,6 +20,6 @@ class VariantToCommObjArray {
   VariantToCommObjArray(CommunicationObjects::Description::ElementArray * arr, open62541::UA_Variant &variant);
 };
 
-}
-}
-}
+} //  namespace Converter
+} //  namespace OPCUA
+} //  namespace SeRoNet

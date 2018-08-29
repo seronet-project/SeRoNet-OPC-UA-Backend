@@ -6,11 +6,10 @@
 
 #pragma once
 #include <list>
-#include "../../../CommunicationObjects/Description/IDescription.hpp"
+#include "../../CommunicationObjects/Description/IDescription.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
-namespace Client {
 namespace Converter {
 
 /// Flat the hierarchical description to a list of primitives
@@ -25,7 +24,6 @@ class CommObjectToListOfPrimitivDescriptions {
   ConvTarget_t m_convertedValue;
 };
 
-}
-}
-}
-}
+}  // namespace Converter
+}  // namespace OPCUA
+}  // namespace SeRoNet

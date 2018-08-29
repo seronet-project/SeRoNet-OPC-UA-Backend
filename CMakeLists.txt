@@ -54,16 +54,16 @@ set(PRJ_FILES
         SeRoNetSDK/SeRoNet/DefaultCommObjects/Description/WiringCommObjectDescription.cpp
 
 		SeRoNetSDK/SeRoNet/OPCUA/Client/IBlocking.cpp
-		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/CommObjectToUaVariantArray.cpp
-		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/UaVariantArrayToCommObject.cpp
-		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/CommObjectToListOfPrimitivDescriptions.cpp
-		SeRoNetSDK/SeRoNet/OPCUA/Client/Converter/CommObjectBrowseToNodeIds.cpp
+        SeRoNetSDK/SeRoNet/OPCUA/Converter/CommObjectToUaVariantArray.cpp
+        SeRoNetSDK/SeRoNet/OPCUA/Converter/UaVariantArrayToCommObject.cpp
+        SeRoNetSDK/SeRoNet/OPCUA/Converter/CommObjectToListOfPrimitivDescriptions.cpp
+        SeRoNetSDK/SeRoNet/OPCUA/Converter/CommObjectBrowseToNodeIds.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Client/NamingServiceOpcUa.cpp
         SeRoNetSDK/SeRoNet/OPCUA/Client/ParameterMaster.cpp
         SeRoNetSDK/SeRoNet/OPCUA/Client/AsyncAnswerMethodCommObjectRequest.cpp
 
-        SeRoNetSDK/SeRoNet/OPCUA/Server/CommObjectToUaArgument.cpp
-        SeRoNetSDK/SeRoNet/OPCUA/Server/CommObjectToPushModel.cpp
+        SeRoNetSDK/SeRoNet/OPCUA/Converter/CommObjectToUaArgument.cpp
+        SeRoNetSDK/SeRoNet/OPCUA/Converter/CommObjectToPushModel.cpp
         SeRoNetSDK/SeRoNet/OPCUA/Server/PushServerUpdater.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Server/SendServerHandler.hpp
         SeRoNetSDK/SeRoNet/OPCUA/Server/ParameterSlave.hpp

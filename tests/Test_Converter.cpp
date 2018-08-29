@@ -10,8 +10,8 @@
 #include <SeRoNet/CommunicationObjects/Description/SelfDescriptionPrimitives.hpp>
 #include <SeRoNet/OPCUA/Converter/CommObjArrayToValue.hpp>
 #include <SeRoNet/OPCUA/Converter/VariantToCommObjArray.hpp>
-#include <SeRoNet/OPCUA/Client/Converter/CommObjectToUaVariantArray.hpp>
-#include <SeRoNet/OPCUA/Client/Converter/UaVariantArrayToCommObject.hpp>
+#include <SeRoNet/OPCUA/Converter/CommObjectToUaVariantArray.hpp>
+#include <SeRoNet/OPCUA/Converter/UaVariantArrayToCommObject.hpp>
 
 #include <SeRoNet/DefaultCommObjects/ParameterRequest.hpp>
 #include <SeRoNet/DefaultCommObjects/Description/ParameterRequestDescription.hpp>
@@ -61,12 +61,12 @@ TEST(Converter, ParameterRequest) {
   inputVal.setString("abc", "value");
 
   auto pSelfDescInput = SeRoNet::CommunicationObjects::Description::SelfDescription(&inputVal, "");
-  SeRoNet::OPCUA::Client::Converter::CommObjectToUaVariantArray commObj2Array(pSelfDescInput.get());
+  SeRoNet::OPCUA::Converter::CommObjectToUaVariantArray commObj2Array(pSelfDescInput.get());
   auto retVal = commObj2Array.getValue();
 
   decltype(inputVal) deserializedValue;
   auto pSelfDescDeserialized = SeRoNet::CommunicationObjects::Description::SelfDescription(&deserializedValue, "");
-  SeRoNet::OPCUA::Client::Converter::UaVariantArrayToCommObject arr2ComObj(retVal, pSelfDescDeserialized.get());
+  SeRoNet::OPCUA::Converter::UaVariantArrayToCommObject arr2ComObj(retVal, pSelfDescDeserialized.get());
 
   EXPECT_EQ(deserializedValue.getString("abc"), inputVal.getString("abc"));
 
@@ -78,12 +78,12 @@ TEST(Converter, Parameter_NameValue) {
   inputVal.values = {"a1", "b2", "c3"};
 
   auto pSelfDescInput = SeRoNet::CommunicationObjects::Description::SelfDescription(&inputVal, "");
-  SeRoNet::OPCUA::Client::Converter::CommObjectToUaVariantArray commObj2Array(pSelfDescInput.get());
+  SeRoNet::OPCUA::Converter::CommObjectToUaVariantArray commObj2Array(pSelfDescInput.get());
   auto retVal = commObj2Array.getValue();
 
   decltype(inputVal) deserializedValue;
   auto pSelfDescDeserialized = SeRoNet::CommunicationObjects::Description::SelfDescription(&deserializedValue, "");
-  SeRoNet::OPCUA::Client::Converter::UaVariantArrayToCommObject arr2ComObj(retVal, pSelfDescDeserialized.get());
+  SeRoNet::OPCUA::Converter::UaVariantArrayToCommObject arr2ComObj(retVal, pSelfDescDeserialized.get());
 
   EXPECT_EQ(deserializedValue.key, inputVal.key);
   EXPECT_EQ(deserializedValue.values, inputVal.values);
@@ -97,14 +97,14 @@ TEST(Converter, Parameter_CommParameterRequest) {
   };
 
   auto pSelfDescInput = SeRoNet::CommunicationObjects::Description::SelfDescription(&inputVal, "");
-  SeRoNet::OPCUA::Client::Converter::CommObjectToUaVariantArray commObj2Array(pSelfDescInput.get());
+  SeRoNet::OPCUA::Converter::CommObjectToUaVariantArray commObj2Array(pSelfDescInput.get());
   auto retVal = commObj2Array.getValue();
   ASSERT_EQ(1, retVal.VariantsSize);
   ASSERT_EQ(1, retVal.Variants->arrayLength);
 
   decltype(inputVal) deserializedValue;
   auto pSelfDescDeserialized = SeRoNet::CommunicationObjects::Description::SelfDescription(&deserializedValue, "");
-  SeRoNet::OPCUA::Client::Converter::UaVariantArrayToCommObject arr2ComObj(retVal, pSelfDescDeserialized.get());
+  SeRoNet::OPCUA::Converter::UaVariantArrayToCommObject arr2ComObj(retVal, pSelfDescDeserialized.get());
 
   EXPECT_EQ(deserializedValue, inputVal);
 }
@@ -115,12 +115,12 @@ TEST(Converter, CommStateRequest) {
   inputVal.command = 22;
 
   auto pSelfDescInput = SeRoNet::CommunicationObjects::Description::SelfDescription(&inputVal, "");
-  SeRoNet::OPCUA::Client::Converter::CommObjectToUaVariantArray commObj2Array(pSelfDescInput.get());
+  SeRoNet::OPCUA::Converter::CommObjectToUaVariantArray commObj2Array(pSelfDescInput.get());
   auto retVal = commObj2Array.getValue();
 
   decltype(inputVal) deserializedValue;
   auto pSelfDescDeserialized = SeRoNet::CommunicationObjects::Description::SelfDescription(&deserializedValue, "");
-  SeRoNet::OPCUA::Client::Converter::UaVariantArrayToCommObject arr2ComObj(retVal, pSelfDescDeserialized.get());
+  SeRoNet::OPCUA::Converter::UaVariantArrayToCommObject arr2ComObj(retVal, pSelfDescDeserialized.get());
 
   EXPECT_EQ(deserializedValue, inputVal);
 }

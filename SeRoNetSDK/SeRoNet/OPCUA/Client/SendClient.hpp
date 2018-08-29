@@ -7,7 +7,7 @@
 
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartISendClientPattern_T.h"
 #include "UaClientWithMutex.hpp"
-#include "Converter/CommObjectToUaVariantArray.hpp"
+#include "SeRoNet/OPCUA/Converter/CommObjectToUaVariantArray.hpp"
 #include "../../CommunicationObjects/ICommunicationObject.hpp"
 #include "../../CommunicationObjects/Description/SelfDescription.hpp"
 #include "NamingServiceOpcUa.hpp"

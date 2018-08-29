@@ -8,11 +8,10 @@
 
 #include <list>
 #include <Open62541Cpp/UA_NodeId.hpp>
-#include "../../../CommunicationObjects/Description/ComplexType.hpp"
+#include "../../CommunicationObjects/Description/ComplexType.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
-namespace Client {
 namespace Converter {
 
 ///\todo define base class for conversion <TARGET_TYPE, INPUT_TYPES ...> (Allow multi argument input)
@@ -47,7 +46,6 @@ class CommObjectBrowseToNodeIds {
   ConvTarget_t m_convertedValue;
 };
 
-}
-}
-}
-}
+}  // namespace Converter
+}  // namespace OPCUA
+}  // namespace SeRoNet

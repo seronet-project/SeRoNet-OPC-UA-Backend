@@ -11,9 +11,9 @@
 #include <sstream>
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartISendServerPattern_T.h"
 #include "../../Utils/Component.hpp"
-#include "CommObjectToUaArgument.hpp"
-#include "../Client/Converter/CommObjectToUaVariantArray.hpp"
-#include "../Client/Converter/UaVariantArrayToCommObject.hpp"
+#include "SeRoNet/OPCUA/Converter/CommObjectToUaArgument.hpp"
+#include "SeRoNet/OPCUA/Converter/CommObjectToUaVariantArray.hpp"
+#include "SeRoNet/OPCUA/Converter/UaVariantArrayToCommObject.hpp"
 
 #include "../../CommunicationObjects/Description/SelfDescription.hpp"
 #include "../../Exceptions/NotImplementedException.hpp"

@@ -57,6 +57,6 @@ std::size_t CommObjArrayToTypeIndex::Id() {
   return m_id;
 }
 
-}
-}
-}
+}  // namespace Converter
+}  // namespace OPCUA
+}  // namespace SeRoNet

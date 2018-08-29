@@ -12,7 +12,7 @@
 
 namespace SeRoNet {
 namespace OPCUA {
-namespace Server {
+namespace Converter {
 
 ///\todo define base class for conversion <TARGET_TYPE, INPUT_TYPES ...> (Allow multi argument input)
 class CommObjectToPushModel {
@@ -26,6 +26,6 @@ class CommObjectToPushModel {
   UA_Server *m_pServer;
 };
 
-} //  namespace Server
+} //  namespace Converter
 } //  namespace OPCUA
 } //  namespace SeRoNet

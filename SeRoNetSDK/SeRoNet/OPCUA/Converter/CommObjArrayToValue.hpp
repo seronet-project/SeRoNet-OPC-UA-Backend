@@ -22,6 +22,6 @@ class CommObjArrayToValue {
   UA_Variant m_variant;
 };
 
-}
-}
-}
+}  // namespace Converter
+}  // namespace OPCUA
+}  // namespace SeRoNet

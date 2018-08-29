@@ -11,7 +11,7 @@
 
 namespace SeRoNet {
 namespace OPCUA {
-namespace Server {
+namespace Converter {
 
 ///\todo define base class for conversion <TARGET_TYPE, INPUT_TYPES ...> (Allow multi argument input)
 class CommObjectToUaArgumentArray {
@@ -26,6 +26,6 @@ class CommObjectToUaArgumentArray {
   open62541::UA_ArrayOfArgument m_convertedValue;
 };
 
-}
-}
-}
+} //  namespace Converter
+} //  namespace OPCUA
+} //  namespace SeRoNet

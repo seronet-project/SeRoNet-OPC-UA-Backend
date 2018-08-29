@@ -19,6 +19,6 @@ class CommObjArrayToTypeIndex {
   std::size_t m_id;
 };
 
-}
-}
-}
+}  // namespace Converter
+}  // namespace OPCUA
+}  // namespace SeRoNet

@@ -10,7 +10,7 @@
 #include "../../CommunicationObjects/Description/ComplexType.hpp"
 #include "../../CommunicationObjects/Description/ElementPrimitive.hpp"
 #include "../../Exceptions/NotImplementedException.hpp"
-#include "../Client/Converter/CommObjectToUaVariantArray.hpp"
+#include "CommObjectToUaVariantArray.hpp"
 namespace SeRoNet {
 namespace OPCUA {
 namespace Converter {
@@ -84,7 +84,7 @@ class SetArrayElementVisitor : public CommunicationObjects::Description::IVisito
  public:
   void visit(CommunicationObjects::Description::ComplexType *complexObject) override {
     UA_Variant *pVariant = &(reinterpret_cast<UA_Variant *> (m_pVariant->data)[m_index]);
-    auto variantArray = SeRoNet::OPCUA::Client::Converter::CommObjectToUaVariantArray(complexObject).getValue();
+    auto variantArray = SeRoNet::OPCUA::Converter::CommObjectToUaVariantArray(complexObject).getValue();
     UA_Variant_setArrayCopy(pVariant, variantArray.Variants, variantArray.VariantsSize, &UA_TYPES[UA_TYPES_VARIANT]);
     pVariant->arrayDimensions = (UA_UInt32 *)UA_Array_new(1, &UA_TYPES[UA_TYPES_UINT32]);
     pVariant->arrayDimensions[0] = variantArray.VariantsSize;
@@ -151,6 +151,6 @@ UA_Variant CommObjArrayToValue::Value() {
   return m_variant;
 }
 
-}
-}
-}
+}  // namespace Converter
+}  // namespace OPCUA
+}  // namespace SeRoNet

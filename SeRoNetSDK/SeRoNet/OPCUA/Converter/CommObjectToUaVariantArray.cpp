@@ -5,14 +5,14 @@
 ///
 
 #include "CommObjectToUaVariantArray.hpp"
-#include "../../../CommunicationObjects/Description/IVisitorDescription.hpp"
-#include "../../../Exceptions/NotImplementedException.hpp"
+#include "../../CommunicationObjects/Description/IVisitorDescription.hpp"
+#include "../../Exceptions/NotImplementedException.hpp"
 #include <list>
 #include <Open62541Cpp/UA_String.hpp>
-#include "../../../CommunicationObjects/Description/ComplexType.hpp"
-#include "../../../CommunicationObjects/Description/ElementPrimitive.hpp"
-#include "../../../CommunicationObjects/Description/ElementArray.hpp"
-#include "../../Converter/CommObjArrayToValue.hpp"
+#include "../../CommunicationObjects/Description/ComplexType.hpp"
+#include "../../CommunicationObjects/Description/ElementPrimitive.hpp"
+#include "../../CommunicationObjects/Description/ElementArray.hpp"
+#include "CommObjArrayToValue.hpp"
 
 /// Internal Class
 class ToUaVariantArrayVisitor : public ::SeRoNet::CommunicationObjects::Description::IVisitorDescription {
@@ -70,7 +70,6 @@ class ToUaVariantArrayVisitor : public ::SeRoNet::CommunicationObjects::Descript
 
 namespace SeRoNet {
 namespace OPCUA {
-namespace Client {
 namespace Converter {
 
 CommObjectToUaVariantArray::CommObjectToUaVariantArray(
@@ -88,7 +87,6 @@ CommObjectToUaVariantArray::CommObjectToUaVariantArray(
   }
 }
 
-}
-}
-}
-}
+} //  namespace Converter
+} //  namespace OPCUA
+} //  namespace SeRoNet

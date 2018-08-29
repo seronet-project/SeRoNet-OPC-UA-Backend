@@ -5,11 +5,10 @@
 ///
 
 #include "CommObjectToListOfPrimitivDescriptions.hpp"
-#include "../../../CommunicationObjects/Description/ComplexType.hpp"
+#include "../../CommunicationObjects/Description/ComplexType.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
-namespace Client {
 namespace Converter {
 
 CommObjectToListOfPrimitivDescriptions::CommObjectToListOfPrimitivDescriptions(
@@ -30,7 +29,6 @@ CommObjectToListOfPrimitivDescriptions::CommObjectToListOfPrimitivDescriptions(
 
 }
 
-}
-}
-}
-}
+}  // namespace Converter
+}  // namespace OPCUA
+}  // namespace SeRoNet
