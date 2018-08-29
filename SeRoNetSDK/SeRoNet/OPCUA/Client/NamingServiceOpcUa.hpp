@@ -48,7 +48,7 @@ class NamingServiceOpcUa : public INamingService, public std::enable_shared_from
 
   std::mutex m_connectionCacheMutex;
   std::map<std::string, ConnectionAndThread> m_connectionCache;
-  UA_UInt16 m_nsIndex = -1;
+  UA_UInt16 m_nsIndex = UA_UINT16_MAX;
 };
 
 }

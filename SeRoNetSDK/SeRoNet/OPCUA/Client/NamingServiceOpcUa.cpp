@@ -30,7 +30,7 @@ INamingService::ConnectionAndNodeid NamingServiceOpcUa::getConnectionAndNodeIdBy
 
   ConnectionAndNodeid ret;
 
-  if (m_nsIndex == -1) {
+  if (m_nsIndex == UA_UINT16_MAX) {
     this->getNsIndexFromServer(serverName);
   }
 
