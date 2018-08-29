@@ -16,11 +16,19 @@ namespace Client {
 namespace Converter {
 
 CommObjectBrowseToNodeIds::CommObjectBrowseToNodeIds(
-    CommunicationObjects::Description::ComplexType::shp_t complexType,
+    CommunicationObjects::Description::IDescription::shp_t pDescription,
     const open62541::UA_NodeId &nodeId,
     std::shared_ptr<UA_Client> pClient
 ) {
 
+  auto complexType = std::dynamic_pointer_cast<CommunicationObjects::Description::ComplexType>(pDescription);
+  if(!complexType)
+  {
+    /// \todo recheck if this is a variable?
+    NodeId_NodeClass_Primitive nnp = {nodeId, pDescription, UA_NODECLASS_VARIABLE};
+    m_convertedValue.push_back(nnp);
+    return;
+  }
   /// Browse for NodeIds, try to find a node for each entry in the description
   UA_BrowseRequest bReq;
   UA_BrowseRequest_init(&bReq);
