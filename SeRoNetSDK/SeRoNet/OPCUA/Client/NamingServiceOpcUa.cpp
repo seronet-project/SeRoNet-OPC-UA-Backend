@@ -8,12 +8,18 @@
 #include <functional>
 #include <open62541/open62541.h>
 #include <Open62541Cpp/UA_String.hpp>
+
+#include <Open62541Cpp/UA_Variant.hpp>
+#include <Open62541Cpp/UA_ArrayOfVariant.hpp>
+
 #include <sstream>
+#include <Open62541Cpp/Exceptions/OpcUaErrorException.hpp>
 
 #include "NamingServiceOpcUa.hpp"
 #include "../../Exceptions/SeRoNetSDKException.hpp"
+#include "../../Exceptions/InvalidConversion.hpp"
 
-#define DISCOVERY_SERVER_ENDPOINT "opc.tcp://localhost:4840"
+#define DISCOVERY_SERVER_ENDPOINT "opc.tcp://localhost:4840" //FIXME dynmaic get the local naming server
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -23,17 +29,49 @@ INamingService::ConnectionAndNodeid NamingServiceOpcUa::getConnectionAndNodeIdBy
                                                                                      const std::string &service) {
 
   ConnectionAndNodeid ret;
-  ret.nodeId = createNodeIdFromServiceName(service);
+
+  if (m_nsIndex == -1) {
+    this->getNsIndexFromServer(serverName);
+  }
+
+  ret.nodeId = createNodeId(service, m_nsIndex);
   ret.connection = getConnectionByName(serverName);
 
   return ret;
 }
-OPEN_65241_CPP_NAMESPACE::UA_NodeId NamingServiceOpcUa::createNodeIdFromServiceName(const std::string &service) {
 
-  std::stringstream ss;
-  ss << "85." << service;
-  // FIXME use generic Namespace
-  return OPEN_65241_CPP_NAMESPACE::UA_NodeId(1, ss.str());
+void NamingServiceOpcUa::getNsIndexFromServer(const std::string &serverName) {
+  const UA_NodeId nodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_SERVER_NAMESPACEARRAY);
+  const open62541::UA_String searchNamespace{"http://seronet-projekt.de/"};
+  UA_StatusCode retval;
+  open62541::UA_ArrayOfVariant nsArray(1);
+
+  UaClientWithMutex_t::shpType connection = getConnectionByName(serverName);
+
+  std::unique_lock<decltype(connection.get()->opcuaMutex)> lock(connection.get()->opcuaMutex);
+  retval = UA_Client_readValueAttribute(connection.get()->pClient.get(), nodeId, nsArray.Variants);
+  if (retval != UA_STATUSCODE_GOOD) {
+    //todo better error Handling
+    throw SeRoNet::Exceptions::SeRoNetSDKException(
+        "Error in function getNsIndexFromServer: UA_Client_readValueAttribute");
+  }
+
+  open62541::UA_Variant returnValue = nsArray[0];
+  if (!UA_Variant_hasArrayType(returnValue.Variant,
+                               &UA_TYPES[UA_TYPES_STRING]))
+    throw SeRoNet::Exceptions::InvalidConversion("NamespaceArray is not a Array");
+
+  for (int i = 0; i < returnValue.Variant->arrayLength; i++) {
+    auto element = (UA_String *) returnValue.Variant->data;
+    open62541::UA_String currentNamespace = open62541::UA_String(&element[i]);
+    if (currentNamespace == searchNamespace) {
+      m_nsIndex = i;
+      std::cout << "Namespace Index of " << currentNamespace << " : " << m_nsIndex << std::endl;
+      break;
+    }
+  }
+  if (m_nsIndex == -1) throw SeRoNet::Exceptions::InvalidConversion("No Namespaceindex found");
+
 }
 
 UaClientWithMutex_t::shpType NamingServiceOpcUa::getConnectionByName(const std::string &serverName) {
@@ -76,7 +114,7 @@ UaClientWithMutex_t::shpType NamingServiceOpcUa::getConnectionByName(const std::
 
     std::thread *opcUA_Thread =
         new std::thread(
-            &NamingServiceOpcUa::opcUaBackgroudTask,
+            &NamingServiceOpcUa::opcUaBackgroundTask,
             this,
             std::move(promiseClient),
             connAndThread.pRun.get(),
@@ -122,11 +160,9 @@ void NamingServiceOpcUa::clientWithMutexDeletedCallback(
   /// \todo Kill the worker thread of the UaClient
   std::unique_lock<decltype(pNamingService->m_connectionCacheMutex)> ul_connCache;
   auto it = pNamingService->m_connectionCache.find(serverName);
-  if(it != pNamingService->m_connectionCache.end())
-  {
+  if (it != pNamingService->m_connectionCache.end()) {
     *(it->second.pRun) = false;
-    if(it->second.thread->joinable())
-    {
+    if (it->second.thread->joinable()) {
       it->second.thread->join();
     }
   }
@@ -134,20 +170,20 @@ void NamingServiceOpcUa::clientWithMutexDeletedCallback(
   delete pClientWithMutex;
 }
 
-void NamingServiceOpcUa::opcUaBackgroudTask(std::promise<shpUA_Client_t> promiseClient,
-                                            std::atomic_bool *run,
-                                            std::mutex &OPCUA_Mutex,
-                                            std::string serverURL) {
+void NamingServiceOpcUa::opcUaBackgroundTask(std::promise<shpUA_Client_t> promiseClient,
+                                             std::atomic_bool *run,
+                                             std::mutex &OPCUA_Mutex,
+                                             std::string serverURL) {
   // Initialize shared pointer so it will clean up UA_Client*
   auto config = UA_ClientConfig_default;
   shpUA_Client_t pClient(UA_Client_new(config), deleteUaClient);
 
-  UA_StatusCode retval;
+  UA_StatusCode retVal;
 
   /* Connect to a server */
-  retval = UA_Client_connect(pClient.get(), serverURL.c_str());
-  if (retval != UA_STATUSCODE_GOOD) {
-    std::cout << "Connection failed: " << retval << std::endl;
+  retVal = UA_Client_connect(pClient.get(), serverURL.c_str());
+  if (retVal != UA_STATUSCODE_GOOD) {
+    std::cout << "Connection failed: " << retVal << std::endl;
     pClient = nullptr;
     promiseClient.set_value(pClient);
     return;
@@ -161,11 +197,12 @@ void NamingServiceOpcUa::opcUaBackgroudTask(std::promise<shpUA_Client_t> promise
       l_opcUA.lock();
       UA_Client_run_iterate(pClient.get(), 10);
       l_opcUA.unlock();
+      std::this_thread::yield();
       std::this_thread::sleep_for(std::chrono::microseconds(10));
     }
   }
 }
-std::string NamingServiceOpcUa::getEndpointByName(const std::string serverName) {
+std::string NamingServiceOpcUa::getEndpointByName(const std::string &serverName) {
 
   UA_ApplicationDescription *applicationDescriptionArray = nullptr;
   size_t applicationDescriptionArraySize = 0;
@@ -177,10 +214,10 @@ std::string NamingServiceOpcUa::getEndpointByName(const std::string serverName) 
   retval = UA_Client_findServers(pClient.get(), DISCOVERY_SERVER_ENDPOINT, 0, nullptr, 0, nullptr,
                                  &applicationDescriptionArraySize, &applicationDescriptionArray);
 
-  if (retval != UA_STATUSCODE_GOOD) {
-    //todo better error Handling
-    throw SeRoNet::Exceptions::SeRoNetSDKException("Error in function Ua_Client_findServer");
-  }
+  if (retval != UA_STATUSCODE_GOOD)
+    open62541::Exceptions::OpcUaErrorException(retval,
+                                               "in function Ua_Client_findServer");
+
   std::string serverUrl;
   for (size_t i = 0; i < applicationDescriptionArraySize; i++) {
     UA_ApplicationDescription *description = &applicationDescriptionArray[i];
@@ -209,6 +246,11 @@ std::string NamingServiceOpcUa::getEndpointByName(const std::string serverName) 
   }
 
   return serverUrl;
+}
+open62541::UA_NodeId NamingServiceOpcUa::createNodeId(const std::string &service, UA_UInt16 nsIndex) {
+  std::stringstream ss;
+  ss << "85." << service;
+  return open62541::UA_NodeId(nsIndex, ss.str());
 }
 
 }
