@@ -2,10 +2,7 @@
 // Created by isw on 30.04.2018.
 //
 
-#ifndef SERONETSDK_EVENTSERVER_H
-#define SERONETSDK_EVENTSERVER_H
-
-#endif //SERONETSDK_EVENTSERVER_H
+#pragma once
 
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIEventServerPattern_T.h"
 #include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartStatusCode.h"
@@ -300,8 +297,7 @@ put(const T_StatusType &newState) {
 
       if (this->testHandler->testEvent(m_param, result, s)) {
         //write the new status into all result nodes
-        PushServerUpdater(CommunicationObjects::Description::SelfDescription(&s, this->serviceName).get(),
-                          server, m_NodeId);
+        PushServerUpdater(CommunicationObjects::Description::SelfDescription(&s, this->serviceName).get(), m_NodeId);
       } else {
         //FIXME set all values to NULL
         //PushServerUpdater(CommunicationObjects::Description::SelfDescription(NULL, this->serviceName).get(),
