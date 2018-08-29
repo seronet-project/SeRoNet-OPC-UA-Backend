@@ -12,7 +12,7 @@
 #include <Open62541Cpp/UA_String.hpp>
 #include "../../CommunicationObjects/Description/ComplexType.hpp"
 #include "../../CommunicationObjects/Description/ElementPrimitive.hpp"
-#include "VariantToCommObjArray.hpp"
+#include "UaVariantToCommObjArray.hpp"
 
 /// Internal Class
 class ToCommObjectVisitor : public ::SeRoNet::CommunicationObjects::Description::IVisitorDescription {

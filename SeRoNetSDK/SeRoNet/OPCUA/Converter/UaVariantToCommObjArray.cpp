@@ -4,7 +4,7 @@
 /// \date 09.08.2018
 ///
 
-#include "VariantToCommObjArray.hpp"
+#include "UaVariantToCommObjArray.hpp"
 #include "../../Exceptions/NotImplementedException.hpp"
 #include "../../Exceptions/InvalidConversion.hpp"
 #include "../../CommunicationObjects/Description/IVisitorDescription.hpp"

@@ -140,7 +140,7 @@ UA_StatusCode EventServer<T_ParameterType, T_ResultType, T_StatusType, T_Identif
                           UA_NODEID_NUMERIC(0, UA_NS0ID_BASEOBJECTTYPE),
                           actvAtrr, nullptr, m_NodeId.NodeId);
 
-  CommObjectToPushModel(
+  Converter::CommObjectToPushModel(
       CommunicationObjects::Description::SelfDescription(ResultObj, friendThis->serviceName).get(),
       server,
       m_NodeId);
@@ -148,7 +148,7 @@ UA_StatusCode EventServer<T_ParameterType, T_ResultType, T_StatusType, T_Identif
   //store the information and id
   T_ParameterType m_param;
 
-  SeRoNet::OPCUA::Client::Converter::UaVariantArrayToCommObject
+  SeRoNet::OPCUA::Converter::UaVariantArrayToCommObject
       UaVariantArrayToCommObject(open62541::UA_ArrayOfVariant(input, inputSize),
                                  CommunicationObjects::Description::SelfDescription(&m_param, "").get());
 
@@ -229,7 +229,7 @@ inline EventServer<T_ParameterType,
   //have a communication object as input parameter
   OPEN_65241_CPP_NAMESPACE::UA_ArrayOfArgument
       actInputArguments =
-      CommObjectToUaArgumentArray(CommunicationObjects::Description::SelfDescription(inputCommObject, "input").get());
+      Converter::CommObjectToUaArgumentArray(CommunicationObjects::Description::SelfDescription(inputCommObject, "input").get());
 
   //the assigned id of the created node as output parameter
   UA_Argument outputArgument;

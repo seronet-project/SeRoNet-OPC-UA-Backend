@@ -9,7 +9,7 @@
 #include <SeRoNet/CommunicationObjects/Description/SelfDescriptionArray.hpp>
 #include <SeRoNet/CommunicationObjects/Description/SelfDescriptionPrimitives.hpp>
 #include <SeRoNet/OPCUA/Converter/CommObjArrayToValue.hpp>
-#include <SeRoNet/OPCUA/Converter/VariantToCommObjArray.hpp>
+#include <SeRoNet/OPCUA/Converter/UaVariantToCommObjArray.hpp>
 #include <SeRoNet/OPCUA/Converter/CommObjectToUaVariantArray.hpp>
 #include <SeRoNet/OPCUA/Converter/UaVariantArrayToCommObject.hpp>
 

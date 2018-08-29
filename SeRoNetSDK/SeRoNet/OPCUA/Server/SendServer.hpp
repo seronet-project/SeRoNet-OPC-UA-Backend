@@ -52,7 +52,7 @@ class SendServer : public Smart::ISendServerPattern<DataType> {
     DataType *inputCommObject = new DataType;
     open62541::UA_ArrayOfArgument
         inputArguments =
-        CommObjectToUaArgumentArray(
+        Converter::CommObjectToUaArgumentArray(
             CommunicationObjects::Description::SelfDescription(inputCommObject, "input").get());
 
     UA_MethodAttributes methodAttibute;
@@ -106,7 +106,7 @@ inline UA_StatusCode SendServer<DataType>::methodCallback(
 
   DataType request;
 
-  OPCUA::Client::Converter::UaVariantArrayToCommObject
+  OPCUA::Converter::UaVariantArrayToCommObject
       conv(open62541::UA_ArrayOfVariant(input, inputSize),
            CommunicationObjects::Description::SelfDescription(&request, "").get());
   friendThis->notify_input(request);
