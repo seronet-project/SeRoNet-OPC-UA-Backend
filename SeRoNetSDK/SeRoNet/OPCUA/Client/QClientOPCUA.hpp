@@ -8,7 +8,7 @@
 #include <memory>
 #include <chrono>
 
-#include <SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIQueryClientPattern_T.h>
+#include <SmartSoft_CD_API/smartIQueryClientPattern_T.h>
 #include "AsyncAnswer.hpp"
 
 #include "../../Exceptions/BlockingDisabledException.hpp"

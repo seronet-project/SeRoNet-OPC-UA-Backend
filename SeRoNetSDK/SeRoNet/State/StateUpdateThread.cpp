@@ -54,8 +54,10 @@ int StateUpdateThread::start() {
   return 0;
 }
 int StateUpdateThread::stop(const bool wait_till_stopped) {
+  halt();
+  cancelTrigger();
   if (m_thread.joinable()) {
-    this->m_interruption_requested.store(true);
+    m_interruption_requested = true;
     m_thread.join();
   }
   return 0;

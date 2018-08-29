@@ -23,3 +23,7 @@ add_test(Converter Test_Converter)
 add_executable(Test_State Test_State.cpp)
 target_link_libraries(Test_State SeRoNetSDK gtest_main)
 add_test(State Test_State)
+
+add_executable(Test_StateSlave Test_StateSlave.cpp)
+target_link_libraries(Test_StateSlave SeRoNetSDK gtest_main)
+add_test(StateSlave Test_StateSlave)

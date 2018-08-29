@@ -6,6 +6,7 @@ enable_testing()
 
 find_package(open62541 REQUIRED)
 find_package(Open62541Cpp REQUIRED)
+find_package(SmartSoft_CD_API REQUIRED)
 
 if ( ENABLE_CODECOVERAGE )
 
@@ -46,10 +47,9 @@ set(PRJ_FILES
         SeRoNetSDK/SeRoNet/CommunicationObjects/DefaultObjects/ParameterResponse.cpp
         SeRoNetSDK/SeRoNet/CommunicationObjects/DefaultObjects/ParameterRequest.cpp
 		SeRoNetSDK/SeRoNet/CommunicationObjects/DefaultObjects/WiringCommObject.cpp
-		SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterRequestDescription.cpp
         SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterResponseDescription.cpp
         SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterRequestIdlDescription.cpp
-		SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterResponseIdlDescription.cpp
+        SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/ParameterResponseIdlDescription.cpp
 		SeRoNetSDK/SeRoNet/CommunicationObjects/Description/DefaultObjects/WiringCommObjectDescription.cpp
 
 		SeRoNetSDK/SeRoNet/OPCUA/Client/IBlocking.cpp
@@ -92,14 +92,14 @@ set(PRJ_FILES
 add_library(SeRoNetSDK ${PRJ_FILES})
 set_target_properties(SeRoNetSDK PROPERTIES LINKER_LANGUAGE CXX)
 set_target_properties(SeRoNetSDK PROPERTIES DEBUG_POSTFIX "d")
-target_link_libraries(SeRoNetSDK Open62541Cpp open62541)
+target_link_libraries(SeRoNetSDK PUBLIC Open62541Cpp::Open62541Cpp SmartSoft_CD_API)
 target_include_directories(SeRoNetSDK INTERFACE
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/SeRoNetSDK/>
-        $<INSTALL_INTERFACE:include/>)
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/SeRoNetSDK>
+        $<INSTALL_INTERFACE:include/SeRoNetSDK>)
 
 # Options for GTest
-set(BUILD_GTEST ON CACHE BOOL "")
-set(BUILD_GMOCK ON CACHE BOOL "")
+set(BUILD_GTEST ON CACHE BOOL "" FORCE)
+set(BUILD_GMOCK ON CACHE BOOL "" FORCE)
 set(INSTALL_GTEST OFF CACHE BOOL "")
 set(INSTALL_GMOCK OFF CACHE BOOL "")
 set(gtest_force_shared_crt ON CACHE BOOL "")
@@ -127,11 +127,7 @@ install(TARGETS SeRoNetSDK
 install(DIRECTORY SeRoNetSDK/ DESTINATION include/SeRoNetSDK
 		FILES_MATCHING PATTERN *.hpp)
 
-install(DIRECTORY SmartSoftComponentDeveloperAPIcpp/ DESTINATION include/SmartSoftComponentDeveloperAPIcpp/
-		FILES_MATCHING PATTERN *.h)
-
-
-set(cmake_configfile_install lib/cmake)
+set(cmake_configfile_install lib/cmake/SeRoNetSDK)
 set(target_install_dest_name "${cmake_configfile_install}/SeRoNetSDKTargets.cmake")
 
 include(CMakePackageConfigHelpers)
@@ -148,7 +144,9 @@ configure_package_config_file("${CMAKE_CURRENT_SOURCE_DIR}/SeRoNetSDKConfig.cmak
 
 install(EXPORT SeRoNetSDKTargets
 		FILE SeRoNetSDKTargets.cmake
-		DESTINATION "${cmake_configfile_install}")
+		DESTINATION "${cmake_configfile_install}"
+		NAMESPACE SeRoNetSDK::
+		EXPORT_LINK_INTERFACE_LIBRARIES)
 
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cmake/SeRoNetSDKConfig.cmake"
 		"${CMAKE_CURRENT_BINARY_DIR}/SeRoNetSDKConfigVersion.cmake"

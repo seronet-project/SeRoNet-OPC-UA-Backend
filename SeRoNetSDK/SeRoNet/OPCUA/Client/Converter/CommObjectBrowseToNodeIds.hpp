@@ -23,7 +23,7 @@ class CommObjectBrowseToNodeIds {
   /// \param nodeId
   /// \param pClient only used inside the constructor
   CommObjectBrowseToNodeIds(
-      CommunicationObjects::Description::ComplexType::shp_t complexType,
+      CommunicationObjects::Description::IDescription::shp_t pDescription,
       const open62541::UA_NodeId& nodeId,
       std::shared_ptr<UA_Client> pClient
   );
