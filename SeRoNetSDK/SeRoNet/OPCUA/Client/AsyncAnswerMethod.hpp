@@ -12,6 +12,7 @@
 #include <memory>
 #include <iostream>
 #include <open62541/open62541.h>
+#include <Open62541Cpp/Exceptions/OpcUaErrorException.hpp>
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -76,16 +77,18 @@ inline AsyncAnswerMethod<T_RETURN>::AsyncAnswerMethod(
   callRequ.methodsToCall = &methodRequest;
   callRequ.methodsToCallSize = 1;
 
-  UA_Client_call_async(
-      client,
-      objectId,
-      methodId,
-      inputs.VariantsSize,
-      inputs.Variants,
-      methodCalledCallback < T_RETURN > ,
-      this,
-      &m_requestId
-  );
+  UA_StatusCode retVal =
+      UA_Client_call_async(
+          client,
+          objectId,
+          methodId,
+          inputs.VariantsSize,
+          inputs.Variants,
+          methodCalledCallback < T_RETURN > ,
+          this,
+          &m_requestId
+      );
+  if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
 
   ///@todo use Open62541Cpp::UA_NodeID as parameter type instead
   UA_NodeId_deleteMembers(&objectId);
@@ -137,15 +140,18 @@ inline void AsyncAnswerMethod<void *>::methodCalled_callback(
   }
 
   UA_StatusCode resultCode = callResponse->responseHeader.serviceResult;
+  if (resultCode != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(resultCode);
 
-  ///@todo Check ReturnCode of the output arguments
   if (callResponse->resultsSize > 0) {
     resultCode = callResponse->results[0].statusCode;
+    if (resultCode != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(resultCode);
+
     if (callResponse->results[0].outputArgumentsSize != 0) {
-      std::cerr << "Receive  Method Call Response with output arguments. No output arguments allowed!" << std::endl;
+      throw Exceptions::SeRoNetSDKException(
+          "Receive  Method Call Response with output arguments. No output arguments allowed!");
     }
   } else {
-    std::cerr << "Receive Empty Method Call Response." << std::endl;
+    throw Exceptions::SeRoNetSDKException("Receive Empty Method Call Response.");
   }
 
 }
