@@ -15,7 +15,8 @@ namespace SeRoNet {
 namespace OPCUA {
 namespace Client {
 
-//@todo use a lds server in a client if no server is found
+//@todo separate client management from namingService
+
 class NamingServiceOpcUa : public INamingService, public std::enable_shared_from_this<NamingServiceOpcUa> {
  public:
   ConnectionAndNodeid getConnectionAndNodeIdByName(const std::string &serverName, const std::string &service) override;
@@ -25,7 +26,7 @@ class NamingServiceOpcUa : public INamingService, public std::enable_shared_from
 
   UaClientWithMutex_t::shpType getConnectionByName(const std::string &serverName);
 
-  std::string getEndpointByName(const std::string &serverName);
+  std::string findServerUrlByServerName(const std::string &serverName);
 
   struct ConnectionAndThread {
     UaClientWithMutex_t::weakpType connection;
@@ -49,6 +50,20 @@ class NamingServiceOpcUa : public INamingService, public std::enable_shared_from
   std::mutex m_connectionCacheMutex;
   std::map<std::string, ConnectionAndThread> m_connectionCache;
   UA_UInt16 m_nsIndex = UA_UINT16_MAX;
+  void changeLocalHostname(std::string &discoveryUrl) const;
+  std::string &getServerUrlFromLDS(const std::shared_ptr<UA_Client> &pClient,
+                                   std::string &serverUrl,
+                                   const std::string &discoveryUrl) const;
+  std::string getServerNameFromServerOnNetworkElement(const std::string &searchServerName,
+                                                      const UA_ServerOnNetwork *Element) const;
+  std::string findServerUrlFromServerOnNetwork(const std::string &serverName,
+                                               const UA_ServerOnNetwork *serverOnNetwork,
+                                               size_t serverOnNetworkSize,
+                                               const std::shared_ptr<UA_Client> &pClient
+  ) const;
+  std::string getServerUrlFromMdnsLDS(const std::string &serverName,
+                                      const std::string &discoveryServerEndpoint,
+                                      const std::shared_ptr<UA_Client> &pClient) const;
 };
 
 }
