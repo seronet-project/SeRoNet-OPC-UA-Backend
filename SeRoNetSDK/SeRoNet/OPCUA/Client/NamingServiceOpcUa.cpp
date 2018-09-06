@@ -207,14 +207,17 @@ void NamingServiceOpcUa::opcUaBackgroundTask(std::promise<shpUA_Client_t> promis
 std::string NamingServiceOpcUa::findServerUrlByServerName(const std::string &serverName) {
 
   std::stringstream ss;
+  std::thread *backgroundLDSServerTask = nullptr;
   ss << DISCOVERY_SERVER_ENDPOINT << ":" << Server::OpcUaServer::instance().getPort();
-  std::thread backgroundLDSServerTask([]() {
-    Server::OpcUaServer::instance().run();
-    return 0;
-  });
 
+  if (!Server::OpcUaServer::instance().isRunning()) {
+    backgroundLDSServerTask = new std::thread([]() {
+      Server::OpcUaServer::instance().run();
+      return 0;
+    });
+
+  }
   sleep(10);
-
 
   auto pClient = std::shared_ptr<UA_Client>(UA_Client_new(UA_ClientConfig_default), UA_Client_delete);
 
@@ -222,7 +225,7 @@ std::string NamingServiceOpcUa::findServerUrlByServerName(const std::string &ser
 
   for (auto const &discoveryServerEndpoint : Server::OpcUaServer::instance().m_foundServer) {
     auto serverEndpoint = static_cast<std::string>(discoveryServerEndpoint);
-    std::cout << ("Check DiscoveryServer %s for ServerName", serverEndpoint) << serverName << std::endl;
+    std::cout << ("Check DiscoveryServer %s for ServerName: ", serverEndpoint) << serverName << std::endl;
     changeLocalHostname(serverEndpoint);
     serverUrl = getServerUrlFromMdnsLDS(serverName, serverEndpoint, pClient);
     if (!serverUrl.empty()) {
@@ -232,9 +235,10 @@ std::string NamingServiceOpcUa::findServerUrlByServerName(const std::string &ser
 
   if (serverUrl.empty()) throw SeRoNet::Exceptions::SeRoNetSDKException(("No Server with name: %s found!", serverName));
 
-  if (backgroundLDSServerTask.joinable()) {
+  if (backgroundLDSServerTask && backgroundLDSServerTask->joinable()) {
     SeRoNet::OPCUA::Server::OpcUaServer::instance().stopRunning();
-    backgroundLDSServerTask.join();
+    backgroundLDSServerTask->join();
+    delete backgroundLDSServerTask;
   }
 
   return serverUrl;
