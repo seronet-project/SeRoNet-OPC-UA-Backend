@@ -149,7 +149,6 @@ inline QueryServer<T_REQUEST, T_ANSWER>::QueryServer(
     Smart::IQueryServerPattern<T_REQUEST, T_ANSWER, int>::IQueryServerPattern(component, service),
     m_component(component),
     m_service(service) {
-  SeRoNet::OPCUA::Server::OpcUaServer::instance().initServer(component->getName());
 
   T_REQUEST *inputCommObject = new T_REQUEST;
   OPEN_65241_CPP_NAMESPACE::UA_ArrayOfArgument
