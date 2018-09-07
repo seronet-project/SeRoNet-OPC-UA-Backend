@@ -27,3 +27,8 @@ add_test(State Test_State)
 add_executable(Test_StateSlave Test_StateSlave.cpp)
 target_link_libraries(Test_StateSlave SeRoNetSDK gtest_main)
 add_test(StateSlave Test_StateSlave)
+
+add_executable(Test_Event Test_Event.cpp)
+target_link_libraries(Test_Event SeRoNetSDK gtest gmock_main)
+add_test(Event Test_Event)
+
