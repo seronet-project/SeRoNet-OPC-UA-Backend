@@ -47,7 +47,6 @@ class SendServer : public Smart::ISendServerPattern<DataType> {
   SendServer(Smart::IComponent *component, const std::string &service)
       : Smart::ISendServerPattern<DataType>(component, service) {
 
-    SeRoNet::OPCUA::Server::OpcUaServer::instance().initServer(component->getName());
     UA_Server *server = OpcUaServer::instance().getServer();
     DataType *inputCommObject = new DataType;
     open62541::UA_ArrayOfArgument

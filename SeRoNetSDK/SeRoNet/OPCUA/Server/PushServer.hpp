@@ -88,7 +88,6 @@ inline PushServer<T_AnswerType>::PushServer(SeRoNet::Utils::Component *component
                                             const std::string &serviceName) :
     Smart::IPushServerPattern<T_AnswerType>::IPushServerPattern(component, serviceName),
     m_service(serviceName) {
-  SeRoNet::OPCUA::Server::OpcUaServer::instance().initServer(component->getName());
   OPEN_65241_CPP_NAMESPACE::UA_NodeId
       objectsFolderNodeId(SeRoNet::OPCUA::Server::OpcUaServer::instance().getNsIndex0(), UA_NS0ID_OBJECTSFOLDER);
 

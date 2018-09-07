@@ -7,6 +7,8 @@
 
 #include <string>
 #include <open62541/open62541.h>
+#include <Open62541Cpp/UA_String.hpp>
+#include <vector>
 namespace SeRoNet {
 namespace OPCUA {
 namespace Server {
@@ -18,6 +20,7 @@ class OpcUaServer {
     static OpcUaServer _instance;
     return _instance;
   }
+
 
   virtual ~OpcUaServer();
 
@@ -41,7 +44,16 @@ class OpcUaServer {
     m_isRunning = false; // TODO check if all server should be stopping
   }
 
+  int getPort() const;
+
+  std::string getDiscoveryServerEndpoint();
+
+  friend void serverOnNetworkCallback(const UA_ServerOnNetwork *serverOnNetwork, UA_Boolean isServerAnnounce,
+                                      UA_Boolean isTxtReceived, void *data);
+  std::vector<open62541::UA_String> m_foundServer; // TODO better lock the vector
+
  private:
+
 
   std::string m_serverName = "";
   UA_ServerConfig *m_Config;
@@ -49,12 +61,19 @@ class OpcUaServer {
   UA_Boolean m_isRunning = false;
 
   UA_UInt16 m_nsIndex1;
-  const UA_UInt16 m_nsIndex0 = 0; /// @TODO remove nsIndex0
+  const UA_UInt16 m_nsIndex0 = 0;
 
   OpcUaServer();
   OpcUaServer &operator=(const OpcUaServer &);
 
+  UA_UInt16 m_port;
+
 };
+
+void serverOnNetworkCallback(const UA_ServerOnNetwork *serverOnNetwork, UA_Boolean isServerAnnounce,
+                             UA_Boolean isTxtReceived, void *data);
+
+
 
 }
 }

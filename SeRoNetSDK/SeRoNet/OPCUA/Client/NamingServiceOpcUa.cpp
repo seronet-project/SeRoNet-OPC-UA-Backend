@@ -18,8 +18,9 @@
 #include "NamingServiceOpcUa.hpp"
 #include "../../Exceptions/SeRoNetSDKException.hpp"
 #include "../../Exceptions/InvalidConversion.hpp"
+#include "../Server/OpcuaServer.hpp"
 
-#define DISCOVERY_SERVER_ENDPOINT "opc.tcp://localhost:4840" //FIXME dynmaic get the local naming server
+#define DISCOVERY_SERVER_ENDPOINT "opc.tcp://localhost"
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -65,7 +66,7 @@ void NamingServiceOpcUa::getNsIndexFromServer(const std::string &serverName) {
     auto element = (UA_String *) returnValue.Variant->data;
     open62541::UA_String currentNamespace = open62541::UA_String(&element[i]);
     if (currentNamespace == searchNamespace) {
-      m_nsIndex = i;
+      m_nsIndex = (UA_UInt16) i;
       std::cout << "Namespace Index of " << currentNamespace << " : " << m_nsIndex << std::endl;
       break;
     }
@@ -97,7 +98,7 @@ UaClientWithMutex_t::shpType NamingServiceOpcUa::getConnectionByName(const std::
   // No connection in the cache, create a new one
   {
 
-    std::string serverUrl = getEndpointByName(serverName);
+    std::string serverUrl = findServerUrlByServerName(serverName);
 
     ConnectionAndThread connAndThread;
 
@@ -202,51 +203,132 @@ void NamingServiceOpcUa::opcUaBackgroundTask(std::promise<shpUA_Client_t> promis
     }
   }
 }
-std::string NamingServiceOpcUa::getEndpointByName(const std::string &serverName) {
 
-  UA_ApplicationDescription *applicationDescriptionArray = nullptr;
-  size_t applicationDescriptionArraySize = 0;
+std::string NamingServiceOpcUa::findServerUrlByServerName(const std::string &serverName) {
+
+  std::stringstream ss;
+  std::thread *backgroundLDSServerTask = nullptr;
+  ss << DISCOVERY_SERVER_ENDPOINT << ":" << Server::OpcUaServer::instance().getPort();
+
+  if (!Server::OpcUaServer::instance().isRunning()) {
+    backgroundLDSServerTask = new std::thread([]() {
+      Server::OpcUaServer::instance().run();
+      return 0;
+    });
+
+  }
+  sleep(10);
 
   auto pClient = std::shared_ptr<UA_Client>(UA_Client_new(UA_ClientConfig_default), UA_Client_delete);
 
-  UA_StatusCode retval;
+  std::string serverUrl;
 
-  retval = UA_Client_findServers(pClient.get(), DISCOVERY_SERVER_ENDPOINT, 0, nullptr, 0, nullptr,
-                                 &applicationDescriptionArraySize, &applicationDescriptionArray);
+  for (auto const &discoveryServerEndpoint : Server::OpcUaServer::instance().m_foundServer) {
+    auto serverEndpoint = static_cast<std::string>(discoveryServerEndpoint);
+    std::cout << ("Check DiscoveryServer %s for ServerName: ", serverEndpoint) << serverName << std::endl;
+    changeLocalHostname(serverEndpoint);
+    serverUrl = getServerUrlFromMdnsLDS(serverName, serverEndpoint, pClient);
+    if (!serverUrl.empty()) {
+      break; // use the first URL found;
+    }
+  }
+
+  if (serverUrl.empty()) throw SeRoNet::Exceptions::SeRoNetSDKException(("No Server with name: %s found!", serverName));
+
+  if (backgroundLDSServerTask && backgroundLDSServerTask->joinable()) {
+    SeRoNet::OPCUA::Server::OpcUaServer::instance().stopRunning();
+    backgroundLDSServerTask->join();
+    delete backgroundLDSServerTask;
+  }
+
+  return serverUrl;
+}
+
+std::string NamingServiceOpcUa::getServerUrlFromMdnsLDS(const std::string &serverName,
+                                                        const std::string &discoveryServerEndpoint,
+                                                        const std::shared_ptr<UA_Client> &pClient) const {
+  std::__cxx11::string serverUrl;
+  UA_ServerOnNetwork *serverOnNetwork = nullptr;
+  UA_StatusCode retval;
+  size_t serverOnNetworkSize = 0;
+  retval = UA_Client_findServersOnNetwork(pClient.get(),
+                                          discoveryServerEndpoint.c_str(),
+                                          0,
+                                          0,
+                                          0,
+                                          nullptr,
+                                          &serverOnNetworkSize,
+                                          &serverOnNetwork);
 
   if (retval != UA_STATUSCODE_GOOD)
     open62541::Exceptions::OpcUaErrorException(retval,
                                                "in function Ua_Client_findServer");
 
+  serverUrl = findServerUrlFromServerOnNetwork(serverName, serverOnNetwork, serverOnNetworkSize, pClient);
+  //FIXME maybe a memory leak
+  //UA_Array_delete(serverOnNetwork, serverOnNetworkSize,
+  //                &UA_TYPES[UA_TYPES_APPLICATIONDESCRIPTION]);
+  return serverUrl;
+}
+
+std::string NamingServiceOpcUa::findServerUrlFromServerOnNetwork(const std::string &serverName,
+                                                                 const UA_ServerOnNetwork *serverOnNetwork,
+                                                                 size_t serverOnNetworkSize,
+                                                                 const std::shared_ptr<UA_Client> &pClient
+) const {
+  UA_StatusCode retval;
   std::string serverUrl;
-  for (size_t i = 0; i < applicationDescriptionArraySize; i++) {
-    UA_ApplicationDescription *description = &applicationDescriptionArray[i];
-    if (serverName != static_cast<std::string>(open62541::UA_String(&description->applicationName.text))) {
+  for (size_t i = 0; i < serverOnNetworkSize; i++) {
+    std::__cxx11::string tmpServerName = getServerNameFromServerOnNetworkElement(serverName, &serverOnNetwork[i]);
+    if (serverName != tmpServerName) {
       continue;
     }
 
-    UA_EndpointDescription *endpointArray = nullptr;
-    size_t endpointArraySize = 0;
-
-    std::string discoveryUrl = static_cast<std::string>(open62541::UA_String(&description->discoveryUrls[0]));
-    retval = UA_Client_getEndpoints(pClient.get(), discoveryUrl.c_str(), &endpointArraySize, &endpointArray);
-    if (retval != UA_STATUSCODE_GOOD) {
-      break;
+    std::__cxx11::string
+        discoveryUrl = static_cast<std::__cxx11::string>(open62541::UA_String(&serverOnNetwork[i].discoveryUrl));
+    changeLocalHostname(discoveryUrl);
+    try {
+      serverUrl = getServerUrlFromLDS(pClient, serverUrl, discoveryUrl);
+    } catch (const Exceptions::SeRoNetSDKException &e) {
+      std::cout << "Server not found" << std::endl;
+      continue;
     }
-    for (size_t j = 0; j < endpointArraySize; j++) {
-      serverUrl = static_cast<std::string>(open62541::UA_String(&endpointArray[j].endpointUrl));
-    }
-    UA_Array_delete(endpointArray, endpointArraySize, &UA_TYPES[UA_TYPES_ENDPOINTDESCRIPTION]);
-  }
-  UA_Array_delete(applicationDescriptionArray, applicationDescriptionArraySize,
-                  &UA_TYPES[UA_TYPES_APPLICATIONDESCRIPTION]);
-
-  if (serverUrl.empty()) {
-    throw SeRoNet::Exceptions::SeRoNetSDKException(("No Server with name: %s found!", serverName));
   }
 
   return serverUrl;
 }
+
+std::string NamingServiceOpcUa::getServerNameFromServerOnNetworkElement(
+    const std::string &searchServerName,
+    const UA_ServerOnNetwork *Element) const {
+  auto tmpServerName =
+      static_cast<std::string>(open62541::UA_String(&Element->serverName)).substr(0, searchServerName.size());
+  return tmpServerName;
+}
+
+std::string &NamingServiceOpcUa::getServerUrlFromLDS(const std::shared_ptr<UA_Client> &pClient,
+                                                     std::string &serverUrl,
+                                                     const std::string &discoveryUrl) const {
+  UA_EndpointDescription *endpointArray = nullptr;
+  size_t endpointArraySize = 0;
+  UA_StatusCode
+      retval = UA_Client_getEndpoints(pClient.get(), discoveryUrl.c_str(), &endpointArraySize, &endpointArray);
+  if (retval != UA_STATUSCODE_GOOD) throw SeRoNet::Exceptions::SeRoNetSDKException("getServerUrlFromLDS faild");
+
+  for (size_t j = 0; j < endpointArraySize; j++) {
+    serverUrl = static_cast<std::__cxx11::string>(open62541::UA_String(&endpointArray[j].endpointUrl));
+  }
+  UA_Array_delete(endpointArray, endpointArraySize, &UA_TYPES[UA_TYPES_ENDPOINTDESCRIPTION]);
+  return serverUrl;
+}
+
+void NamingServiceOpcUa::changeLocalHostname(std::string &discoveryUrl) const {// FIXME hack to connect to the localhost adress
+  std::size_t found = discoveryUrl.find("169.254.");
+  if (found != std::string::npos) {
+    discoveryUrl.replace(found, 15, "localhost");
+  }
+}
+
 open62541::UA_NodeId NamingServiceOpcUa::createNodeId(const std::string &service, UA_UInt16 nsIndex) {
   std::stringstream ss;
   ss << "85." << service;
