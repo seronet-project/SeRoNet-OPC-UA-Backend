@@ -88,7 +88,7 @@ UA_StatusCode AsyncSubscriptionWithCommObject<T_DATATYPE>::subscribe(open62541::
   lock.unlock();
 
   // Call parent class function
-  AsyncSubscriptionOpcUa<T_DATATYPE>::subscribe(vecOfNodeIds);
+  return AsyncSubscriptionOpcUa<T_DATATYPE>::subscribe(vecOfNodeIds);
 }
 
 template<typename T_DATATYPE>

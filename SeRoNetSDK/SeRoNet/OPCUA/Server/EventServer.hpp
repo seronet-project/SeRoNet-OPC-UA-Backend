@@ -121,8 +121,12 @@ UA_StatusCode EventServer<T_ParameterType, T_ResultType, T_StatusType, T_Identif
   EventServer<T_ParameterType, T_ResultType, T_StatusType, T_IdentificationType> *friendThis =
       static_cast<EventServer<T_ParameterType, T_ResultType, T_StatusType, T_IdentificationType> *>(methodContext);
 
+  /// \todo check for valid obj NodeId!!
+  //auto callobjNodeId = open62541::UA_NodeId::FromConstNodeId(objectId);
 
   //Create the Opc Node
+
+  ///\FIXME \todo Do NOT use pointer?!
   T_ResultType *ResultObj = new T_ResultType;
   //since every Node should get the same Id because they are all of the same type, every node gets a different nsIndex
   //UA_UInt16 nsIndex = rand();
@@ -154,8 +158,11 @@ UA_StatusCode EventServer<T_ParameterType, T_ResultType, T_StatusType, T_Identif
 
   std::pair<open62541::UA_NodeId, T_ParameterType> m_eventPair = std::make_pair(m_NodeId, m_param);
   friendThis->m_EventInfos.insert(m_eventPair);
-
-  UA_StatusCode retval = UA_Variant_setScalarCopy(output, m_NodeId.NodeId, &UA_TYPES[UA_TYPES_NODEID]);
+  std::stringstream ss;
+  ss << m_NodeId.NodeId->identifier.numeric << "." << friendThis->serviceName;
+  ///\todo determine general namespace index (might not be always 2)
+  open62541::UA_NodeId retNodeId(2, ss.str());
+  UA_StatusCode retval = UA_Variant_setScalarCopy(output, retNodeId.NodeId, &UA_TYPES[UA_TYPES_NODEID]);
   return retval;
 };
 /**
@@ -211,12 +218,14 @@ inline EventServer<T_ParameterType,
   UA_Server *server = OpcUaServer::instance().getServer();
   //UA_NodeId objectsFolderNodeId(component->getNsIndex0(), UA_NS0ID_OBJECTSFOLDER);
   UA_NodeId objectsFolderNodeId = UA_NODEID_NUMERIC(OpcUaServer::instance().getNsIndex0(), UA_NS0ID_OBJECTSFOLDER);
-
+  /// \fixme determine by URI
+  const UA_UInt16 nsIndex = 2;
 
   //create the object node to manage the result nodes
   UA_ObjectAttributes m_attr = UA_ObjectAttributes_default;
   m_attr.displayName = UA_LOCALIZEDTEXT_ALLOC("", this->m_service.c_str());
-  m_objNodeId = UA_NODEID_NUMERIC(1, 42);
+  /// \FIXME generate NodeId by nameservice
+  m_objNodeId = UA_NODEID_STRING_ALLOC(nsIndex, ("85." + serviceName).c_str());
   UA_Server_addObjectNode(server,
                           *m_objNodeId.NodeId,
                           objectsFolderNodeId,
@@ -235,7 +244,7 @@ inline EventServer<T_ParameterType,
   UA_Argument outputArgument;
   UA_Argument_init(&outputArgument);
   outputArgument.description = UA_LOCALIZEDTEXT_ALLOC("en-US", "The assigned id");
-  outputArgument.name = UA_STRING("The assigned id");
+  outputArgument.name = UA_STRING_ALLOC("The assigned id");
   outputArgument.dataType = UA_TYPES[UA_TYPES_NODEID].typeId;
   outputArgument.valueRank = -2;
 
@@ -245,10 +254,10 @@ inline EventServer<T_ParameterType,
   activateAttr.executable = true;
   activateAttr.userExecutable = true;
   UA_Server_addMethodNode(server,
-                          UA_NODEID_STRING_ALLOC(1, "Activation method"),
+                          UA_NODEID_STRING_ALLOC(nsIndex, "Activation method"),
                           *m_objNodeId.NodeId,
                           UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT),
-                          UA_QUALIFIEDNAME_ALLOC(1, "Event activation Method"),
+                          UA_QUALIFIEDNAME_ALLOC(nsIndex, "Event activation Method"),
                           activateAttr,
                           &activateCallback, actInputArguments.arraySize,
                           actInputArguments.arguments, 1,

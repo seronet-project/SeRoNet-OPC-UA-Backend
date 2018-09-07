@@ -14,7 +14,7 @@ namespace Utils {
 
 Component::Component(const std::string &componentName)
     : IComponent(componentName) {
-
+  SeRoNet::OPCUA::Server::OpcUaServer::instance().initServer(componentName);
 };
 
 Component::Component(const std::string &componentName, int /*argc*/, char **/*argv*/) : Component(componentName) {}
