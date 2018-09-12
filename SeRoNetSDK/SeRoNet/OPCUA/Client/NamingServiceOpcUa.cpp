@@ -289,7 +289,16 @@ std::string NamingServiceOpcUa::findServerUrlFromServerOnNetwork(const std::stri
     changeLocalHostname(discoveryUrl);
     try {
       serverUrl = getServerUrlFromLDS(pClient, serverUrl, discoveryUrl);
-    } catch (const Exceptions::SeRoNetSDKException &e) {
+    } catch (const open62541::Exceptions::OpcUaErrorException &e) {
+      if (e.m_statusCode == UA_STATUSCODE_BADCONNECTIONCLOSED) {
+        //@todo remove url from Array of LDS
+        std::cout << "Server  coud not conntected" << std::endl;
+        continue;
+      } else {
+        throw;
+      }
+    }
+    catch (const Exceptions::SeRoNetSDKException &e) {
       std::cout << "Server not found" << std::endl;
       continue;
     }
@@ -313,7 +322,7 @@ std::string &NamingServiceOpcUa::getServerUrlFromLDS(const std::shared_ptr<UA_Cl
   size_t endpointArraySize = 0;
   UA_StatusCode
       retval = UA_Client_getEndpoints(pClient.get(), discoveryUrl.c_str(), &endpointArraySize, &endpointArray);
-  if (retval != UA_STATUSCODE_GOOD) throw SeRoNet::Exceptions::SeRoNetSDKException("getServerUrlFromLDS faild");
+  if (retval != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retval);
 
   for (size_t j = 0; j < endpointArraySize; j++) {
     serverUrl = static_cast<std::__cxx11::string>(open62541::UA_String(&endpointArray[j].endpointUrl));
