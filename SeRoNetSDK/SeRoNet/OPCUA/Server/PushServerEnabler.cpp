@@ -1,5 +1,5 @@
 ///
-/// \file PushServerDisabler.cpp
+/// \file PushServerEnabler.cpp
 /// \author Sebastian Friedl
 /// \date  12.09.2018
 ///
@@ -17,7 +17,7 @@
 #include <iostream>
 #include <cstdint>
 
-#include "PushServerDisabler.hpp"
+#include "PushServerEnabler.hpp"
 
 #include "../../Exceptions/NotImplementedException.hpp"
 #include "../../CommunicationObjects/Description/ComplexType.hpp"
@@ -25,17 +25,17 @@
 #include "OpcuaServer.hpp"
 
 /// Internal Class
-class UpdateOpcuaServerVisitor :
+class EnableOpcuaServerVisitor :
     public ::SeRoNet::CommunicationObjects::Description::IVisitorDescription {
  public:
 
-  explicit UpdateOpcuaServerVisitor(const open62541::UA_NodeId &parent)
+  explicit EnableOpcuaServerVisitor(const open62541::UA_NodeId &parent)
       : m_parent(parent) {}
 
   void visit(SeRoNet::CommunicationObjects::Description::ComplexType *complexObject) override {
     open62541::UA_NodeId ownNodeId = generateNodeId(complexObject);
 
-    UpdateOpcuaServerVisitor visitor(ownNodeId);
+    EnableOpcuaServerVisitor visitor(ownNodeId);
     for (auto &el: *complexObject) {
       el->accept(&visitor);
     }
@@ -44,35 +44,45 @@ class UpdateOpcuaServerVisitor :
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<bool> *el) override {
     UA_StatusCode retVal;
     auto myNodeId = generateNodeId(el);
-    retVal = UA_Server_writeAccessLevel(SeRoNet::OPCUA::Server::OpcUaServer::instance().getServer(),*myNodeId.NodeId,0);
+    retVal = UA_Server_writeAccessLevel(SeRoNet::OPCUA::Server::OpcUaServer::instance().getServer(),
+                                        *myNodeId.NodeId,
+                                        UA_ACCESSLEVELMASK_READ);
     if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<std::int32_t> *el) override {
     UA_StatusCode retVal;
     auto myNodeId = generateNodeId(el);
-    retVal = UA_Server_writeAccessLevel(SeRoNet::OPCUA::Server::OpcUaServer::instance().getServer(),*myNodeId.NodeId,0);
+    retVal = UA_Server_writeAccessLevel(SeRoNet::OPCUA::Server::OpcUaServer::instance().getServer(),
+                                        *myNodeId.NodeId,
+                                        UA_ACCESSLEVELMASK_READ);
     if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<float> *el) override {
     UA_StatusCode retVal;
     auto myNodeId = generateNodeId(el);
-    retVal = UA_Server_writeAccessLevel(SeRoNet::OPCUA::Server::OpcUaServer::instance().getServer(),*myNodeId.NodeId,0);
+    retVal = UA_Server_writeAccessLevel(SeRoNet::OPCUA::Server::OpcUaServer::instance().getServer(),
+                                        *myNodeId.NodeId,
+                                        UA_ACCESSLEVELMASK_READ);
     if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<double> *el) override {
     UA_StatusCode retVal;
     auto myNodeId = generateNodeId(el);
-    retVal = UA_Server_writeAccessLevel(SeRoNet::OPCUA::Server::OpcUaServer::instance().getServer(),*myNodeId.NodeId,0);
+    retVal = UA_Server_writeAccessLevel(SeRoNet::OPCUA::Server::OpcUaServer::instance().getServer(),
+                                        *myNodeId.NodeId,
+                                        UA_ACCESSLEVELMASK_READ);
     if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<std::string> *el) override {
     UA_StatusCode retVal;
     auto myNodeId = generateNodeId(el);
-    retVal = UA_Server_writeAccessLevel(SeRoNet::OPCUA::Server::OpcUaServer::instance().getServer(),*myNodeId.NodeId,0);
+    retVal = UA_Server_writeAccessLevel(SeRoNet::OPCUA::Server::OpcUaServer::instance().getServer(),
+                                        *myNodeId.NodeId,
+                                        UA_ACCESSLEVELMASK_READ);
     if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
   }
 
@@ -108,10 +118,10 @@ namespace OPCUA {
 namespace Server {
 
 /// @TODO (Sebastian Friedl) add Status Message for Error Handling
-PushServerDisabler::PushServerDisabler(
+PushServerEnabler::PushServerEnabler(
     CommunicationObjects::Description::IVisitableDescription *description,
     const open62541::UA_NodeId &parent) {
-  UpdateOpcuaServerVisitor visitor(parent);
+  EnableOpcuaServerVisitor visitor(parent);
   description->accept(&visitor);
 }
 

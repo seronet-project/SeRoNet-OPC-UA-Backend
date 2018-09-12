@@ -19,7 +19,8 @@
 #include "SeRoNet/OPCUA/Converter/UaVariantArrayToCommObject.hpp"
 #include "../../Exceptions/NoDataAvailableException.hpp"
 #include "OpcuaServer.hpp"
-
+#include "PushServerDisabler.hpp"
+#include "PushServerEnabler.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -102,6 +103,7 @@ class EventServer :
 
   Smart::StatusCode put(const T_StatusType &newState) override;
 
+  bool m_disabled = false;
 };
 //method callback equates to activation method
 template<class T_ParameterType, class T_ResultType, class T_StatusType, class T_IdentificationType>
@@ -305,12 +307,18 @@ put(const T_StatusType &newState) {
       T_ParameterType m_param = it->second;
 
       if (this->testHandler->testEvent(m_param, result, s)) {
+        if (m_disabled) {
+          PushServerEnabler(CommunicationObjects::Description::SelfDescription(&s, this->serviceName).get(), m_NodeId);
+          m_disabled = false;
+        }
+
         //write the new status into all result nodes
         PushServerUpdater(CommunicationObjects::Description::SelfDescription(&s, this->serviceName).get(), m_NodeId);
       } else {
-        //FIXME set all values to NULL
-        //PushServerUpdater(CommunicationObjects::Description::SelfDescription(NULL, this->serviceName).get(),
-        //                  server, m_NodeId, opc_Component->getNsIndex1());
+        if (!m_disabled) {
+          PushServerDisabler(CommunicationObjects::Description::SelfDescription(&s, this->serviceName).get(), m_NodeId);
+          m_disabled = true;
+        }
       }
 
     }

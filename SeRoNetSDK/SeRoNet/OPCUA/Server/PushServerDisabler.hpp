@@ -1,7 +1,7 @@
 ///
-/// \file PushServerUpdater.hpp
+/// \file PushServerDisabler.hpp
 /// \author Sebastian Friedl
-/// \date 27.02.2018
+/// \date 12.09.2018
 ///
 #pragma once
 
@@ -15,11 +15,12 @@ namespace OPCUA {
 namespace Server {
 
 ///\todo define base class for conversion <TARGET_TYPE, INPUT_TYPES ...> (Allow multi argument input)
-class PushServerUpdater {
+class PushServerDisabler {
  public:
-  PushServerUpdater(CommunicationObjects::Description::IVisitableDescription *description,
-                    const OPEN_65241_CPP_NAMESPACE::UA_NodeId &parent);
-  virtual ~PushServerUpdater() = default;
+  PushServerDisabler(CommunicationObjects::Description::IVisitableDescription *description,
+                     const OPEN_65241_CPP_NAMESPACE::UA_NodeId &parent);
+
+  virtual ~PushServerDisabler() = default;
 };
 
 } //  namespace Server

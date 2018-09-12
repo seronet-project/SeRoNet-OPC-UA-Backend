@@ -68,7 +68,9 @@ set(PRJ_FILES
 		SeRoNetSDK/SeRoNet/OPCUA/Server/SendServerHandler.hpp
         SeRoNetSDK/SeRoNet/OPCUA/Server/ParameterSlave.hpp
         SeRoNetSDK/SeRoNet/OPCUA/Server/ParameterUpdateHandler.cpp
-        SeRoNetSDK/SeRoNet/OPCUA/Server/ParameterSlave.cpp
+		SeRoNetSDK/SeRoNet/OPCUA/Server/PushServerDisabler.cpp
+		SeRoNetSDK/SeRoNet/OPCUA/Server/PushServerEnabler.cpp
+		SeRoNetSDK/SeRoNet/OPCUA/Server/ParameterSlave.cpp
 		SeRoNetSDK/SeRoNet/OPCUA/Server/WiringSlave.cpp
         SeRoNetSDK/SeRoNet/OPCUA/Server/OpcuaServer.cpp
 
