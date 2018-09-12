@@ -191,6 +191,15 @@ inline void AsyncSubscriptionOpcUa<T_DATATYPE>::processValues() {
 
 template<typename T_DATATYPE>
 inline void AsyncSubscriptionOpcUa<T_DATATYPE>::valueChanged(UA_UInt32 monId, UA_DataValue *value) {
+
+  if (value->hasStatus && value->status != UA_STATUSCODE_GOOD){
+    return;
+  }
+
+  if (!value->hasValue) {
+    return;
+  }
+
   auto itValue = this->m_monItems.find(monId);
 
   if (itValue == m_monItems.end()) {
