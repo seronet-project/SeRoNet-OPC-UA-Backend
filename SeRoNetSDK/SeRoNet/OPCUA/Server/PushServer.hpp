@@ -10,8 +10,8 @@
 #include <open62541.h>
 #include <Open62541Cpp/UA_ArrayOfVariant.hpp>
 #include "../../Utils/Component.hpp"
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartStatusCode.h"
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIPushServerPattern_T.h"
+#include "smartStatusCode.h"
+#include "smartIPushServerPattern_T.h"
 #include "SeRoNet/OPCUA/Converter/CommObjectToPushModel.hpp"
 #include "SeRoNet/OPCUA/Converter/CommObjectToUaVariantArray.hpp"
 #include "PushServerUpdater.hpp"

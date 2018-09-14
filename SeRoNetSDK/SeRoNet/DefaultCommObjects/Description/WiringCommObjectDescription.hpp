@@ -8,9 +8,16 @@
 #include "../../DefaultCommObjects/WiringCommObject.hpp"
 #include "../../CommunicationObjects/Description/SelfDescription.hpp"
 
+namespace SeRoNet {
+namespace CommunicationObjects {
+namespace Description {
 
 template<>
-SeRoNet::CommunicationObjects::Description::IDescription::shp_t SeRoNet::CommunicationObjects::Description::SelfDescription(
+IDescription::shp_t SelfDescription(
     SeRoNet::DefaultCommObjects::WiringCommObject *obj,
     std::string name
 );
+
+}
+}
+}

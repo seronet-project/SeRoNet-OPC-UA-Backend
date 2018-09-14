@@ -14,7 +14,7 @@ class StateSlaveHandler;
 
 #include "StateSlave.hpp"
 
-#include "../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartQueryStatus.h"
+#include "smartQueryStatus.h"
 #include "../OPCUA/Server/QueryServerHandler.hpp"
 
 namespace SeRoNet {

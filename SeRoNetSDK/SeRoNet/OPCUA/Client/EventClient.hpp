@@ -4,7 +4,7 @@
 /// \date 06.09.2018
 ///
 
-#include <SmartSoft_CD_API/smartIEventClientPattern_T.h>
+#include <smartIEventClientPattern_T.h>
 #include <chrono>
 #include <memory>
 #include "NamingServiceOpcUa.hpp"

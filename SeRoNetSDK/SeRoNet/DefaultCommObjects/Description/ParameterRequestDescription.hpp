@@ -8,8 +8,15 @@
 
 #include "../../CommunicationObjects/Description/SelfDescription.hpp"
 
+namespace SeRoNet {
+namespace CommunicationObjects {
+namespace Description {
 
 template<>
-SeRoNet::CommunicationObjects::Description::IDescription::shp_t SeRoNet::CommunicationObjects::Description::SelfDescription<SeRoNet::DefaultCommObjects::CommParameterRequest>(
+IDescription::shp_t SelfDescription<SeRoNet::DefaultCommObjects::CommParameterRequest>(
     SeRoNet::DefaultCommObjects::CommParameterRequest *obj,
     std::string name);
+
+}
+}
+}

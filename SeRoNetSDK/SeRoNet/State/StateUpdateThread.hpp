@@ -8,7 +8,7 @@
 
 #include <thread>
 #include <atomic>
-#include "../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIManagedTask.h"
+#include "smartIManagedTask.h"
 
 namespace SeRoNet {
 

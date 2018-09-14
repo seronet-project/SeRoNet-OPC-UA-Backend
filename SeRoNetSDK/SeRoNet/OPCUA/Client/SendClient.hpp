@@ -5,7 +5,7 @@
 ///
 #pragma once
 
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartISendClientPattern_T.h"
+#include "smartISendClientPattern_T.h"
 #include "UaClientWithMutex.hpp"
 #include "SeRoNet/OPCUA/Converter/CommObjectToUaVariantArray.hpp"
 #include "../../CommunicationObjects/ICommunicationObject.hpp"

@@ -34,7 +34,7 @@
 #ifndef _SMARTPROCESSINGPATTERNS_HH
 #define _SMARTPROCESSINGPATTERNS_HH
 
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIActiveQueueInputHandlerDecorator_T.h"
+#include "smartIActiveQueueInputHandlerDecorator_T.h"
 
 #include "../smartMessageQueue.hpp"
 

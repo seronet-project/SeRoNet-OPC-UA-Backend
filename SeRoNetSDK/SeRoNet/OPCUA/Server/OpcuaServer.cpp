@@ -6,6 +6,7 @@
 #include <iostream>
 #include <Open62541Cpp/UA_String.hpp>
 #include "OpcuaServer.hpp"
+
 namespace SeRoNet {
 namespace OPCUA {
 namespace Server {

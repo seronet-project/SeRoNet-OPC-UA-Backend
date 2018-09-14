@@ -19,10 +19,10 @@
 #include <sstream>
 #include <Open62541Cpp/UA_NodeId.hpp>
 
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIComponent.h"
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartStatusCode.h"
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartICommunicationObject.h"
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIQueryServerPattern_T.h"
+#include "smartIComponent.h"
+#include "smartStatusCode.h"
+#include "smartICommunicationObject.h"
+#include "smartIQueryServerPattern_T.h"
 
 #include "../../Utils/Component.hpp"
 #include "../../CommunicationObjects/ICommunicationObject.hpp"

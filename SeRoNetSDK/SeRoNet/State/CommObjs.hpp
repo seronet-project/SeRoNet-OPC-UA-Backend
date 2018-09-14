@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include "../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartICommunicationObject.h"
+#include "smartICommunicationObject.h"
 
 namespace SeRoNet {
 

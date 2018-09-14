@@ -3,7 +3,8 @@
 include(CMakeFindDependencyMacro)
 find_dependency(open62541)
 find_dependency(Open62541Cpp)
-find_dependency(SmartSoft_CD_API)
+
+find_package(SmartSoft_CD_API PATHS $ENV{SMART_ROOT_ACE}/modules)
 
 include ("@PACKAGE_target_install_dest_name@")
 

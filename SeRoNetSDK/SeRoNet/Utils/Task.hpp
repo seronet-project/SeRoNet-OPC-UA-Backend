@@ -7,8 +7,8 @@
 #include <thread>
 #include <atomic>
 
-#include "../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIComponent.h"
-#include "../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartITask.h"
+#include "smartIComponent.h"
+#include "smartITask.h"
 #include "../Exceptions/NotImplementedException.hpp"
 
 namespace SeRoNet {

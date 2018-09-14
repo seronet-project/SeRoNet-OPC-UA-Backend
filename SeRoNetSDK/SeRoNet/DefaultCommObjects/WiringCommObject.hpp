@@ -6,7 +6,7 @@
 #define SERONETSDK_WIRING_HPP
 
 #include <string>
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartStatusCode.h"
+#include "smartStatusCode.h"
 namespace SeRoNet {
 namespace DefaultCommObjects {
 

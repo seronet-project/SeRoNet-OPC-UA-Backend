@@ -67,8 +67,12 @@ class CoordinateObject :
 
 };
 
+namespace SeRoNet {
+namespace CommunicationObjects {
+namespace Description {
+
 template<>
-SeRoNet::CommunicationObjects::Description::IDescription::shp_t SeRoNet::CommunicationObjects::Description::SelfDescription<
+IDescription::shp_t SelfDescription<
     CoordinateObject>(CoordinateObject *obj, std::string name) {
 
   SeRoNet::CommunicationObjects::Description::ComplexType::shp_t ret(
@@ -102,6 +106,10 @@ SeRoNet::CommunicationObjects::Description::IDescription::shp_t SeRoNet::Communi
       )
   );
   return ret;
+}
+
+}
+}
 }
 
 TEST(Push, ComplexDataTypeGetUpdate) {

@@ -8,7 +8,7 @@
 
 #include "AsyncSubscriptionOpcUa.hpp"
 #include "AsyncSubscriptionReader.hpp"
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIPushClientPattern_T.h"
+#include "smartIPushClientPattern_T.h"
 #include "AsyncSubscriptionWithCommObject.hpp"
 
 #include <open62541.h>

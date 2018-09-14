@@ -13,7 +13,7 @@
 // include enums
 #include "EnumParamResponseType.hpp"
 #include "../CommunicationObjects/ICommunicationObject.hpp"
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartICommunicationObject.h"
+#include "smartICommunicationObject.h"
 
 namespace SeRoNet {
 namespace DefaultCommObjects {

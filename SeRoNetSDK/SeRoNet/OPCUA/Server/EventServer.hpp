@@ -4,15 +4,15 @@
 
 #pragma once
 
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIEventServerPattern_T.h"
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartStatusCode.h"
+#include "smartIEventServerPattern_T.h"
+#include "smartStatusCode.h"
 #include "../../Utils/Component.hpp"
 #include <sstream>
 #include <Open62541Cpp/UA_String.hpp>
 #include <open62541/open62541.h>
 #include "../../CommunicationObjects/Description/SelfDescription.hpp"
 #include "PushServerUpdater.hpp"
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIEventClientPattern_T.h"
+#include "smartIEventClientPattern_T.h"
 #include "SeRoNet/OPCUA/Converter/CommObjectToUaArgument.hpp"
 #include "../../Exceptions/NotImplementedException.hpp"
 #include "SeRoNet/OPCUA/Converter/CommObjectToPushModel.hpp"

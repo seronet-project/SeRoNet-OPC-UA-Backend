@@ -7,8 +7,12 @@
 #include "../../CommunicationObjects/Description/ComplexType.hpp"
 #include "../../CommunicationObjects/Description/ElementPrimitives.hpp"
 
+namespace SeRoNet {
+namespace CommunicationObjects {
+namespace Description {
+
 template<>
-SeRoNet::CommunicationObjects::Description::IDescription::shp_t SeRoNet::CommunicationObjects::Description::SelfDescription(
+IDescription::shp_t SelfDescription(
     DefaultCommObjects::WiringCommObject *obj,
 
     std::string name) {
@@ -72,4 +76,8 @@ SeRoNet::CommunicationObjects::Description::IDescription::shp_t SeRoNet::Communi
   );
 
   return ret;
+}
+
+}
+}
 }

@@ -5,7 +5,7 @@
 #ifndef SERONETSDK_ACTIVEQUEUEINPUTHANDLERDECORATOR_HPP
 #define SERONETSDK_ACTIVEQUEUEINPUTHANDLERDECORATOR_HPP
 
-#include "../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIActiveQueueInputHandlerDecorator_T.h"
+#include "smartIActiveQueueInputHandlerDecorator_T.h"
 #include "Task.hpp"
 #include "../OPCUA/Server/QueryServerHandler.hpp"
 

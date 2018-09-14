@@ -3,8 +3,8 @@
 
 ////#include "SeRoNet/Utils/IObserver.hpp"
 #include "QueryServer.hpp"
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIQueryServerPattern_T.h"
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartICommunicationObject.h"
+#include "smartIQueryServerPattern_T.h"
+#include "smartICommunicationObject.h"
 
 namespace SeRoNet {
 namespace OPCUA {

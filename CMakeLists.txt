@@ -7,7 +7,7 @@ set(ENABLE_CODECOVERAGE OFF CACHE BOOL "Enables the codecoverage")
 
 find_package(open62541 REQUIRED)
 find_package(Open62541Cpp REQUIRED)
-find_package(SmartSoft_CD_API REQUIRED)
+find_package(SmartSoft_CD_API PATHS $ENV{SMART_ROOT_ACE}/modules REQUIRED)
 
 if ( ENABLE_CODECOVERAGE )
 

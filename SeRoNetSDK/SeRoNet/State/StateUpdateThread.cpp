@@ -49,7 +49,7 @@ void StateUpdateThread::sleep_for(const std::chrono::steady_clock::duration &rel
 }
 int StateUpdateThread::start() {
   if (!m_thread.joinable()) {
-    m_thread = std::thread(&task_execution, this);
+    m_thread = std::thread(&StateUpdateThread::task_execution, this);
   }
   return 0;
 }

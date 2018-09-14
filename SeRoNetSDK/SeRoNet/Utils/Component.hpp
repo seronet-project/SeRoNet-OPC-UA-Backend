@@ -6,8 +6,8 @@
 #include <open62541.h>
 #include "../OPCUA/Server/OpcuaServer.hpp"
 
-#include "../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIComponent.h"
-#include "../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartStatusCode.h"
+#include "smartIComponent.h"
+#include "smartStatusCode.h"
 
 namespace SeRoNet {
 namespace Utils {

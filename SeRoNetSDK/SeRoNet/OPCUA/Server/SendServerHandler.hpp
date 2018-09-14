@@ -7,9 +7,9 @@
 
 #include "SendServer.hpp"
 
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIInputHandler_T.h"
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartISendServerPattern_T.h"
-#include "../../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartICommunicationObject.h"
+#include "smartIInputHandler_T.h"
+#include "smartISendServerPattern_T.h"
+#include "smartICommunicationObject.h"
 
 namespace SeRoNet {
 namespace OPCUA {

@@ -19,7 +19,7 @@ class StateSlave;
 #include "StateUpdateThread.hpp"
 #include "StateChangeHandler.hpp"
 #include <list>
-#include "../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIComponent.h"
+#include "smartIComponent.h"
 #include <condition_variable>
 #include "StateSlaveHandler.hpp"
 

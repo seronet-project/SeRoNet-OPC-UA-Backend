@@ -8,8 +8,8 @@
 
 #include "CommObjs.hpp"
 #include "../Exceptions/SeRoNetSDKException.hpp"
-#include "../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartStatusCode.h"
-#include "../../../SmartSoftComponentDeveloperAPIcpp/SmartSoft_CD_API/smartIComponent.h"
+#include "smartStatusCode.h"
+#include "smartIComponent.h"
 #include "../OPCUA/Client/QueryClient.hpp"
 
 namespace SeRoNet {
