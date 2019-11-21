@@ -85,8 +85,7 @@ Smart::StatusCode SendClient<DataType>::connect(const std::string &server,
 
 template<class DataType>
 Smart::StatusCode SendClient<DataType>::send(const DataType &data) {
-  typename QClientOPCUA<DataType, void *>::QueryIDtype::element_type::shpAsyncAnswer_t
-      ans(m_Factory->call(data));
+  auto ans = m_Factory->call(data);
   return (ans != nullptr) ? Smart::StatusCode::SMART_OK : Smart::StatusCode::SMART_ERROR;
 }
 

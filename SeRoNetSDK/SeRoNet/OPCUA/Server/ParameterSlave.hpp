@@ -65,18 +65,16 @@ class ParameterSlave {
    public:
     /** Constructor.
      *
-     * @param slave  <I>ParameterSlave</I> needed to access it from the handler
+     * @param param_handler
      */
     ParameterQueryHandler(
-        QueryServer<SeRoNet::DefaultCommObjects::CommParameterRequest,
-                    SeRoNet::DefaultCommObjects::CommParameterResponse> *server,
         ParameterUpdateHandler *param_handler) noexcept;
 
     /// Destructor
     ~ParameterQueryHandler() noexcept override = default;
 
     /// handle query method of query handler class
-    void handleQuery(const int &id,
+    void handleQuery(IQueryServer& server, const Smart::QueryIdPtr &id,
                      const SeRoNet::DefaultCommObjects::CommParameterRequest &request) noexcept final;
   }; // end class ParameterQueryHandler
 
@@ -85,11 +83,11 @@ class ParameterSlave {
               SeRoNet::DefaultCommObjects::CommParameterResponse> query_server;
 
   ///
-  ParameterQueryHandler query_handler;
+  std::shared_ptr<ParameterQueryHandler> query_handler;
 
   /// Decorator for ParameterHandler
-  SeRoNet::Utils::HsUlm::ThreadQueueQueryHandler<SeRoNet::DefaultCommObjects::CommParameterRequest,
-                                                 SeRoNet::DefaultCommObjects::CommParameterResponse>
+  std::shared_ptr<SeRoNet::Utils::HsUlm::ThreadQueueQueryHandler<SeRoNet::DefaultCommObjects::CommParameterRequest,
+                                                 SeRoNet::DefaultCommObjects::CommParameterResponse>>
       thread_handler;
 
  public:

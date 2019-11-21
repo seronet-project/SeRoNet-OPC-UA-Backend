@@ -20,7 +20,6 @@
 #include <SeRoNet/OPCUA/Client/SendClient.hpp>
 #include <SeRoNet/OPCUA/Server/SendServerHandler.hpp>
 #include <SeRoNet/OPCUA/Server/SendServer.hpp>
-#include <SeRoNet/Utils/ActiveQueueInputHandlerDecorator.hpp>
 
 #include "helperClasses/ComponentHelperTest.hpp"
 #include "Mocks/MockSendHandler.hpp"
@@ -33,8 +32,8 @@ class Send : public ComponentHelperTest
 TEST_F(Send, SendPrimitive) {
   /// ------------ Setup Server ------------
   std::string serviceName("SendPrimitive");
-  SeRoNet::OPCUA::Server::SendServer<int> SendServer(compServer, serviceName);
-  MockSendHandler<int> qHandler(&SendServer);
+  auto qHandler = std::make_shared<MockSendHandler<int>>();
+  SeRoNet::OPCUA::Server::SendServer<int> SendServer(compServer, serviceName, qHandler);
 
   /// ------------ Setup Client ------------
   SeRoNet::OPCUA::Client::SendClient<int> SendClient(compServer);
@@ -42,7 +41,7 @@ TEST_F(Send, SendPrimitive) {
 
   /// ------------ Setup Mocks ------------
   int clientReq = 1;
-  EXPECT_CALL(qHandler, handleSend(clientReq))
+  EXPECT_CALL(*qHandler, handleSend(clientReq))
       .Times(::testing::Exactly(1));
 
 
@@ -57,8 +56,8 @@ TEST_F(Send, SendPrimitiveArray) {
   typedef std::vector<int> ioType_t;
   /// ------------ Setup Server ------------
   std::string serviceName("SendPrimitiveArray");
-  SeRoNet::OPCUA::Server::SendServer<ioType_t> SendServer(compServer, serviceName);
-  MockSendHandler<ioType_t> qHandler(&SendServer);
+  auto qHandler = std::make_shared<MockSendHandler<ioType_t>>();
+  SeRoNet::OPCUA::Server::SendServer<ioType_t> SendServer(compServer, serviceName, qHandler);
 
   /// ------------ Setup Client ------------
   SeRoNet::OPCUA::Client::SendClient<ioType_t> SendClient(compServer);
@@ -66,7 +65,7 @@ TEST_F(Send, SendPrimitiveArray) {
 
   /// ------------ Setup Mocks ------------
   const ioType_t req = {1, 2, 3};
-  EXPECT_CALL(qHandler, handleSend(req))
+  EXPECT_CALL(*qHandler, handleSend(req))
       .Times(::testing::Exactly(1));
 
   EXPECT_EQ(Smart::StatusCode::SMART_OK, SendClient.connect(compServer->getName(), serviceName));

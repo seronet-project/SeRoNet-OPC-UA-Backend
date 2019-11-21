@@ -34,13 +34,12 @@
 #ifndef _SERONETPROCESSINGPATTERNS_HH
 #define _SERONETPROCESSINGPATTERNS_HH
 
-#include <smartIActiveQueueInputHandlerDecorator_T.h>
+#include <smartIProcessingPatterns_T.h>
 
 #include "../smartMessageQueue.hpp"
 
 #include "../../OPCUA/Server/QueryServerHandler.hpp"
 #include "../Task.hpp"
-#include "../ActiveQueueInputHandlerDecorator.hpp"
 //#include "smartSend.hh"
 namespace SeRoNet {
 namespace Utils {
@@ -72,26 +71,34 @@ namespace HsUlm {
  */
 template<class RequestType, class AnswerType>
 class ThreadQueueQueryHandler
-    : public SeRoNet::Utils::ActiveQueueQueryServerHandlerDecoratorImpl<RequestType, AnswerType> {
- public:
+    : public Smart::IActiveQueryServerHandler<RequestType,AnswerType> 
+    , public SeRoNet::Utils::Task
+{
+private:
+	virtual int task_execution() override {
+		return this->process_fifo_queue();
+	}
+public:
+	using IQueryServerHandlerPtr = std::shared_ptr<Smart::IQueryServerHandler<RequestType,AnswerType>>;
 
-  /** Create a new threaded QueryServerHandler Decorator.
-   *
-   *  the handling thread can be started automatically, or with a
-   *  separate open();
-   *
-   *  @param handler which will be called in a separate thread.
-   *  @param start   start the handler thread (default)
-   */
-  ThreadQueueQueryHandler(Smart::IComponent *component,
-                          SeRoNet::OPCUA::Server::QueryServerHandler<RequestType, AnswerType> *handler)
-      : SeRoNet::Utils::ActiveQueueQueryServerHandlerDecoratorImpl<RequestType, AnswerType>(component, handler) {
-    this->start();
-  };
+	/** Create a new threaded QueryServerHandler Decorator.
+	 *
+	 *  The internal handling thread is started/stopped automatically.
+	 *
+	 *  @param component          the pointer to the surrounding component
+	 *  @param inner_handler_ptr  which will be called in a separate thread.
+	 */
+	ThreadQueueQueryHandler(Smart::IComponent *component, IQueryServerHandlerPtr inner_handler_ptr)
+	:	Smart::IActiveQueryServerHandler<RequestType,AnswerType>(inner_handler_ptr)
+	,	SeRoNet::Utils::Task(component)
+	{
+		SeRoNet::Utils::Task::start();
+	}
 
-  virtual ~ThreadQueueQueryHandler() {
-    this->stop();
-  }
+	virtual ~ThreadQueueQueryHandler()
+	{
+		SeRoNet::Utils::Task::stop();
+	}
 };
 
 }// end namespace HsUlm

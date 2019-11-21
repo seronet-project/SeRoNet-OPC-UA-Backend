@@ -32,43 +32,42 @@ class Event : public ComponentHelperTest {
 TEST_F(Event, Activate) {
   std::string serviceName("ActivateTest");
 
-  MockIEventTestHandler evTestHandler;
+  auto evTestHandler = std::make_shared<MockIEventTestHandler>();
 
   /// T_ParameterType T_ResultType T_StatusType T_IdentificationType
-  SeRoNet::OPCUA::Server::EventServer<int, int, int, int> evServer(compServer, serviceName, &evTestHandler);
+  SeRoNet::OPCUA::Server::EventServer<int, int, int> evServer(compServer, serviceName, evTestHandler);
 
   SeRoNet::OPCUA::Client::EventClient<int, int> eventClient(compServer);
 
-  EXPECT_CALL(evTestHandler, testEvent(::testing::_, ::testing::_, ::testing::_)).Times(::testing::Exactly(0));
+  EXPECT_CALL(*evTestHandler, testEvent(::testing::_, ::testing::_, ::testing::_)).Times(::testing::Exactly(0));
 
   startServer();
 
   EXPECT_EQ(eventClient.connect(compServer->getName(), serviceName), Smart::StatusCode::SMART_OK);
-  decltype(eventClient)::EventIdType id;
+  Smart::EventIdPtr id;
   EXPECT_EQ(eventClient.activate(Smart::EventMode::continuous, 1, id), Smart::StatusCode::SMART_OK);
-  id = decltype(id)();
 }
 
 TEST_F(Event, TryEvent) {
 
   std::string serviceName("TryEventTest");
 
-  MockIEventTestHandler evTestHandler;
+  auto evTestHandler = std::make_shared<MockIEventTestHandler>();
 
   /// T_ParameterType T_ResultType T_StatusType T_IdentificationType
-  SeRoNet::OPCUA::Server::EventServer<int, int, int, int> evServer(compServer, serviceName, &evTestHandler);
+  SeRoNet::OPCUA::Server::EventServer<int, int, int> evServer(compServer, serviceName, evTestHandler);
 
   SeRoNet::OPCUA::Client::EventClient<int, int> eventClient(compServer);
 
   startServer();
 
   EXPECT_EQ(eventClient.connect(compServer->getName(), serviceName), Smart::StatusCode::SMART_OK);
-  decltype(eventClient)::EventIdType id;
+  Smart::EventIdPtr id;
   EXPECT_EQ(eventClient.activate(Smart::EventMode::continuous, 1, id), Smart::StatusCode::SMART_OK);
 
   EXPECT_EQ(eventClient.tryEvent(id), Smart::StatusCode::SMART_ERROR);
 
-  EXPECT_CALL(evTestHandler, testEvent(::testing::_, ::testing::_, ::testing::_))
+  EXPECT_CALL(*evTestHandler, testEvent(::testing::_, ::testing::_, ::testing::_))
       .Times(::testing::Exactly(1))
       .WillRepeatedly(::testing::Return(true));
 

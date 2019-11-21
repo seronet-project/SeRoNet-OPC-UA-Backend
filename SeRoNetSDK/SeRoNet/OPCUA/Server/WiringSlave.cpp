@@ -16,17 +16,15 @@ namespace OPCUA {
 namespace Server {
 
 WiringQueryHandler::WiringQueryHandler(WiringSlave *slave) noexcept
-    : QueryServerHandler<DefaultCommObjects::WiringCommObject,
-                         DefaultCommObjects::WiringCommObject>(slave->wiring),
-      wiringSlave(slave) {}
+     : wiringSlave(slave) {}
 
-void WiringQueryHandler::handleQuery(const int &id,
+void WiringQueryHandler::handleQuery(IQueryServer &server, const Smart::QueryIdPtr &id,
                                      const DefaultCommObjects::WiringCommObject &request) {
   DefaultCommObjects::WiringCommObject answer;
 
   answer = wiringSlave->handleWiring(request);
 
-  this->server->answer(id, answer);
+  server.answer(id, answer);
 }
 
 WiringSlave::WiringSlave(Utils::Component *component, std::string slaveaddress)
@@ -34,6 +32,11 @@ WiringSlave::WiringSlave(Utils::Component *component, std::string slaveaddress)
   {
 
     const std::string SMART_NONS = "NoNamingService"; //FIXME check why this const is needed
+
+    handler = std::make_shared<WiringQueryHandler>(this);
+
+    threadHandler = std::make_shared<SeRoNet::Utils::HsUlm::ThreadQueueQueryHandler<DefaultCommObjects::WiringCommObject,
+                                                           DefaultCommObjects::WiringCommObject>>(component,handler);
 
     // added functionality to work without NamingService
     if (component->getName() == SMART_NONS) {
@@ -47,21 +50,12 @@ WiringSlave::WiringSlave(Utils::Component *component, std::string slaveaddress)
         // Slaveaddress has to contain a propper "ip:portnr" string for WiringSlave.
         // This "ip:portnr" will be used by WiringMaster to connect to WiringSlave!
         wiring = new QueryServer<DefaultCommObjects::WiringCommObject,
-                                 DefaultCommObjects::WiringCommObject>(component, slaveaddress);
+                                 DefaultCommObjects::WiringCommObject>(component, slaveaddress, threadHandler);
       }
     } else {
       wiring = new QueryServer<DefaultCommObjects::WiringCommObject,
-                               DefaultCommObjects::WiringCommObject>(component, "wiring");
+                               DefaultCommObjects::WiringCommObject>(component, "wiring", threadHandler);
     }
-
-    handler = new WiringQueryHandler(this);
-
-    // Handling is done in separate thread, otherwise blocking of main thread occures!
-    threadHandler =
-        new SeRoNet::Utils::HsUlm::ThreadQueueQueryHandler<DefaultCommObjects::WiringCommObject,
-                                                           DefaultCommObjects::WiringCommObject>(
-            component,
-            handler);
   }
 }
 
@@ -139,8 +133,6 @@ Smart::StatusCode WiringSlave::remove(const std::string &portName) {
 
 WiringSlave::~WiringSlave() {
   std::unique_lock<decltype(mutex)> lock(mutex);
-  delete handler;
-  delete threadHandler;
 }
 
 bool WiringSlave::PortElement::operator==(const WiringSlave::PortElement &rhs) const {

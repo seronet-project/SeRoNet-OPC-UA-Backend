@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.0)
-project(SeRoNetSDK)
+cmake_minimum_required(VERSION 3.5)
+project(SeRoNetSDK VERSION 1.0.0)
 
 set(CMAKE_CXX_STANDARD 14)
 enable_testing()
@@ -18,7 +18,7 @@ option(BUILD_SHARED_LIBS "Build shared libraryies" ON)
 
 find_package(open62541 REQUIRED)
 find_package(Open62541Cpp REQUIRED)
-find_package(SmartSoft_CD_API REQUIRED)
+find_package(SmartSoft_CD_API 1.1 REQUIRED HINTS $ENV{SMART_ROOT_ACE}/modules)
 
 set(PRJ_FILES
         SeRoNetSDK/SeRoNet/CommunicationObjects/Description/ComplexType.cpp
@@ -103,10 +103,9 @@ endif()
 
 # Install
 include(GenerateExportHeader)
-set(SERONET_SDK_VERSION 0.1.0)
 
-set_property(TARGET SeRoNetSDK PROPERTY VERSION ${OPEN62541_CPP_VERSION})
-set_property(TARGET SeRoNetSDK PROPERTY SOVERSION 3)
+set_property(TARGET SeRoNetSDK PROPERTY VERSION ${SeRoNetSDK_VERSION})
+set_property(TARGET SeRoNetSDK PROPERTY SOVERSION ${SeRoNetSDK_VERSION_MAJOR})
 
 # export library (either static or shared depending on BUILD_SHARED_LIBS)
 install(TARGETS SeRoNetSDK
@@ -126,7 +125,7 @@ set(target_install_dest_name "${cmake_configfile_install}/SeRoNetSDKTargets.cmak
 include(CMakePackageConfigHelpers)
 write_basic_package_version_file(
 		"${CMAKE_CURRENT_BINARY_DIR}/SeRoNetSDKConfigVersion.cmake"
-		VERSION ${SERONET_SDK_VERSION}
+		VERSION ${SeRoNetSDK_VERSION}
 		COMPATIBILITY AnyNewerVersion
 )
 

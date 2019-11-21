@@ -22,7 +22,6 @@
 #include <SeRoNet/CommunicationObjects/Description/ElementPrimitives.hpp>
 
 #include <SeRoNet/OPCUA/Client/PushClient.hpp>
-#include <SeRoNet/Utils/ActiveQueueInputHandlerDecorator.hpp>
 #include <SeRoNet/OPCUA/Server/PushServer.hpp>
 
 #include "helperClasses/ComponentHelperTest.hpp"

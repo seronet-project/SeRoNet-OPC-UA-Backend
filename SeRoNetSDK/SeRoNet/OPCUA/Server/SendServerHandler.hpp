@@ -20,31 +20,11 @@ namespace OPCUA {
 namespace Server {
 
 template<class DataType>
-class SendServerHandler : public Smart::IInputHandler<DataType> {
+class SendServerHandler : public Smart::ISendServerHandler<DataType> {
 
  public:
 
   SendServerHandler() = default;
-
-  /** Default constructor.
-   *
-   *  The constructor requires the server pointer to register itself
-   *  for handling incoming send commands.
-   *
-   *  @param server the pointer to the ISendServerPattern instance
-   *
-   */
-  SendServerHandler(SendServer<DataType>
-                    *server)
-      :
-      Smart::IInputHandler<DataType>(server) {}
-
-  /// Default destructor.
-  ~SendServerHandler() = default;
-
-  void handle_input(const DataType &input) override {
-    this->handleSend(input);
-  }
 
   /** Handler method for an incoming command.
    *
@@ -60,7 +40,7 @@ class SendServerHandler : public Smart::IInputHandler<DataType> {
    *
    *  @param data communicated DataType object (Communication Object)
    */
-  virtual void handleSend(const DataType &data) {
+  virtual void handleSend(const DataType &data) override {
     return;
   };
 };

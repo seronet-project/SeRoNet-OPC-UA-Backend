@@ -16,7 +16,6 @@ template<typename DataType>
 class MockSendHandler
     : public SeRoNet::OPCUA::Server::SendServerHandler<DataType> {
  public:
-  using SeRoNet::OPCUA::Server::SendServerHandler<DataType>::SendServerHandler;
   // Make public availiable
   MOCK_METHOD1_T(handleSend, void (const DataType&));
 };

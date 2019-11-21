@@ -18,7 +18,8 @@
 #include <SeRoNet/CommunicationObjects/Description/ElementArray.hpp>
 
 #include <SeRoNet/OPCUA/Client/QueryClient.hpp>
-#include <SeRoNet/Utils/ActiveQueueInputHandlerDecorator.hpp>
+#include <SeRoNet/OPCUA/Server/QueryServer.hpp>
+#include <SeRoNet/Utils/HsUlm/smartProcessingPattern.hpp>
 
 #include "helperClasses/ComponentHelperTest.hpp"
 #include "helperClasses/CreateValues.hpp"
@@ -27,11 +28,10 @@ template<typename T_REQ_RESPONSE>
 class MockQueryHandler
     : public SeRoNet::OPCUA::Server::QueryServerHandler<T_REQ_RESPONSE, T_REQ_RESPONSE> {
  public:
-  using SeRoNet::OPCUA::Server::QueryServerHandler<T_REQ_RESPONSE, T_REQ_RESPONSE>::QueryServerHandler;
+  using IQueryServer = Smart::IQueryServerPattern<T_REQ_RESPONSE,T_REQ_RESPONSE>;
   // Make public availiable
-  using SeRoNet::OPCUA::Server::QueryServerHandler<T_REQ_RESPONSE, T_REQ_RESPONSE>::m_server;
-  MOCK_METHOD2_T(handleQuery, void(
-      const int&, const T_REQ_RESPONSE&));
+  MOCK_METHOD3_T(handleQuery, void(
+      IQueryServer &server, const Smart::QueryIdPtr&, const T_REQ_RESPONSE&));
 };
 
 class Query : public ComponentHelperTest {
@@ -41,24 +41,24 @@ class Query : public ComponentHelperTest {
 TEST_F(Query, QueryPrimitive) {
   /// ------------ Setup Server ------------
   std::string serviceName("QueryPrimitive");
-  SeRoNet::OPCUA::Server::QueryServer<int, int> queryServer(compServer, serviceName);
-  MockQueryHandler<int> qHandler(&queryServer);
-  SeRoNet::Utils::ActiveQueueQueryServerHandlerDecoratorImpl<int, int> actHandler(compServer, &qHandler);
+  auto qHandler = std::make_shared<MockQueryHandler<int>>();
+  auto actHandler = std::make_shared<SeRoNet::Utils::HsUlm::ThreadQueueQueryHandler<int, int>>(compServer, qHandler);
+  SeRoNet::OPCUA::Server::QueryServer<int, int> queryServer(compServer, serviceName, actHandler);
 
   /// ------------ Setup Client ------------
   SeRoNet::OPCUA::Client::QueryClient<int, int> queryClient(compServer);
   startServer();
 
   /// ------------ Setup Mocks ------------
-  EXPECT_CALL(qHandler, handleQuery(::testing::_, ::testing::_))
+  EXPECT_CALL(*qHandler, handleQuery(::testing::_, ::testing::_, ::testing::_))
       .Times(::testing::Exactly(1))
       .WillRepeatedly(
-          [&qHandler](const int &id, const int &req) {
-            qHandler.m_server->answer(id, req);
+          [&qHandler](Smart::IQueryServerPattern<int,int> &server, const Smart::QueryIdPtr &id, const int &req) {
+            server.answer(id, req);
           }
       );
 
-  EXPECT_EQ(actHandler.start(), 0);
+  //EXPECT_EQ(actHandler.start(), 0);
 
   EXPECT_EQ(Smart::StatusCode::SMART_OK, queryClient.connect(compServer->getName(), serviceName));
 
@@ -72,23 +72,23 @@ TEST_F(Query, QueryPrimitiveArray) {
   typedef std::vector<int> ioType_t;
   /// ------------ Setup Server ------------
   std::string serviceName("QueryPrimitiveArray");
-  SeRoNet::OPCUA::Server::QueryServer<ioType_t, ioType_t> queryServer(compServer, serviceName);
-  MockQueryHandler<ioType_t> qHandler(&queryServer);
-  SeRoNet::Utils::ActiveQueueQueryServerHandlerDecoratorImpl<ioType_t, ioType_t> actHandler(compServer, &qHandler);
+  auto qHandler = std::make_shared<MockQueryHandler<ioType_t>>();
+  auto actHandler = std::make_shared<SeRoNet::Utils::HsUlm::ThreadQueueQueryHandler<ioType_t, ioType_t>>(compServer, qHandler);
+  SeRoNet::OPCUA::Server::QueryServer<ioType_t, ioType_t> queryServer(compServer, serviceName, actHandler);
 
   /// ------------ Setup Client ------------
   SeRoNet::OPCUA::Client::QueryClient<ioType_t, ioType_t> queryClient(compServer);
 
   startServer();
   /// ------------ Setup Mocks ------------
-  EXPECT_CALL(qHandler, handleQuery(::testing::_, ::testing::_))
+  EXPECT_CALL(*qHandler, handleQuery(::testing::_, ::testing::_, ::testing::_))
       .Times(::testing::Exactly(1))
       .WillRepeatedly(
-          [&qHandler](const int &id, const ioType_t &req) {
-            qHandler.m_server->answer(id, req);
+          [&qHandler](Smart::IQueryServerPattern<ioType_t,ioType_t> &server, const Smart::QueryIdPtr &id, const ioType_t &req) {
+            server.answer(id, req);
           }
       );
-  EXPECT_EQ(actHandler.start(), 0);
+  //EXPECT_EQ(actHandler.start(), 0);
 
   EXPECT_EQ(Smart::StatusCode::SMART_OK, queryClient.connect(compServer->getName(), serviceName));
 
@@ -120,9 +120,9 @@ TYPED_TEST(QueryTemplate, QueryPrimitiveArrayTypes) {
   typedef std::vector<TypeParam> ioType_t;
   /// ------------ Setup Server ------------
   std::string serviceName("QueryPrimitiveArray");
-  SeRoNet::OPCUA::Server::QueryServer<ioType_t, ioType_t> queryServer(this->compServer, serviceName);
-  MockQueryHandler<ioType_t> qHandler(&queryServer);
-  SeRoNet::Utils::ActiveQueueQueryServerHandlerDecoratorImpl<ioType_t, ioType_t> actHandler(this->compServer, &qHandler);
+  auto qHandler = std::make_shared<MockQueryHandler<ioType_t>>();
+  auto actHandler = std::make_shared<SeRoNet::Utils::HsUlm::ThreadQueueQueryHandler<ioType_t, ioType_t>>(this->compServer, qHandler);
+  SeRoNet::OPCUA::Server::QueryServer<ioType_t, ioType_t> queryServer(this->compServer, serviceName, actHandler);
 
   /// ------------ Setup Client ------------
   SeRoNet::OPCUA::Client::QueryClient<ioType_t, ioType_t> queryClient(this->compServer);
@@ -130,14 +130,14 @@ TYPED_TEST(QueryTemplate, QueryPrimitiveArrayTypes) {
   this->startServer();
 
   /// ------------ Setup Mocks ------------
-  EXPECT_CALL(qHandler, handleQuery(::testing::_, ::testing::_))
+  EXPECT_CALL(*qHandler, handleQuery(::testing::_, ::testing::_, ::testing::_))
       .Times(::testing::Exactly(1))
       .WillRepeatedly(
-          [&qHandler](const int &id, const ioType_t &req) {
-            qHandler.m_server->answer(id, req);
+          [&qHandler](Smart::IQueryServerPattern<ioType_t,ioType_t> &server, const Smart::QueryIdPtr &id, const ioType_t &req) {
+            server.answer(id, req);
           }
       );
-  EXPECT_EQ(actHandler.start(), 0);
+  //EXPECT_EQ(actHandler.start(), 0);
 
   EXPECT_EQ(Smart::StatusCode::SMART_OK, queryClient.connect(this->compServer->getName(), serviceName));
 

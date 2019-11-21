@@ -47,9 +47,11 @@ class SendServer : public Smart::ISendServerPattern<DataType> {
   void serverInitiatedDisconnect() override;
 
  public:
+  using ISendServerBase = Smart::ISendServerPattern<DataType>;
+  using typename ISendServerBase::ISendServerHandlerPtr;
 
-  SendServer(Utils::Component  *component, const std::string &service)
-      : Smart::ISendServerPattern<DataType>(component, service) {
+  SendServer(Utils::Component  *component, const std::string &service, ISendServerHandlerPtr handler = nullptr)
+      : ISendServerBase(component, service, handler) {
 
     auto server = (component)->getOpcUaServer();
     DataType inputCommObject;
@@ -110,12 +112,13 @@ inline UA_StatusCode SendServer<DataType>::methodCallback(
     UA_Variant */*output*/) {
   SendServer<DataType> *friendThis = static_cast<SendServer<DataType> *>(methodContext);
 
-  DataType request;
+  DataType update;
 
   OPCUA::Converter::UaVariantArrayToCommObject
       conv(open62541::UA_ArrayOfVariant(input, inputSize),
-           CommunicationObjects::Description::SelfDescription(&request, "").get());
-  friendThis->notify_input(request);
+           CommunicationObjects::Description::SelfDescription(&update, "").get());
+  friendThis->handleSend(update);
+  friendThis->notify_input(update);
   return UA_STATUSCODE_GOOD;
 }
 

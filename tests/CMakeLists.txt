@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD 14)
 # installation. As this does not include GMock.
 find_package(GTest REQUIRED NO_CMAKE_SYSTEM_PATH)
 
+add_subdirectory(SmartSoftOpcUaTests)
+
 add_library(CommObjs
 		CommObjs/CommScanOpcUa.cpp
 		CommObjs/CommPose3dOpcUa.cpp

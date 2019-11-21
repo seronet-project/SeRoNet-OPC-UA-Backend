@@ -12,16 +12,17 @@
 namespace SeRoNet {
 namespace State {
 
-StateSlaveHandler::StateSlaveHandler(StateSlave *slave) throw()
-    : stateSlave(slave), QueryServerHandler<CommStateRequest, CommStateResponse>(slave->query_server) {}
+StateSlaveHandler::StateSlaveHandler(StateSlave *slave)
+    : stateSlave(slave) {}
 
-StateSlaveHandler::~StateSlaveHandler() throw() {}
+StateSlaveHandler::~StateSlaveHandler() {}
 
-void StateSlaveHandler::handleQuery(const QueryId &id, const CommStateRequest &request) throw() {
+void StateSlaveHandler::handleQuery(IQueryServer &server, const Smart::QueryIdPtr &id, const CommStateRequest &request) {
   CommStateResponse reply;
   std::vector<std::string> state_list;
   std::string mainstate;
   Smart::StatusCode ret_val;
+  auto server_ptr = dynamic_cast<OPCUA::Server::QueryServer<CommStateRequest, CommStateResponse>*>(&server);
 
   // call appropriate command depending on command-id
   switch (request.getCommand()) {
@@ -31,8 +32,7 @@ void StateSlaveHandler::handleQuery(const QueryId &id, const CommStateRequest &r
 
       // call handler for setMainState
       StateSlave::hndSetMainState(stateSlave,
-                                  dynamic_cast<SeRoNet::OPCUA::Server::QueryServer<CommStateRequest,
-                                                                                   CommStateResponse> *>(server),
+                                  server_ptr,
                                   id,
                                   mainstate);
       break;
@@ -46,7 +46,7 @@ void StateSlaveHandler::handleQuery(const QueryId &id, const CommStateRequest &r
       reply.setStatus(static_cast<int>(ret_val));
 
       // reply to client
-      server->answer(id, reply);
+      server.answer(id, reply);
       break;
 
     case STATE_CMD_GET_MAIN_STATES:
@@ -58,7 +58,7 @@ void StateSlaveHandler::handleQuery(const QueryId &id, const CommStateRequest &r
       reply.setStatus(static_cast<int>(ret_val));
 
       // reply to client
-      server->answer(id, reply);
+      server.answer(id, reply);
       break;
 
     case STATE_CMD_GET_SUB_STATES:
@@ -72,7 +72,7 @@ void StateSlaveHandler::handleQuery(const QueryId &id, const CommStateRequest &r
       reply.setStatus(static_cast<int>(ret_val));
 
       // reply to client
-      server->answer(id, reply);
+      server.answer(id, reply);
       break;
 
     default:std::cout << "<StateSlaveHandler> unknown command\n" << std::endl;

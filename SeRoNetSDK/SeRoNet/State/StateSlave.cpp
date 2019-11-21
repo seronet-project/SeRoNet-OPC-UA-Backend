@@ -19,7 +19,7 @@ namespace State {
 
 void StateSlave::hndSetMainState(StateSlave *ptr,
                                  queryServer_t *server,
-                                 const QueryId &qid,
+                                 const Smart::QueryIdPtr &qid,
                                  const std::string &mainstate) {
   StateSlave *lthis = (StateSlave *) ptr;
   SmartStateEntry entry;
@@ -255,8 +255,8 @@ StateSlave::StateSlave(Utils::Component *comp, StateChangeHandler *hnd, const st
   setUpInitialStateList();
 
   //component->setStateSlave(this); /// \todo ersatz in IComponent?
-  query_server = new queryServer_t(component, serviceName);
-  query_handler = new StateSlaveHandler(this);
+  query_handler = std::make_shared<StateSlaveHandler>(this);
+  query_server = new queryServer_t(component, serviceName, query_handler);
   //</alexej>
 
   stateUpdateThread.init(this);
@@ -267,10 +267,9 @@ StateSlave::StateSlave(Utils::Component *comp, StateChangeHandler *hnd, const st
 //
 // default destructor
 //
-StateSlave::~StateSlave(void) throw() {
+StateSlave::~StateSlave(void) {
   shutdown();
   //delete acceptor;
-  delete query_handler;
   delete query_server;
 
   ///component->setStateSlave(NULL); /// \todo ersatz in IComponent?
@@ -846,7 +845,7 @@ Smart::StatusCode StateSlave::setWaitState(const std::string &MainState) {
 //
 //
 
-Smart::StatusCode StateSlave::defineStates(const std::string &mainstate, const std::string &substate) throw() {
+Smart::StatusCode StateSlave::defineStates(const std::string &mainstate, const std::string &substate) {
   std::list<SmartSubStateEntry>::iterator iterator;
   std::list<SmartSubStateEntry>::iterator substatePtr;
   SmartSubStateEntry newEntry;
@@ -1095,14 +1094,14 @@ std::string StateSlave::getCurrentMainState() const {
   return retval;
 }
 
-Smart::StatusCode StateSlave::activate() throw() {
+Smart::StatusCode StateSlave::activate() {
   std::unique_lock<decltype(mutex)> ul(mutex);
   running = true;
 
   return Smart::SMART_OK;
 }
 
-Smart::StatusCode StateSlave::acquire(const std::string &substate) throw() {
+Smart::StatusCode StateSlave::acquire(const std::string &substate) {
   std::list<SmartSubStateEntry>::iterator iterator;
   std::list<SmartSubStateEntry>::iterator sIterator = stateList.end();
 
@@ -1218,7 +1217,7 @@ Smart::StatusCode StateSlave::acquire(const std::string &substate) throw() {
   return result;
 }
 
-Smart::StatusCode StateSlave::tryAcquire(const std::string &substate) throw() {
+Smart::StatusCode StateSlave::tryAcquire(const std::string &substate) {
   std::list<SmartSubStateEntry>::iterator iterator;
   std::list<SmartSubStateEntry>::iterator sIterator = stateList.end();
 
@@ -1323,7 +1322,7 @@ Smart::StatusCode StateSlave::tryAcquire(const std::string &substate) throw() {
 //        indicating the components inactivity.)
 
 
-Smart::StatusCode StateSlave::release(const std::string &substate) throw() {
+Smart::StatusCode StateSlave::release(const std::string &substate) {
   std::list<SmartSubStateEntry>::iterator iterator;
   std::list<SmartSubStateEntry>::iterator sIterator = stateList.end();
 

@@ -40,9 +40,9 @@ struct EventInfo {
   EventInfo() {};
 };**/
 
-template<class T_ParameterType, class T_ResultType, class T_StatusType, class T_IdentificationType>
+template<class T_ParameterType, class T_ResultType, class T_StatusType=T_ResultType>
 class EventServer :
-    public Smart::IEventServerPattern<T_ParameterType, T_ResultType, T_StatusType, T_IdentificationType> {
+    public Smart::IEventServerPattern<T_ParameterType, T_ResultType, T_StatusType> {
  protected:
 
   virtual void serverInitiatedDisconnect() {
@@ -85,6 +85,9 @@ class EventServer :
   std::map<open62541::UA_NodeId, T_ParameterType> m_EventInfos;
  public:
 
+  using IEventServerBase = Smart::IEventServerPattern<T_ParameterType,T_ResultType,T_StatusType>;
+  using typename IEventServerBase::IEventTestHandlerPtr;
+
   /**Constructor
    * creates an Opc Object node derived of the object folder
    * creates a method node as a component of the object
@@ -96,7 +99,7 @@ class EventServer :
 
   EventServer(SeRoNet::Utils::Component *component,
               const std::string &serviceName,
-              Smart::IEventTestHandler<T_ParameterType, T_ResultType, T_StatusType> *eventTestHandler);
+              IEventTestHandlerPtr eventTestHandler);
 
   /** Destructor.
      *  Properly disconnects all service requestors in case of destruction
@@ -110,8 +113,8 @@ class EventServer :
   bool m_disabled = true;
 };
 //method callback equates to activation method
-template<class T_ParameterType, class T_ResultType, class T_StatusType, class T_IdentificationType>
-UA_StatusCode EventServer<T_ParameterType, T_ResultType, T_StatusType, T_IdentificationType>::activateCallback(
+template<class T_ParameterType, class T_ResultType, class T_StatusType>
+UA_StatusCode EventServer<T_ParameterType, T_ResultType, T_StatusType>::activateCallback(
     UA_Server *server,
     const UA_NodeId */*sessionId*/,
     void */*sessionContext*/,
@@ -124,8 +127,8 @@ UA_StatusCode EventServer<T_ParameterType, T_ResultType, T_StatusType, T_Identif
     size_t /*outputSize*/,
     UA_Variant *output) {
 
-  EventServer<T_ParameterType, T_ResultType, T_StatusType, T_IdentificationType> *friendThis =
-      static_cast<EventServer<T_ParameterType, T_ResultType, T_StatusType, T_IdentificationType> *>(methodContext);
+  EventServer<T_ParameterType, T_ResultType, T_StatusType> *friendThis =
+      static_cast<EventServer<T_ParameterType, T_ResultType, T_StatusType> *>(methodContext);
 
   /// \todo check for valid obj NodeId!!
   //auto callobjNodeId = open62541::UA_NodeId::FromConstNodeId(objectId);
@@ -204,21 +207,13 @@ UA_StatusCode EventServer<T_ParameterType, T_ResultType, T_StatusType, T_Identif
 };**/
 
 //Constructor
-template<class T_ParameterType, class T_ResultType, class T_StatusType, class T_IdentificationType>
+template<class T_ParameterType, class T_ResultType, class T_StatusType>
 inline EventServer<T_ParameterType,
                    T_ResultType,
-                   T_StatusType,
-                   T_IdentificationType>::EventServer(SeRoNet::Utils::Component *component,
+                   T_StatusType>::EventServer(SeRoNet::Utils::Component *component,
                                                       const std::string &serviceName,
-                                                      Smart::IEventTestHandler<
-                                                          T_ParameterType,
-                                                          T_ResultType,
-                                                          T_StatusType> *eventTestHandler)
-    : Smart::IEventServerPattern<
-    T_ParameterType,
-    T_ResultType,
-    T_StatusType,
-    T_IdentificationType>(component, serviceName, eventTestHandler),
+                                                      IEventTestHandlerPtr eventTestHandler)
+    : IEventServerBase(component, serviceName, eventTestHandler),
       m_service(serviceName),
       m_pComponent(component) {
   UA_Server *server = component->getOpcUaServer()->getServer();
@@ -298,8 +293,8 @@ inline EventServer<T_ParameterType,
 **/
 };
 
-template<class T_ParameterType, class T_ResultType, class T_StatusType, class T_IdentificationType>
-Smart::StatusCode EventServer<T_ParameterType, T_ResultType, T_StatusType, T_IdentificationType>::
+template<class T_ParameterType, class T_ResultType, class T_StatusType>
+Smart::StatusCode EventServer<T_ParameterType, T_ResultType, T_StatusType>::
 put(const T_StatusType &newState) {
 
   if (!m_EventInfos.empty()) {
@@ -310,7 +305,7 @@ put(const T_StatusType &newState) {
       open62541::UA_NodeId m_NodeId = it->first;
       T_ParameterType m_param = it->second;
 
-      if (this->testHandler->testEvent(m_param, result, s)) {
+      if (IEventServerBase::testEvent(m_param, result, s)) {
         if (m_disabled) {
           PushServerEnabler(m_pComponent->getOpcUaServer(), CommunicationObjects::Description::SelfDescription(&s, this->serviceName).get(), m_NodeId);
           m_disabled = false;

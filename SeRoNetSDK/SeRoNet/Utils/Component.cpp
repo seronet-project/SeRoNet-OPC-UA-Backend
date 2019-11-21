@@ -26,6 +26,10 @@ Smart::StatusCode Component::run() {
   return Smart::StatusCode::SMART_OK;
 }
 
+void Component::signal_shutdown() {
+    running = false;
+    m_pOpcUaServer->stopRunning();
+}
 Smart::StatusCode Component::blocking(const bool /*b*/) {
   return Smart::StatusCode::SMART_OK;
 }

@@ -32,10 +32,10 @@ TEST_F(PushSend, SimpleObj){
   std::string serviceNamePush("pushServiceTest");
   std::string serviceNameSend("sendServiceTest");
   SeRoNet::OPCUA::Server::PushServer<int> pushServer(this->compServer, serviceNamePush);
-  SeRoNet::OPCUA::Server::SendServer<int> sendServer(this->compServer, serviceNameSend);
+  auto qHandler = std::make_shared<MockSendHandler<int>>();
+  SeRoNet::OPCUA::Server::SendServer<int> sendServer(this->compServer, serviceNameSend, qHandler);
   ASSERT_EQ(this->compServer->getOpcUaServer()->getServerName(), this->compServer->getName());
 
-  MockSendHandler<int> qHandler(&sendServer);
 
   this->startServer();
 
@@ -48,7 +48,7 @@ TEST_F(PushSend, SimpleObj){
   //FIXME create a Factory for Values
   int clientElement = 42;
   int serverElement = 33;
-  EXPECT_CALL(qHandler, handleSend(clientElement))
+  EXPECT_CALL(*qHandler, handleSend(clientElement))
       .Times(::testing::Exactly(1));
 
 

@@ -21,6 +21,7 @@
 #include "../../Utils/Component.hpp"
 #include <atomic>
 #include <open62541/client_highlevel.h>
+#include <smartICorrelationId.h>
 
 #pragma once
 namespace SeRoNet {
@@ -32,21 +33,40 @@ class EventClient;
 
 namespace Event {
 template<typename ActivationType, typename EventType>
-struct Id_t {
+class Id_t : public Smart::ICorrelationId {
   ///\FIXME Set back to private
  public:
   friend EventClient<ActivationType, EventType>;
   open62541::UA_NodeId dataNodeId;
   std::shared_ptr<AsyncSubscriptionReader<EventType>> pSubscriptionReader;
   std::atomic_bool invalid {false};
+  Id_t(const open62541::UA_NodeId &dataNodeId, const std::shared_ptr<AsyncSubscriptionReader<EventType>> reader)
+  : dataNodeId(dataNodeId), pSubscriptionReader(reader) {  }
+protected:
+  virtual std::string to_string() const override final {
+    std::stringstream sstream;
+    sstream << pSubscriptionReader;
+    return sstream.str();
+  }
+  virtual bool less_than(const ICorrelationId *other) const override final {
+    auto native_other = dynamic_cast<const Id_t<ActivationType,EventType>*>(other);
+    //TODO: should we rather compare the dataNodeId here???
+    return pSubscriptionReader < native_other->pSubscriptionReader;
+  }
+  virtual bool equals_to(const ICorrelationId *other) const override final {
+    auto native_other = dynamic_cast<const Id_t<ActivationType,EventType>*>(other);
+    //TODO: should we rather compare the dataNodeId here???
+    return pSubscriptionReader == native_other->pSubscriptionReader;
+  }
 };
 }
 
 template<typename ActivationType, typename EventType>
-class EventClient : Smart::IEventClientPattern<ActivationType, EventType, std::shared_ptr<Event::Id_t<ActivationType, EventType>>> {
+class EventClient : public Smart::IEventClientPattern<ActivationType, EventType> {
  public:
 
-  typedef std::shared_ptr<Event::Id_t<ActivationType, EventType>> EventIdType;
+  // <alex> this typedef is not required anymore as it is only used internally
+  //typedef std::shared_ptr<Event::Id_t<ActivationType, EventType>> EventIdType;
 
   EventClient(Utils::Component *pComponent);
 
@@ -56,19 +76,19 @@ class EventClient : Smart::IEventClientPattern<ActivationType, EventType, std::s
 
   Smart::StatusCode blocking(const bool blocking) override;
 
-  Smart::StatusCode activate(const Smart::EventMode &mode, const ActivationType &parameter, EventIdType &id) override;
+  Smart::StatusCode activate(const Smart::EventMode &mode, const ActivationType &parameter, Smart::EventIdPtr &id) override;
 
-  Smart::StatusCode deactivate(const EventIdType &id) override;
+  Smart::StatusCode deactivate(const Smart::EventIdPtr id) override;
 
-  Smart::StatusCode tryEvent(const EventIdType &id) override;
+  Smart::StatusCode tryEvent(const Smart::EventIdPtr id) override;
 
-  Smart::StatusCode getEvent(const EventIdType &id,
+  Smart::StatusCode getEvent(const Smart::EventIdPtr id,
                              EventType &event,
-                             const std::chrono::steady_clock::duration &timeout) override;
+                             const Smart::Duration &timeout = Smart::Duration::max()) override;
 
-  Smart::StatusCode getNextEvent(const EventIdType &id,
+  Smart::StatusCode getNextEvent(const Smart::EventIdPtr id,
                                  EventType &event,
-                                 const std::chrono::steady_clock::duration &timeout) override;
+                                 const Smart::Duration &timeout = Smart::Duration::max()) override;
 
  private:
   std::string m_server;
@@ -108,7 +128,7 @@ template<typename ActivationType, typename EventType>
 Smart::StatusCode EventClient<ActivationType, EventType>::activate(
     const Smart::EventMode &mode,
     const ActivationType &parameter,
-    EventIdType &id) {
+    Smart::EventIdPtr &id) {
   /// \FIXME get NodeId from m_nodeId
   //m_nodeId.NodeId->namespaceIndex
   open62541::UA_NodeId methodNodeId(2, "Activation method");
@@ -172,59 +192,63 @@ Smart::StatusCode EventClient<ActivationType, EventType>::activate(
       std::static_pointer_cast<AsyncSubscription<EventType>>(asyncSubscription)
       );
 
-  id = std::make_shared<typename EventIdType::element_type>();
-  id->dataNodeId = dataNodeId;
-  id->pSubscriptionReader = subscriptionReader;
+  id = std::make_shared<Event::Id_t<ActivationType,EventType>>(dataNodeId, subscriptionReader);
 
   return Smart::SMART_OK;
 }
 
 template<typename ActivationType, typename EventType>
-Smart::StatusCode EventClient<ActivationType, EventType>::deactivate(const EventIdType &id) {
-  id->invalid = true;
+Smart::StatusCode EventClient<ActivationType, EventType>::deactivate(const Smart::EventIdPtr id) {
+  auto internal_id = std::dynamic_pointer_cast<Event::Id_t<ActivationType,EventType>>(id);
+  if(internal_id) {
+    internal_id->invalid = true;
+  }
   return Smart::SMART_OK;
 }
 
 template<typename ActivationType, typename EventType>
-Smart::StatusCode EventClient<ActivationType, EventType>::tryEvent(const EventIdType &id) {
-  if(!id || id->invalid)
+Smart::StatusCode EventClient<ActivationType, EventType>::tryEvent(const Smart::EventIdPtr id) {
+  auto internal_id = std::dynamic_pointer_cast<Event::Id_t<ActivationType,EventType>>(id);
+  if(!internal_id || internal_id->invalid)
   {
     return Smart::SMART_NOTACTIVATED;
   }
-  return id->pSubscriptionReader->hasData()? Smart::SMART_OK : Smart::SMART_ERROR;
+  return internal_id->pSubscriptionReader->hasData()? Smart::SMART_OK : Smart::SMART_ERROR;
 }
 
 template<typename ActivationType, typename EventType>
 Smart::StatusCode EventClient<ActivationType, EventType>::getEvent(
-    const EventIdType &id,
+    const Smart::EventIdPtr id,
     EventType &event,
-    const std::chrono::steady_clock::duration &timeout) {
-  if(!id || id->invalid)
+    const Smart::Duration &timeout) {
+  auto internal_id = std::dynamic_pointer_cast<Event::Id_t<ActivationType,EventType>>(id);
+  if(!internal_id || internal_id->invalid)
   {
     return Smart::SMART_NOTACTIVATED;
   }
   /// TODO respect timeout
-  event = id->pSubscriptionReader->getData();
+  event = internal_id->pSubscriptionReader->getData();
   return Smart::StatusCode::SMART_OK;
 }
 
 template<typename ActivationType, typename EventType>
 Smart::StatusCode EventClient<ActivationType, EventType>::getNextEvent(
-    const EventIdType &id,
+    const Smart::EventIdPtr id,
     EventType &event,
-    const std::chrono::steady_clock::duration &timeout) {
-  if(!id || id->invalid)
+    const Smart::Duration &timeout) {
+  auto internal_id = std::dynamic_pointer_cast<Event::Id_t<ActivationType,EventType>>(id);
+  if(!internal_id || internal_id->invalid)
   {
     return Smart::SMART_NOTACTIVATED;
   }
-  id->pSubscriptionReader->seek(0, AsyncSubscriptionReader<EventType>::SEEK_REF::REF_END);
-  event = id->pSubscriptionReader->getData();
+  internal_id->pSubscriptionReader->seek(0, AsyncSubscriptionReader<EventType>::SEEK_REF::REF_END);
+  event = internal_id->pSubscriptionReader->getData();
   return Smart::StatusCode::SMART_OK;
 }
 
 template<typename ActivationType, typename EventType>
 EventClient<ActivationType, EventType>::EventClient(Utils::Component *pComponent)
-    : Smart::IEventClientPattern<ActivationType, EventType, EventIdType>(pComponent),
+    : Smart::IEventClientPattern<ActivationType, EventType>(pComponent),
       m_namingService(std::make_shared<SeRoNet::OPCUA::Client::NamingServiceOpcUa>(pComponent->getOpcUaServer())) {
 
 }

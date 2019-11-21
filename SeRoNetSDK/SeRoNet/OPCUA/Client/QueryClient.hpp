@@ -28,7 +28,7 @@ class QueryClient :
 
   Smart::StatusCode queryRequest(
       const RequestType &request,
-      typename QClientOPCUA<RequestType, AnswerType>::QueryIDtype &id
+      Smart::QueryIdPtr &id
   ) override;
 
   Smart::StatusCode blocking(const bool blocking) override;
@@ -56,11 +56,13 @@ inline QueryClient<RequestType, AnswerType>::QueryClient(
 template<class RequestType, class AnswerType>
 inline Smart::StatusCode QueryClient<RequestType, AnswerType>::queryRequest(
     const RequestType &request,
-    typename QClientOPCUA<RequestType, AnswerType>::QueryIDtype &id
+    Smart::QueryIdPtr &id
 ) {
-  typename QClientOPCUA<RequestType, AnswerType>::QueryIDtype::element_type::shpAsyncAnswer_t
-      ans(m_Factory->call(request));
-  id.reset(new typename QClientOPCUA<RequestType, AnswerType>::QueryIDtype::element_type(ans));
+//  typename QClientOPCUA<RequestType, AnswerType>::QueryIDtype::element_type::shpAsyncAnswer_t
+//      ans(m_Factory->call(request));
+//  id.reset(new typename QClientOPCUA<RequestType, AnswerType>::QueryIDtype::element_type(ans));
+  auto ans = m_Factory->call(request);
+  id = std::make_shared<OPCUAQueryID<AnswerType>>(ans);
   return ans != nullptr ? Smart::StatusCode::SMART_OK : Smart::StatusCode::SMART_ERROR;
 }
 

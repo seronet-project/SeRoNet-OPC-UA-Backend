@@ -40,7 +40,6 @@ class SERONETSDK_EXPORT StateSlave {
   friend class StateSlaveHandler;
 
  private:
-  typedef int QueryId;
   typedef OPCUA::Server::QueryServer<CommStateRequest, CommStateResponse> queryServer_t;
   typedef std::recursive_mutex StateSlaveMutex_t;
 
@@ -53,7 +52,7 @@ class SERONETSDK_EXPORT StateSlave {
     StateSlaveAction action;
     std::string state;
     queryServer_t *server_proxy;
-    QueryId qid;
+    Smart::QueryIdPtr qid;
     std::shared_ptr<std::condition_variable_any> cond = std::make_shared<std::condition_variable_any>();
   };
 
@@ -125,7 +124,7 @@ class SERONETSDK_EXPORT StateSlave {
   StateChangeHandler *changeHandler;
 
   /// QueryHandler handles incomming state-requests from StateClient
-  StateSlaveHandler *query_handler;
+  std::shared_ptr<StateSlaveHandler> query_handler;
 
   /// QueryServer as main port of StateServer
   queryServer_t *query_server;
@@ -134,7 +133,7 @@ class SERONETSDK_EXPORT StateSlave {
   void shutdown();
 
   /// private handler functions
-  static void hndSetMainState(StateSlave *, queryServer_t *server, const QueryId &qid, const std::string &);
+  static void hndSetMainState(StateSlave *, queryServer_t *server, const Smart::QueryIdPtr &qid, const std::string &);
   static Smart::StatusCode hndGetCurrentState(void *, std::string &);
   static Smart::StatusCode hndGetMainStates(void *, std::vector<std::string> &);
   static Smart::StatusCode hndGetSubStates(void *, const std::string &, std::vector<std::string> &);
@@ -165,7 +164,7 @@ class SERONETSDK_EXPORT StateSlave {
              const std::string &serviceName = "state");
 
   /// Destructor
-  virtual ~StateSlave() throw();
+  virtual ~StateSlave();
 
   // User interface
 
@@ -213,7 +212,7 @@ class SERONETSDK_EXPORT StateSlave {
    *   - SMART_ERROR_COMMUNICATION : communication problems
    *   - SMART_ERROR               : something went wrong
    */
-  Smart::StatusCode defineStates(const std::string &MainState, const std::string &SubState) throw();
+  Smart::StatusCode defineStates(const std::string &MainState, const std::string &SubState);
 
   /** Set the first MainState which is automatically entered after the pattern switched into Alive state.
    *
@@ -250,7 +249,7 @@ class SERONETSDK_EXPORT StateSlave {
    *    - SMART_OK  : configuration has been activated and no more
    *                  state definitions possible
    */
-  Smart::StatusCode activate() throw();
+  Smart::StatusCode activate();
 
   /** Wait until specified substate is available and acquire it.
    *
@@ -267,7 +266,7 @@ class SERONETSDK_EXPORT StateSlave {
    *   - SMART_ERROR_COMMUNICATION : communication problems
    *   - SMART_ERROR               : something went wrong
    */
-  Smart::StatusCode acquire(const std::string &SubState) throw();
+  Smart::StatusCode acquire(const std::string &SubState);
 
   /** Acquire specified substate if available, otherwise return immediately.
    *
@@ -287,7 +286,7 @@ class SERONETSDK_EXPORT StateSlave {
    *   - SMART_ERROR_COMMUNICATION : communication problems
    *   - SMART_ERROR : something went wrong
    */
-  Smart::StatusCode tryAcquire(const std::string &SubState) throw();
+  Smart::StatusCode tryAcquire(const std::string &SubState);
 
   /** Release specified substate.
    *
@@ -302,7 +301,7 @@ class SERONETSDK_EXPORT StateSlave {
    *   - SMART_ERROR_COMMUNICATION : communication problems
    *   - SMART_ERROR               : something went wrong
    */
-  Smart::StatusCode release(const std::string &SubState) throw();
+  Smart::StatusCode release(const std::string &SubState);
 };
 
 }

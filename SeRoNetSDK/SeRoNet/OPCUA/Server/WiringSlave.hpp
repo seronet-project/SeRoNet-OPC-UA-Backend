@@ -50,8 +50,8 @@ class WiringQueryHandler : public QueryServerHandler<DefaultCommObjects::WiringC
   ~WiringQueryHandler() override = default;
 
   /// handle query method of query handler class
-  void handleQuery(const int &id,
-                   const DefaultCommObjects::WiringCommObject &request) override; //TODO @xfl int durch QueryID ersetztn
+  void handleQuery(IQueryServer &server, const Smart::QueryIdPtr &id,
+                   const DefaultCommObjects::WiringCommObject &request) override;
 };
 
 
@@ -77,7 +77,6 @@ class WiringQueryHandler : public QueryServerHandler<DefaultCommObjects::WiringC
 //  are used to call the connect() / disconnect() methods of the client objects
 //  when wiring changes have to be performed.
 
-// TODO @xfl check if handler and threadHandler realy need to be pointer
 class WiringSlave {
   friend class WiringQueryHandler;
  private:
@@ -98,12 +97,11 @@ class WiringSlave {
   Smart::IComponent *component{};
 
   ///
-  WiringQueryHandler *handler{};
+  std::shared_ptr<WiringQueryHandler> handler;
 
   /// Decorator for WiringHandler
-  Utils::HsUlm::ThreadQueueQueryHandler<DefaultCommObjects::WiringCommObject,
-                                        DefaultCommObjects::WiringCommObject> *threadHandler
-      {};
+  std::shared_ptr<Utils::HsUlm::ThreadQueueQueryHandler<DefaultCommObjects::WiringCommObject,
+                                        DefaultCommObjects::WiringCommObject>> threadHandler;
 
   /// query server part
   QueryServer<DefaultCommObjects::WiringCommObject,

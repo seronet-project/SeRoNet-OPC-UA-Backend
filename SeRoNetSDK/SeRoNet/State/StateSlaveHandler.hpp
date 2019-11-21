@@ -36,17 +36,16 @@ class StateSlaveHandler : public OPCUA::Server::QueryServerHandler<CommStateRequ
   StateSlave *stateSlave;
 
  public:
-  typedef int QueryId;
   /** Constructor.
    *
    * @param slave  <I>StateSlave</I> needed to access it from the handler
    */
-  StateSlaveHandler(StateSlave *state) throw();
+  StateSlaveHandler(StateSlave *state);
 
   /// Destructor
-  virtual ~StateSlaveHandler() throw();
+  virtual ~StateSlaveHandler();
 
-  virtual void handleQuery(const QueryId &id, const CommStateRequest &request) throw();
+  virtual void handleQuery(IQueryServer &server, const Smart::QueryIdPtr &id, const CommStateRequest &request);
 };
 
 }

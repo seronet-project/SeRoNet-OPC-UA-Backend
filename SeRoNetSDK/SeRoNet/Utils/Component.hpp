@@ -29,6 +29,7 @@ class SERONETSDK_EXPORT Component :
 
   Smart::StatusCode run() override;
 
+  void signal_shutdown(void) override;
   Smart::StatusCode blocking(bool b) override;
   Smart::ITimerManager *getTimerManager() override;
 

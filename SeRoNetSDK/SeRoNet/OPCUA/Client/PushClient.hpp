@@ -33,14 +33,14 @@ class PushClient :
   Smart::StatusCode connect(const std::string &server, const std::string &service) override;
   Smart::StatusCode disconnect() override;
   Smart::StatusCode blocking(const bool blocking) override;
-  Smart::StatusCode subscribe(const int &prescale) override;
+  Smart::StatusCode subscribe(const unsigned int &prescale=1) override;
   ~PushClient() override;
   Smart::StatusCode unsubscribe() override;
 
   Smart::StatusCode getUpdate(DataType &d) override;
 
   Smart::StatusCode getUpdateWait(DataType &d,
-                                  const std::chrono::steady_clock::duration &timeout = std::chrono::steady_clock::duration::zero()) override;
+                                  const Smart::Duration &timeout = Smart::Duration::max()) override;
 
  private:
   DataType readValueFromSubscription(typename SeRoNet::OPCUA::Client::AsyncSubscriptionOpcUa<DataType>::counter_t offset);
@@ -61,7 +61,7 @@ PushClient<DataType>::PushClient(
 }
 
 template<class DataType>
-Smart::StatusCode PushClient<DataType>::subscribe(const int &prescale) {
+Smart::StatusCode PushClient<DataType>::subscribe(const unsigned int &prescale) {
 
   if (m_pSubscription) {
     m_pSubscription->setOnDataCallback(); // Reset callback
@@ -105,7 +105,7 @@ Smart::StatusCode PushClient<DataType>::getUpdate(DataType &d) {
 
 template<class DataType>
 Smart::StatusCode PushClient<DataType>::getUpdateWait(DataType &d,
-                                                      const std::chrono::steady_clock::duration &timeout) {
+                                                      const Smart::Duration &timeout) {
   if (m_pReader == nullptr || m_pSubscription == nullptr) {
     return Smart::StatusCode::SMART_UNSUBSCRIBED;
   }

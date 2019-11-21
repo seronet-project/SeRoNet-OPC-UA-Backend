@@ -7,8 +7,9 @@
  *  \author Sebastian Friedl - ISW, University of Stuttgart
  **/
 
-
 #pragma once
+
+#include <smartICommunicationObject.h>
 
 class CoordinateObject :
     public Smart::ICommunicationObject {

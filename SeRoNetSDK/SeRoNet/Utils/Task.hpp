@@ -21,15 +21,15 @@ namespace SeRoNet {
 namespace Utils {
 
 class Task :
-    public Smart::ITask {
+    virtual public Smart::ITask {
  private:
   std::thread m_thread;
 
   std::atomic_bool m_interruption_requested = {false};
 
  protected:
-  void sleep_for(const std::chrono::steady_clock::duration &rel_time) override {
-    throw SeRoNet::Exceptions::NotImplementedException(__FUNCTION__);
+  void sleep_for(const Smart::Duration &rel_time) override {
+    std::this_thread::sleep_for(rel_time);
   }
 
  public:

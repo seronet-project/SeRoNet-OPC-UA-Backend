@@ -16,31 +16,29 @@ namespace SeRoNet {
 namespace OPCUA {
 namespace Server {
 
-ParameterSlave::ParameterQueryHandler::ParameterQueryHandler(QueryServer<DefaultCommObjects::CommParameterRequest,
-                                                                         DefaultCommObjects::CommParameterResponse> *server,
-                                                             ParameterUpdateHandler *param_handler) noexcept
-    : param_handler(param_handler),
-      QueryServerHandler<DefaultCommObjects::CommParameterRequest,
-                         DefaultCommObjects::CommParameterResponse>(server) {
-
+ParameterSlave::ParameterQueryHandler::ParameterQueryHandler(ParameterUpdateHandler *param_handler) noexcept
+    : param_handler(param_handler)
+{
 }
-void ParameterSlave::ParameterQueryHandler::handleQuery(const int &id,
+void ParameterSlave::ParameterQueryHandler::handleQuery(IQueryServer& server, const Smart::QueryIdPtr &id,
                                                         const DefaultCommObjects::CommParameterRequest &request) noexcept {
 
   SeRoNet::DefaultCommObjects::CommParameterResponse answer;
 
   answer = param_handler->handleParameter(request);
 
-  this->server->answer(id, answer);
+  server.answer(id, answer);
 }
 
 ParameterSlave::ParameterSlave(Utils::Component *comp,
                                ParameterUpdateHandler *hnd,
                                std::string slave_address)
-    : component(comp),
-      query_server(comp, slave_address),
-      query_handler(&query_server, hnd),
-      thread_handler(comp, &query_handler) {
+    : component(comp)
+    , query_handler(std::make_shared<ParameterQueryHandler>(hnd))
+    , thread_handler(std::make_shared<SeRoNet::Utils::HsUlm::ThreadQueueQueryHandler<SeRoNet::DefaultCommObjects::CommParameterRequest,
+                                                                                     SeRoNet::DefaultCommObjects::CommParameterResponse>>(comp,query_handler))
+    , query_server(comp, slave_address, thread_handler)
+{
 
 }
 
