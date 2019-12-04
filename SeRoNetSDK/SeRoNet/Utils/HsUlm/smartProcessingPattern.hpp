@@ -71,34 +71,30 @@ namespace HsUlm {
  */
 template<class RequestType, class AnswerType>
 class ThreadQueueQueryHandler
-    : public Smart::IActiveQueryServerHandler<RequestType,AnswerType> 
-    , public SeRoNet::Utils::Task
-{
-private:
-	virtual int task_execution() override {
-		return this->process_fifo_queue();
-	}
-public:
-	using IQueryServerHandlerPtr = std::shared_ptr<Smart::IQueryServerHandler<RequestType,AnswerType>>;
+    : public Smart::IActiveQueryServerHandler<RequestType, AnswerType>, public SeRoNet::Utils::Task {
+ private:
+  virtual int task_execution() override {
+    return this->process_fifo_queue();
+  }
+ public:
+  using IQueryServerHandlerPtr = std::shared_ptr<Smart::IQueryServerHandler<RequestType, AnswerType>>;
 
-	/** Create a new threaded QueryServerHandler Decorator.
-	 *
-	 *  The internal handling thread is started/stopped automatically.
-	 *
-	 *  @param component          the pointer to the surrounding component
-	 *  @param inner_handler_ptr  which will be called in a separate thread.
-	 */
-	ThreadQueueQueryHandler(Smart::IComponent *component, IQueryServerHandlerPtr inner_handler_ptr)
-	:	Smart::IActiveQueryServerHandler<RequestType,AnswerType>(inner_handler_ptr)
-	,	SeRoNet::Utils::Task(component)
-	{
-		SeRoNet::Utils::Task::start();
-	}
+  /** Create a new threaded QueryServerHandler Decorator.
+   *
+   *  The internal handling thread is started/stopped automatically.
+   *
+   *  @param component          the pointer to the surrounding component
+   *  @param inner_handler_ptr  which will be called in a separate thread.
+   */
+  ThreadQueueQueryHandler(Smart::IComponent *component, IQueryServerHandlerPtr inner_handler_ptr)
+      : Smart::IActiveQueryServerHandler<RequestType, AnswerType>(inner_handler_ptr), SeRoNet::Utils::Task(component) {
+    SeRoNet::Utils::Task::start();
+  }
 
-	virtual ~ThreadQueueQueryHandler()
-	{
-		SeRoNet::Utils::Task::stop();
-	}
+  virtual ~ThreadQueueQueryHandler() {
+    this->signal_to_stop();
+    SeRoNet::Utils::Task::stop();
+  }
 };
 
 }// end namespace HsUlm
