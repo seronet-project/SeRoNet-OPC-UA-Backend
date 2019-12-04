@@ -88,7 +88,6 @@ TEST_F(Query, QueryPrimitiveArray) {
             server.answer(id, req);
           }
       );
-  //EXPECT_EQ(actHandler.start(), 0);
 
   EXPECT_EQ(Smart::StatusCode::SMART_OK, queryClient.connect(compServer->getName(), serviceName));
 
@@ -137,7 +136,6 @@ TYPED_TEST(QueryTemplate, QueryPrimitiveArrayTypes) {
             server.answer(id, req);
           }
       );
-  //EXPECT_EQ(actHandler.start(), 0);
 
   EXPECT_EQ(Smart::StatusCode::SMART_OK, queryClient.connect(this->compServer->getName(), serviceName));
 

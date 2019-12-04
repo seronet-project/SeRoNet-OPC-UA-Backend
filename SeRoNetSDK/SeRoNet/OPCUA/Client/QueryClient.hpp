@@ -58,9 +58,6 @@ inline Smart::StatusCode QueryClient<RequestType, AnswerType>::queryRequest(
     const RequestType &request,
     Smart::QueryIdPtr &id
 ) {
-//  typename QClientOPCUA<RequestType, AnswerType>::QueryIDtype::element_type::shpAsyncAnswer_t
-//      ans(m_Factory->call(request));
-//  id.reset(new typename QClientOPCUA<RequestType, AnswerType>::QueryIDtype::element_type(ans));
   auto ans = m_Factory->call(request);
   id = std::make_shared<OPCUAQueryID<AnswerType>>(ans);
   return ans != nullptr ? Smart::StatusCode::SMART_OK : Smart::StatusCode::SMART_ERROR;

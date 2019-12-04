@@ -64,10 +64,6 @@ protected:
 template<typename ActivationType, typename EventType>
 class EventClient : public Smart::IEventClientPattern<ActivationType, EventType> {
  public:
-
-  // <alex> this typedef is not required anymore as it is only used internally
-  //typedef std::shared_ptr<Event::Id_t<ActivationType, EventType>> EventIdType;
-
   EventClient(Utils::Component *pComponent);
 
   Smart::StatusCode connect(const std::string &server, const std::string &service) override;

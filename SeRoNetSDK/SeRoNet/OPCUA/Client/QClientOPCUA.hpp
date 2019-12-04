@@ -66,7 +66,6 @@ class QClientOPCUA :
 
   Smart::StatusCode connect(const std::string &server, const std::string &service) override;
   Smart::StatusCode disconnect() override;
-  //typedef QueryIDtype_template<AnswerType> QueryIDtype;
 
   using Smart::IQueryClientPattern<RequestType,AnswerType>::query; // use default implementation
   //Smart::StatusCode query(const RequestType &request, AnswerType &answer) override;
