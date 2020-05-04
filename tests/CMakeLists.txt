@@ -3,9 +3,9 @@ project(SeRoNetSDK_Tests)
 
 set(CMAKE_CXX_STANDARD 14)
 
-# NO_CMAKE_SYSTEM_PATH prevents the usage of 'FindGTest.cmake' from the cmake
+# NO_CMAKE_SYSTEM_PACKAGE_REGISTRY prevents the usage of 'FindGTest.cmake' from the cmake
 # installation. As this does not include GMock.
-find_package(GTest REQUIRED NO_CMAKE_SYSTEM_PATH)
+find_package(GTest REQUIRED NO_CMAKE_SYSTEM_PACKAGE_REGISTRY)
 
 add_subdirectory(SmartSoftOpcUaTests)
 
