@@ -1,105 +1,26 @@
 name: Build and Test
 
-on:
-  push:
-    branches: [ master, dev ]
-  pull_request:
-    branches: [ master, dev ]
+on: [push, pull_request]
 
 jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    env:
+      CMAKE_INSTALL_PREFIX: ${{ github.workspace }}/install
     steps:
-    - name: Install Apt Dependencies
-      run: |
-        sudo apt-get update -y
-        sudo apt-get install g++ cmake git python3 -y
     - name: Checkout repository
       uses: actions/checkout@v2
       with:
-        path: main
-        submodules: 'true'
-    - name: Checkout open62541
-      uses: actions/checkout@v2
-      with:
-        path: open62541
-        submodules: 'true'
-        repository: open62541/open62541
-        ref: '1.0'
-    - name: Checkout Open62541Cpp
-      uses: actions/checkout@v2
-      with:
-        path: Open62541Cpp
-        submodules: 'true'
-        repository: seronet-project/open62541Cpp
-    - name: Checkout googletest
-      uses: actions/checkout@v2
-      with:
-        path: googletest
-        submodules: 'true'
-        repository: google/googletest
-        ref: ae8d1fc81b1469905b3d0fa6f8a077f58fc4b250
-    - name: Checkout SmartSoftComponentDeveloperAPIcpp
-      uses: actions/checkout@v2
-      with:
-        path: SmartSoftComponentDeveloperAPIcpp
-        submodules: 'true'
-        repository: ccvca/SmartSoftComponentDeveloperAPIcpp
-        ref: dev
-
-    - name: Build open62541
+        path: SeRoNetOpcUaBackend
+        submodules: recursive
+    - name: Build server with dependencies
       run: |
-        mkdir -p build/open62541
-        export CMAKE_PREFIX_PATH=$buildPath$appendix:$buildPath/modules
-        CMAKE_PREFIX_PATH=$buildPath$appendix:$buildPath/modules
-        buildPath=`pwd`/install
-        cd build/open62541
-        cmake -DUA_ENABLE_DISCOVERY_MULTICAST:BOOL="1" -DBUILD_SHARED_LIBS:BOOL="1" -DCMAKE_INSTALL_PREFIX:STRING=$buildPath ../../open62541
-        cmake --build . --target install
-
-    - name: Build googletest
+        mkdir -p build
+        cd build
+        cmake ../SeRoNetOpcUaBackend/.github/ -DCMAKE_INSTALL_PREFIX:PATH=${{ env.CMAKE_INSTALL_PREFIX }}
+        cmake --build .
+    - name: Test SeRoNetOpcUaBackend
       run: |
-        mkdir -p build/googletest
-        export CMAKE_PREFIX_PATH=$buildPath$appendix:$buildPath/modules
-        CMAKE_PREFIX_PATH=$buildPath$appendix:$buildPath/modules
-        buildPath=`pwd`/install
-        cd build/googletest
-        cmake -DCMAKE_INSTALL_PREFIX:STRING=$buildPath ../../googletest
-        cmake --build . --target install
-
-    - name: Build SmartSoftComponentDeveloperAPIcpp
-      run: |
-        mkdir -p build/SmartSoftComponentDeveloperAPIcpp
-        export CMAKE_PREFIX_PATH=$buildPath$appendix:$buildPath/modules
-        CMAKE_PREFIX_PATH=$buildPath$appendix:$buildPath/modules
-        buildPath=`pwd`/install
-        cd build/SmartSoftComponentDeveloperAPIcpp
-        cmake -DCMAKE_INSTALL_PREFIX:STRING=$buildPath ../../SmartSoftComponentDeveloperAPIcpp
-        cmake --build . --target install
-
-    - name: Build Open62541Cpp
-      run: |
-        mkdir -p build/Open62541Cpp
-        export CMAKE_PREFIX_PATH=$buildPath$appendix:$buildPath/modules
-        CMAKE_PREFIX_PATH=$buildPath$appendix:$buildPath/modules
-        buildPath=`pwd`/install
-        cd build/Open62541Cpp
-        cmake -DCMAKE_INSTALL_PREFIX:STRING=$buildPath ../../Open62541Cpp
-        cmake --build . --target install
-
-    - name: Build
-      run: |
-        mkdir -p build/main
-        export CMAKE_PREFIX_PATH=$buildPath$appendix:$buildPath/modules
-        CMAKE_PREFIX_PATH=$buildPath$appendix:$buildPath/modules
-        buildPath=`pwd`/install
-        cd build/main
-        cmake -DCMAKE_INSTALL_PREFIX:STRING=$buildPath  -DSERONETSDK_ENABLE_TESTS:BOOL=ON ../../main
-        cmake --build . --target install
-
-    - name: Test
-      run: |
-        cd build/main
-        ctest
+        cd build/SeRoNetOpcUaBackend-build/
+        ctest --output-on-failure ${{env.ARG_CTEST}}

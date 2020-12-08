@@ -72,15 +72,15 @@ void OpcUaServer::initServer(const std::string &serverName) {
   UA_LocalizedText_deleteMembers(&pConfig->applicationDescription.applicationName);
   pConfig->applicationDescription.applicationName = UA_LOCALIZEDTEXT_ALLOC("", m_serverName.c_str());
 
-  pConfig->discovery.mdnsEnable = true;
-  pConfig->discovery.mdns.mdnsServerName = UA_STRING_ALLOC(m_serverName.c_str());
+  pConfig->mdnsEnabled = true;
+  pConfig->mdnsConfig.mdnsServerName = UA_STRING_ALLOC(m_serverName.c_str());
   UA_String hostname = UA_STRING_ALLOC("localhost");
   pConfig->customHostname = hostname;
   UA_String *caps = UA_String_new();
   *caps = UA_STRING_ALLOC(m_serverName.c_str());
-  pConfig->discovery.mdns.serverCapabilities = caps;
-  pConfig->discovery.mdns.serverCapabilitiesSize = 1;
-  pConfig->discovery.cleanupTimeout = 30; //s;
+  pConfig->mdnsConfig.serverCapabilities = caps;
+  pConfig->mdnsConfig.serverCapabilitiesSize = 1;
+  pConfig->discoveryCleanupTimeout = 30; //s;
 
 
   // Set publishing interval
