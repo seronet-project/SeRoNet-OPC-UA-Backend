@@ -85,8 +85,8 @@ class SendServer : public Smart::ISendServerPattern<DataType> {
         nullptr,
         this,
         NULL);
-    UA_QualifiedName_deleteMembers(&qualifiedName);
-    UA_MethodAttributes_deleteMembers(&methodAttibute);
+    UA_QualifiedName_clear(&qualifiedName);
+    UA_MethodAttributes_clear(&methodAttibute);
   }
 
   /** Destructor.

@@ -195,8 +195,8 @@ inline QueryServer<T_REQUEST, T_ANSWER>::QueryServer(
       this,
       NULL);
 
-  UA_QualifiedName_deleteMembers(&qualifiedName);
-  UA_MethodAttributes_deleteMembers(&helloAttr);
+  UA_QualifiedName_clear(&qualifiedName);
+  UA_MethodAttributes_clear(&helloAttr);
 }
 
 template<typename T_REQUEST, typename T_ANSWER>

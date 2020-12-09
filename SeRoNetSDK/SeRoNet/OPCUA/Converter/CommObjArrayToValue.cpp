@@ -204,7 +204,7 @@ CommObjArrayToValue::CommObjArrayToValue(CommunicationObjects::Description::Elem
 }
 
 CommObjArrayToValue::~CommObjArrayToValue() {
-  UA_Variant_deleteMembers(&m_variant);
+  UA_Variant_clear(&m_variant);
 }
 
 UA_Variant CommObjArrayToValue::Value() {

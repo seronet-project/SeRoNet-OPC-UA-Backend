@@ -148,7 +148,7 @@ inline UA_StatusCode AsyncSubscriptionOpcUa<T_DATATYPE>::subscribe(std::vector<U
                                                   UA_TIMESTAMPSTORETURN_BOTH,
                                                   monItemRequest, this, &handler_ValueChanged, NULL);
 
-    UA_MonitoredItemCreateRequest_deleteMembers(&monItemRequest);
+    UA_MonitoredItemCreateRequest_clear(&monItemRequest);
 
     if (monItemResponse.statusCode != UA_STATUSCODE_GOOD) {
       /// TODO Logging

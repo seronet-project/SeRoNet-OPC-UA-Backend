@@ -55,8 +55,8 @@ class ToPushModellVisitor :
         nullptr
     );
 
-    UA_QualifiedName_deleteMembers(&qualifiedName);
-    UA_ObjectAttributes_deleteMembers(&attr);
+    UA_QualifiedName_clear(&qualifiedName);
+    UA_ObjectAttributes_clear(&attr);
 
     if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
 
@@ -92,8 +92,8 @@ class ToPushModellVisitor :
         nullptr
     );
 
-    UA_QualifiedName_deleteMembers(&qualifiedName);
-    UA_VariableAttributes_deleteMembers(&attr);
+    UA_QualifiedName_clear(&qualifiedName);
+    UA_VariableAttributes_clear(&attr);
     if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
   }
 

@@ -92,8 +92,8 @@ CommObjectBrowseToNodeIds::CommObjectBrowseToNodeIds(
       }
     }
   }
-  UA_BrowseRequest_deleteMembers(&bReq);
-  UA_BrowseResponse_deleteMembers(&bResp);
+  UA_BrowseRequest_clear(&bReq);
+  UA_BrowseResponse_clear(&bResp);
 
   ///\todo check if a nodeId for each primitive description element has been found
 }

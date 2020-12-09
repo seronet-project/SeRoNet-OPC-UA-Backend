@@ -69,7 +69,7 @@ void OpcUaServer::initServer(const std::string &serverName) {
   auto pConfig = UA_Server_getConfig(m_pServer);
 
   pConfig->applicationDescription.applicationType = UA_APPLICATIONTYPE_DISCOVERYSERVER;
-  UA_LocalizedText_deleteMembers(&pConfig->applicationDescription.applicationName);
+  UA_LocalizedText_clear(&pConfig->applicationDescription.applicationName);
   pConfig->applicationDescription.applicationName = UA_LOCALIZEDTEXT_ALLOC("", m_serverName.c_str());
 
   pConfig->mdnsEnabled = true;
