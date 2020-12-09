@@ -47,7 +47,7 @@ TEST(Converter, VariantToObjArray) {
   SeRoNet::OPCUA::Converter::CommObjArrayToValue commObj2Array(pArraySelfDescInput.get());
   auto retVal = commObj2Array.Value();
 
-  open62541::UA_Variant retValuAsVariant(&retVal, false);
+  open62541Cpp::UA_Variant retValuAsVariant(&retVal, false);
   decltype(inputVal) deserializedValue;
   auto pArraySelfDescDeserialized =
       std::dynamic_pointer_cast<SeRoNet::CommunicationObjects::Description::ElementArray>(
@@ -147,7 +147,7 @@ TEST(Converter, VectorOfComplexObj) {
 
   ASSERT_EQ(retVal.arrayLength, inputVal.size());
 
-  open62541::UA_Variant retValuAsVariant(&retVal, false);
+  open62541Cpp::UA_Variant retValuAsVariant(&retVal, false);
   decltype(inputVal) deserializedValue;
   auto pArraySelfDescDeserialized =
       std::dynamic_pointer_cast<SeRoNet::CommunicationObjects::Description::ElementArray>(

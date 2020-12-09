@@ -31,13 +31,13 @@ class ToPushModellVisitor :
  public:
 
   ToPushModellVisitor(std::shared_ptr<SeRoNet::OPCUA::Server::OpcUaServer> pServer,
-                      const OPEN_65241_CPP_NAMESPACE::UA_NodeId &parent)
+                      const open62541Cpp::UA_NodeId &parent)
       : m_pServer(pServer),
         m_parent(parent) {}
 
   /// WARNING this Methode is untested
   void visit(SeRoNet::CommunicationObjects::Description::ComplexType *complexObject) override {
-    const open62541::UA_NodeId ownNodeId = generateNodeId(complexObject);
+    const open62541Cpp::UA_NodeId ownNodeId = generateNodeId(complexObject);
     UA_ObjectAttributes attr = UA_ObjectAttributes_default;
     attr.displayName = UA_LOCALIZEDTEXT_ALLOC("", complexObject->getName().c_str());
 
@@ -58,7 +58,7 @@ class ToPushModellVisitor :
     UA_QualifiedName_clear(&qualifiedName);
     UA_ObjectAttributes_clear(&attr);
 
-    if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
+    if (retVal != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retVal);
 
     ToPushModellVisitor visitor(m_pServer, ownNodeId);
     for (auto &el: *complexObject) {
@@ -94,7 +94,7 @@ class ToPushModellVisitor :
 
     UA_QualifiedName_clear(&qualifiedName);
     UA_VariableAttributes_clear(&attr);
-    if (retVal != UA_STATUSCODE_GOOD) throw OPEN_65241_CPP_NAMESPACE::Exceptions::OpcUaErrorException(retVal);
+    if (retVal != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retVal);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<bool> *el) override {
@@ -167,29 +167,29 @@ class ToPushModellVisitor :
     retVal = UA_Server_writeAccessLevel(m_pServer->getServer(),
                                         *myNodeId.NodeId,
                                         0);
-    if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
+    if (retVal != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retVal);
   }
 
-  open62541::UA_NodeId generateNodeId(const SeRoNet::CommunicationObjects::Description::IDescription *description)
+  open62541Cpp::UA_NodeId generateNodeId(const SeRoNet::CommunicationObjects::Description::IDescription *description)
   const {
     std::stringstream ss;
     switch (m_parent.NodeId->identifierType) {
       case UA_NODEIDTYPE_NUMERIC:ss << m_parent.NodeId->identifier.numeric << ".";
         break;
-      case UA_NODEIDTYPE_STRING:ss << open62541::UA_String(&m_parent.NodeId->identifier.string) << ".";
+      case UA_NODEIDTYPE_STRING:ss << open62541Cpp::UA_String(&m_parent.NodeId->identifier.string) << ".";
         break;
       case UA_NODEIDTYPE_BYTESTRING: throw SeRoNet::Exceptions::NotImplementedException(__FUNCTION__);
       case UA_NODEIDTYPE_GUID: throw SeRoNet::Exceptions::NotImplementedException(__FUNCTION__);
     }
 
     ss << description->getName();
-    open62541::UA_NodeId
-        ownNodeId = open62541::UA_NodeId(m_pServer->getNsIndex1(), ss.str());
+    open62541Cpp::UA_NodeId
+        ownNodeId = open62541Cpp::UA_NodeId(m_pServer->getNsIndex1(), ss.str());
     return ownNodeId;
   }
 
   std::shared_ptr<SeRoNet::OPCUA::Server::OpcUaServer> m_pServer;
-  OPEN_65241_CPP_NAMESPACE::UA_NodeId m_parent;
+  open62541Cpp::UA_NodeId m_parent;
 };
 
 namespace SeRoNet {
@@ -199,7 +199,7 @@ namespace Converter {
 CommObjectToPushModel::CommObjectToPushModel(
     std::shared_ptr<SeRoNet::OPCUA::Server::OpcUaServer> pServer,
     CommunicationObjects::Description::IVisitableDescription *description,
-    const OPEN_65241_CPP_NAMESPACE::UA_NodeId &parent) : m_pServer(pServer) {
+    const open62541Cpp::UA_NodeId &parent) : m_pServer(pServer) {
   ToPushModellVisitor visitor(pServer, parent);
   description->accept(&visitor);
 }

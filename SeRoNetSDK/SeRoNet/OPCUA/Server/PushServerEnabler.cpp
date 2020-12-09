@@ -33,11 +33,11 @@ class EnableOpcuaServerVisitor :
     public ::SeRoNet::CommunicationObjects::Description::IVisitorDescription {
  public:
 
-  explicit EnableOpcuaServerVisitor(std::shared_ptr<SeRoNet::OPCUA::Server::OpcUaServer> pOpcUaServer, const open62541::UA_NodeId &parent)
+  explicit EnableOpcuaServerVisitor(std::shared_ptr<SeRoNet::OPCUA::Server::OpcUaServer> pOpcUaServer, const open62541Cpp::UA_NodeId &parent)
       : m_pOpcUaServer(pOpcUaServer), m_parent(parent) {}
 
   void visit(SeRoNet::CommunicationObjects::Description::ComplexType *complexObject) override {
-    open62541::UA_NodeId ownNodeId = generateNodeId(complexObject);
+    open62541Cpp::UA_NodeId ownNodeId = generateNodeId(complexObject);
 
     EnableOpcuaServerVisitor visitor(m_pOpcUaServer, ownNodeId);
     for (auto &el: *complexObject) {
@@ -106,28 +106,28 @@ class EnableOpcuaServerVisitor :
     retVal = UA_Server_writeAccessLevel(m_pOpcUaServer->getServer(),
                                         *myNodeId.NodeId,
                                         UA_ACCESSLEVELMASK_READ);
-    if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
+    if (retVal != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retVal);
   }
 
-  open62541::UA_NodeId generateNodeId(const SeRoNet::CommunicationObjects::Description::IDescription *description)
+  open62541Cpp::UA_NodeId generateNodeId(const SeRoNet::CommunicationObjects::Description::IDescription *description)
   const {
     std::stringstream ss;
     switch (m_parent.NodeId->identifierType) {
       case UA_NODEIDTYPE_NUMERIC:ss << m_parent.NodeId->identifier.numeric << ".";
         break;
-      case UA_NODEIDTYPE_STRING:ss << open62541::UA_String(&m_parent.NodeId->identifier.string) << ".";
+      case UA_NODEIDTYPE_STRING:ss << open62541Cpp::UA_String(&m_parent.NodeId->identifier.string) << ".";
         break;
       case UA_NODEIDTYPE_BYTESTRING: throw SeRoNet::Exceptions::NotImplementedException(__FUNCTION__);
       case UA_NODEIDTYPE_GUID: throw SeRoNet::Exceptions::NotImplementedException(__FUNCTION__);
     }
 
     ss << description->getName();
-    open62541::UA_NodeId
-        ownNodeId = open62541::UA_NodeId(m_pOpcUaServer->getNsIndex1(), ss.str());
+    open62541Cpp::UA_NodeId
+        ownNodeId = open62541Cpp::UA_NodeId(m_pOpcUaServer->getNsIndex1(), ss.str());
     return ownNodeId;
   }
   std::shared_ptr<SeRoNet::OPCUA::Server::OpcUaServer> m_pOpcUaServer;
-  open62541::UA_NodeId m_parent;
+  open62541Cpp::UA_NodeId m_parent;
 };
 
 namespace SeRoNet {
@@ -138,7 +138,7 @@ namespace Server {
 PushServerEnabler::PushServerEnabler(
     std::shared_ptr<SeRoNet::OPCUA::Server::OpcUaServer> pOpcUaServer,
     CommunicationObjects::Description::IVisitableDescription *description,
-    const open62541::UA_NodeId &parent) {
+    const open62541Cpp::UA_NodeId &parent) {
   EnableOpcuaServerVisitor visitor(pOpcUaServer, parent);
   description->accept(&visitor);
 }

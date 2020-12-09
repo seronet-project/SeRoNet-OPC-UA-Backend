@@ -128,7 +128,7 @@ UA_StatusCode QueryServer<T_REQUEST, T_ANSWER>::methodCallback(
   T_REQUEST request;
 
   OPCUA::Converter::UaVariantArrayToCommObject
-      conv(open62541::UA_ArrayOfVariant(input, inputSize),
+      conv(open62541Cpp::UA_ArrayOfVariant(input, inputSize),
            CommunicationObjects::Description::SelfDescription(&request, "").get());
 
   auto id_ptr = std::make_shared<Smart::NumericCorrelationId>(rand()); // TODO(Friedl) ersetzten mit std:future
@@ -136,7 +136,7 @@ UA_StatusCode QueryServer<T_REQUEST, T_ANSWER>::methodCallback(
   while (friendThis->m_answers.find(*id_ptr) == friendThis->m_answers.end()) {
     std::this_thread::yield();
   }
-  auto tmp = static_cast<open62541::UA_ArrayOfVariant> (Converter::CommObjectToUaVariantArray
+  auto tmp = static_cast<open62541Cpp::UA_ArrayOfVariant> (Converter::CommObjectToUaVariantArray
       (CommunicationObjects::Description::SelfDescription(&friendThis->m_answers.at(*id_ptr), "").get()));
 
   ///\todo use UA_Variant_setArrayCopy()!
@@ -159,11 +159,11 @@ inline QueryServer<T_REQUEST, T_ANSWER>::QueryServer(
     m_service(service) {
 
   T_REQUEST inputCommObject;
-  OPEN_65241_CPP_NAMESPACE::UA_ArrayOfArgument
+  open62541Cpp::UA_ArrayOfArgument
       inputArguments =
       Converter::CommObjectToUaArgumentArray(CommunicationObjects::Description::SelfDescription(&inputCommObject, "input").get());
   T_ANSWER outputCommObject;
-  OPEN_65241_CPP_NAMESPACE::UA_ArrayOfArgument
+  open62541Cpp::UA_ArrayOfArgument
       outputArguments =
       Converter::CommObjectToUaArgumentArray(CommunicationObjects::Description::SelfDescription(&outputCommObject, "output").get());
 
@@ -178,7 +178,7 @@ inline QueryServer<T_REQUEST, T_ANSWER>::QueryServer(
   ss <<"85." <<this->m_service.c_str(); //TODO use a own function to create nodeIds
 
   UA_QualifiedName qualifiedName = UA_QUALIFIEDNAME_ALLOC(1, this->m_service.c_str());
-  open62541::UA_NodeId newNodeId(m_component->getOpcUaServer()->getNsIndex1(), ss.str().c_str());
+  open62541Cpp::UA_NodeId newNodeId(m_component->getOpcUaServer()->getNsIndex1(), ss.str().c_str());
 
   UA_Server_addMethodNode(
       m_component->getOpcUaServer()->getServer(),

@@ -29,77 +29,77 @@ class ToUaVariantArrayVisitor : public ::SeRoNet::CommunicationObjects::Descript
     }
   }
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<bool> *el) override {
-    open62541::UA_Variant newEl;
+    open62541Cpp::UA_Variant newEl;
     auto value = el->get();
     UA_Variant_setScalarCopy(newEl.Variant, &value, &UA_TYPES[UA_TYPES_BOOLEAN]);
     Variants.push_back(newEl);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<int8_t> *el) override {
-    open62541::UA_Variant newEl;
+    open62541Cpp::UA_Variant newEl;
     auto value = el->get();
     UA_Variant_setScalarCopy(newEl.Variant, &value, &UA_TYPES[UA_TYPES_BYTE]);
     Variants.push_back(newEl);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<int16_t> *el) override {
-    open62541::UA_Variant newEl;
+    open62541Cpp::UA_Variant newEl;
     auto value = el->get();
     UA_Variant_setScalarCopy(newEl.Variant, &value, &UA_TYPES[UA_TYPES_INT16]);
     Variants.push_back(newEl);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<int32_t> *el) override {
-    open62541::UA_Variant newEl;
+    open62541Cpp::UA_Variant newEl;
     auto value = el->get();
     UA_Variant_setScalarCopy(newEl.Variant, &value, &UA_TYPES[UA_TYPES_INT32]);
     Variants.push_back(newEl);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<int64_t> *el) override {
-    open62541::UA_Variant newEl;
+    open62541Cpp::UA_Variant newEl;
     auto value = el->get();
     UA_Variant_setScalarCopy(newEl.Variant, &value, &UA_TYPES[UA_TYPES_INT64]);
     Variants.push_back(newEl);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<uint8_t> *el) override {
-    open62541::UA_Variant newEl;
+    open62541Cpp::UA_Variant newEl;
     auto value = el->get();
     UA_Variant_setScalarCopy(newEl.Variant, &value, &UA_TYPES[UA_TYPES_BYTE]);
     Variants.push_back(newEl);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<uint16_t> *el) override {
-    open62541::UA_Variant newEl;
+    open62541Cpp::UA_Variant newEl;
     auto value = el->get();
     UA_Variant_setScalarCopy(newEl.Variant, &value, &UA_TYPES[UA_TYPES_UINT16]);
     Variants.push_back(newEl);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<uint32_t> *el) override {
-    open62541::UA_Variant newEl;
+    open62541Cpp::UA_Variant newEl;
     auto value = el->get();
     UA_Variant_setScalarCopy(newEl.Variant, &value, &UA_TYPES[UA_TYPES_UINT32]);
     Variants.push_back(newEl);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<uint64_t> *el) override {
-    open62541::UA_Variant newEl;
+    open62541Cpp::UA_Variant newEl;
     auto value = el->get();
     UA_Variant_setScalarCopy(newEl.Variant, &value, &UA_TYPES[UA_TYPES_UINT64]);
     Variants.push_back(newEl);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<float> *el) override {
-    open62541::UA_Variant newEl;
+    open62541Cpp::UA_Variant newEl;
     auto value = el->get();
     UA_Variant_setScalarCopy(newEl.Variant, &value, &UA_TYPES[UA_TYPES_FLOAT]);
     Variants.push_back(newEl);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<double> *el) override {
-    open62541::UA_Variant newEl;
+    open62541Cpp::UA_Variant newEl;
     auto value = el->get();
     UA_Variant_setScalarCopy(newEl.Variant, &value, &UA_TYPES[UA_TYPES_DOUBLE]);
     Variants.push_back(newEl);
@@ -107,20 +107,20 @@ class ToUaVariantArrayVisitor : public ::SeRoNet::CommunicationObjects::Descript
 
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<std::string> *el) override {
-    open62541::UA_Variant newEl;
+    open62541Cpp::UA_Variant newEl;
     auto value = el->get();
-    UA_Variant_setScalarCopy(newEl.Variant, open62541::UA_String(value).String, &UA_TYPES[UA_TYPES_STRING]);
+    UA_Variant_setScalarCopy(newEl.Variant, open62541Cpp::UA_String(value).String, &UA_TYPES[UA_TYPES_STRING]);
     Variants.push_back(newEl);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementArray *elementArray) override {
     SeRoNet::OPCUA::Converter::CommObjArrayToValue commObjArrayToValue(elementArray);
     auto variant = commObjArrayToValue.Value();
-    open62541::UA_Variant newEl(&variant, false);
+    open62541Cpp::UA_Variant newEl(&variant, false);
     Variants.push_back(newEl);
   }
 
-  std::list<open62541::UA_Variant> Variants;
+  std::list<open62541Cpp::UA_Variant> Variants;
 };
 
 namespace SeRoNet {

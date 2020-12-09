@@ -25,7 +25,7 @@ class AsyncAnswerFactory {
  public:
   AsyncAnswerFactory(std::shared_ptr<UA_Client> pClient,
                      std::mutex &opcuaThreadMutex,
-                     open62541::UA_NodeId methodNodeId);
+                     open62541Cpp::UA_NodeId methodNodeId);
   virtual ~AsyncAnswerFactory();
 
   typedef std::shared_ptr<AsyncAnswer<T_RETURN>> CallReturn_t;
@@ -38,7 +38,7 @@ class AsyncAnswerFactory {
   std::shared_ptr<UA_Client> m_pClient;
   std::mutex &m_opcuaThreadMutex;
   InstanceStorage<IBlocking> m_activeInstances;
-  open62541::UA_NodeId m_methodNodeId;
+  open62541Cpp::UA_NodeId m_methodNodeId;
 
   /// Store the blocking state for newly created Instances
   /// \todo move m_activeInstances, m_blockingEnabled, disableBlocking and enableBlocking to base class
@@ -48,7 +48,7 @@ class AsyncAnswerFactory {
 template<typename T_RETURN, typename... T_CAll_ARGS>
 inline AsyncAnswerFactory<T_RETURN, T_CAll_ARGS...>::AsyncAnswerFactory(std::shared_ptr<UA_Client> pClient,
                                                                         std::mutex &opcuaThreadMutex,
-                                                                        open62541::UA_NodeId methodNodeId) :
+                                                                        open62541Cpp::UA_NodeId methodNodeId) :
     m_pClient(pClient), m_opcuaThreadMutex(opcuaThreadMutex), m_methodNodeId(methodNodeId) {
 }
 

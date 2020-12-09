@@ -22,7 +22,7 @@ class INamingService {
 
   struct ConnectionAndNodeid{
     UaClientWithMutex_t::shpType connection;
-    OPEN_65241_CPP_NAMESPACE::UA_NodeId nodeId;
+    open62541Cpp::UA_NodeId nodeId;
   };
 
   virtual ConnectionAndNodeid getConnectionAndNodeIdByName(const std::string &serverName, const std::string &service) = 0;

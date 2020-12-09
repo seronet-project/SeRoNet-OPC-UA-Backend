@@ -55,7 +55,7 @@ class SendServer : public Smart::ISendServerPattern<DataType> {
 
     auto server = (component)->getOpcUaServer();
     DataType inputCommObject;
-    open62541::UA_ArrayOfArgument
+    open62541Cpp::UA_ArrayOfArgument
         inputArguments =
         Converter::CommObjectToUaArgumentArray(
             CommunicationObjects::Description::SelfDescription(&inputCommObject, "input").get());
@@ -70,7 +70,7 @@ class SendServer : public Smart::ISendServerPattern<DataType> {
     ss <<"85." <<service.c_str(); // @todo hier sollte eine besser dynamischer weg geunden werden.
 
     UA_QualifiedName qualifiedName = UA_QUALIFIEDNAME_ALLOC(server.get()->getNsIndex1(), service.c_str());
-    open62541::UA_NodeId nodeId(server.get()->getNsIndex1(), ss.str().c_str());
+    open62541Cpp::UA_NodeId nodeId(server.get()->getNsIndex1(), ss.str().c_str());
     UA_Server_addMethodNode(
         server.get()->getServer(),
         *nodeId.NodeId,
@@ -115,7 +115,7 @@ inline UA_StatusCode SendServer<DataType>::methodCallback(
   DataType update;
 
   OPCUA::Converter::UaVariantArrayToCommObject
-      conv(open62541::UA_ArrayOfVariant(input, inputSize),
+      conv(open62541Cpp::UA_ArrayOfVariant(input, inputSize),
            CommunicationObjects::Description::SelfDescription(&update, "").get());
   friendThis->handleSend(update);
   friendThis->notify_input(update);

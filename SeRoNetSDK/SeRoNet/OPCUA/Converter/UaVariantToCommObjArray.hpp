@@ -21,8 +21,8 @@ namespace Converter {
 class SERONETSDK_EXPORT VariantToCommObjArray {
 
  public:
-  /// \todo use const for open62541::UA_Variant
-  VariantToCommObjArray(CommunicationObjects::Description::ElementArray * arr, open62541::UA_Variant &variant);
+  /// \todo use const for open62541Cpp::UA_Variant
+  VariantToCommObjArray(CommunicationObjects::Description::ElementArray * arr, open62541Cpp::UA_Variant &variant);
 };
 
 } //  namespace Converter

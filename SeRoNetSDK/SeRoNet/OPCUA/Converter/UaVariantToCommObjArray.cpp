@@ -25,7 +25,7 @@ namespace internal {
 class ToCommObjArrayVisitor : public CommunicationObjects::Description::IVisitorDescription {
  public:
   ToCommObjArrayVisitor(
-      CommunicationObjects::Description::ElementArray *arr, open62541::UA_Variant &variant)
+      CommunicationObjects::Description::ElementArray *arr, open62541Cpp::UA_Variant &variant)
       : m_variant(variant) {
 
     for (m_index = 0; m_index < variant.Variant->arrayLength; ++m_index) {
@@ -46,7 +46,7 @@ class ToCommObjArrayVisitor : public CommunicationObjects::Description::IVisitor
     if (pData->arrayDimensionsSize != 1 || !pData->arrayDimensions) {
       throw SeRoNet::Exceptions::InvalidConversion("Expected single dimension array of Variants");
     }
-    open62541::UA_ArrayOfVariant
+    open62541Cpp::UA_ArrayOfVariant
         ua_arrayOfVariant(reinterpret_cast<UA_Variant *> (pData[m_index].data), pData[m_index].arrayLength);
     Converter::UaVariantArrayToCommObject uaVariantArrayToCommObject(ua_arrayOfVariant, complexObject);
   }
@@ -56,7 +56,7 @@ class ToCommObjArrayVisitor : public CommunicationObjects::Description::IVisitor
       throw SeRoNet::Exceptions::InvalidConversion("Expected Variant");
     }
     auto pData = m_variant.getDataAs<UA_Variant>();
-    open62541::UA_Variant ua_variant(&pData[m_index], false);
+    open62541Cpp::UA_Variant ua_variant(&pData[m_index], false);
     VariantToCommObjArray valToCommObj(elementArray, ua_variant);
   }
 
@@ -166,14 +166,14 @@ class ToCommObjArrayVisitor : public CommunicationObjects::Description::IVisitor
 
  protected:
   std::size_t m_index;
-  open62541::UA_Variant &m_variant;
+  open62541Cpp::UA_Variant &m_variant;
 };
 
 }
 
 VariantToCommObjArray::VariantToCommObjArray(
     CommunicationObjects::Description::ElementArray *arr,
-    open62541::UA_Variant &variant) {
+    open62541Cpp::UA_Variant &variant) {
   internal::ToCommObjArrayVisitor toCommObjArrayVisitor(arr, variant);
 }
 

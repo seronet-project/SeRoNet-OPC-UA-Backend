@@ -19,7 +19,7 @@ namespace Converter {
 
 CommObjectBrowseToNodeIds::CommObjectBrowseToNodeIds(
     CommunicationObjects::Description::IDescription::shp_t pDescription,
-    const open62541::UA_NodeId &nodeId,
+    const open62541Cpp::UA_NodeId &nodeId,
     std::shared_ptr<UA_Client> pClient
 ) {
 
@@ -59,7 +59,7 @@ CommObjectBrowseToNodeIds::CommObjectBrowseToNodeIds(
       }
 
       ///\todo handle the case of different servers?(ref.nodeId.serverIndex)
-      open62541::UA_NodeId nodeIdOfRefTarget(&(ref->nodeId.nodeId), false);
+      open62541Cpp::UA_NodeId nodeIdOfRefTarget(&(ref->nodeId.nodeId), false);
 
       if (std::dynamic_pointer_cast<CommunicationObjects::Description::ComplexType>(description) != nullptr) {
         if (ref->nodeClass == UA_NODECLASS_OBJECT) {

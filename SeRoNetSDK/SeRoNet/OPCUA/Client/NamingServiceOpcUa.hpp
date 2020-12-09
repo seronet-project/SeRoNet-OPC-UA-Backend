@@ -54,7 +54,7 @@ class SERONETSDK_EXPORT NamingServiceOpcUa : public INamingService, public std::
   /// Custom Deleter of shared_ptr
   static void clientWithMutexDeletedCallback(UaClientWithMutex_t *pClientWithMutex, shpType pNamingService, std::string serverName);
 
-  static open62541::UA_NodeId createNodeId(const std::string &service, UA_UInt16 nsIndex);
+  static open62541Cpp::UA_NodeId createNodeId(const std::string &service, UA_UInt16 nsIndex);
 
   void changeLocalHostname(std::string &discoveryUrl) const;
   std::string getSessionEndpointUrlFromDiscoveryEndpointUrl(const std::shared_ptr<UA_Client> &pClient,

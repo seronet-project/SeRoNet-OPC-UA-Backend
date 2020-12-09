@@ -25,7 +25,7 @@ class SERONETSDK_EXPORT CommObjectToPushModel {
   CommObjectToPushModel(
       std::shared_ptr<SeRoNet::OPCUA::Server::OpcUaServer> pServer,
       CommunicationObjects::Description::IVisitableDescription *description,
-      const open62541::UA_NodeId &parent);
+      const open62541Cpp::UA_NodeId &parent);
   virtual ~CommObjectToPushModel() = default;
 
  private:

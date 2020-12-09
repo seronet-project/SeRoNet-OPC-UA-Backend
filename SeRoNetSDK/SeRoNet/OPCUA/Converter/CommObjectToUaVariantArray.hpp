@@ -22,11 +22,11 @@ class SERONETSDK_EXPORT CommObjectToUaVariantArray {
  public:
   CommObjectToUaVariantArray(CommunicationObjects::Description::IVisitableDescription *description);
   virtual ~CommObjectToUaVariantArray() = default;
-  typedef open62541::UA_ArrayOfVariant ConvTarget_t;
+  typedef open62541Cpp::UA_ArrayOfVariant ConvTarget_t;
   inline operator ConvTarget_t() { return getValue(); }
   inline  ConvTarget_t getValue() { return m_convertedValue; }
  private:
-  open62541::UA_ArrayOfVariant m_convertedValue;
+  open62541Cpp::UA_ArrayOfVariant m_convertedValue;
 };
 
 } //  namespace Converter

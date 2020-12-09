@@ -29,13 +29,13 @@ class SERONETSDK_EXPORT CommObjectBrowseToNodeIds {
   /// \param pClient only used inside the constructor
   CommObjectBrowseToNodeIds(
       CommunicationObjects::Description::IDescription::shp_t pDescription,
-      const open62541::UA_NodeId& nodeId,
+      const open62541Cpp::UA_NodeId& nodeId,
       std::shared_ptr<UA_Client> pClient
   );
   virtual ~CommObjectBrowseToNodeIds() = default;
 
   struct NodeId_NodeClass_Primitive{
-    open62541::UA_NodeId NodeId;
+    open62541Cpp::UA_NodeId NodeId;
     CommunicationObjects::Description::IDescription::shp_t Description;
     UA_NodeClass NodeClass;
   };

@@ -37,10 +37,10 @@ class Id_t : public Smart::ICorrelationId {
   ///\FIXME Set back to private
  public:
   friend EventClient<ActivationType, EventType>;
-  open62541::UA_NodeId dataNodeId;
+  open62541Cpp::UA_NodeId dataNodeId;
   std::shared_ptr<AsyncSubscriptionReader<EventType>> pSubscriptionReader;
   std::atomic_bool invalid {false};
-  Id_t(const open62541::UA_NodeId &dataNodeId, const std::shared_ptr<AsyncSubscriptionReader<EventType>> reader)
+  Id_t(const open62541Cpp::UA_NodeId &dataNodeId, const std::shared_ptr<AsyncSubscriptionReader<EventType>> reader)
   : dataNodeId(dataNodeId), pSubscriptionReader(reader) {  }
 protected:
   virtual std::string to_string() const override final {
@@ -91,7 +91,7 @@ class EventClient : public Smart::IEventClientPattern<ActivationType, EventType>
   std::string m_service;
   std::shared_ptr<SeRoNet::OPCUA::Client::INamingService> m_namingService;
   SeRoNet::OPCUA::Client::UaClientWithMutex_t::shpType m_pUaClientWithMutex;
-  open62541::UA_NodeId m_nodeId;
+  open62541Cpp::UA_NodeId m_nodeId;
 };
 
 template<typename ActivationType, typename EventType>
@@ -127,7 +127,7 @@ Smart::StatusCode EventClient<ActivationType, EventType>::activate(
     Smart::EventIdPtr &id) {
   /// \FIXME get NodeId from m_nodeId
   //m_nodeId.NodeId->namespaceIndex
-  open62541::UA_NodeId methodNodeId(2, "Activation method");
+  open62541Cpp::UA_NodeId methodNodeId(2, "Activation method");
 
   ActivationType paramCopy(parameter);
   auto selfDesc = CommunicationObjects::Description::SelfDescription(&paramCopy, "");
@@ -155,7 +155,7 @@ Smart::StatusCode EventClient<ActivationType, EventType>::activate(
     return Smart::SMART_ERROR;
   }
 
-  open62541::UA_ArrayOfVariant outArguments(pOutArgs, outArgSize, true);
+  open62541Cpp::UA_ArrayOfVariant outArguments(pOutArgs, outArgSize, true);
 
   if (outArguments.VariantsSize != 1) {
     std::cout <<"Wrong number of reutn values, expect 1, got " <<outArguments.VariantsSize <<std::endl;
@@ -169,7 +169,7 @@ Smart::StatusCode EventClient<ActivationType, EventType>::activate(
     return Smart::SMART_ERROR;
   }
 
-  auto dataNodeId = open62541::UA_NodeId(variantNodeid.getDataAs<UA_NodeId>());
+  auto dataNodeId = open62541Cpp::UA_NodeId(variantNodeid.getDataAs<UA_NodeId>());
 
   /// Remove logging
   std::cout <<"Got new object of eventdata: " <<dataNodeId <<std::endl;

@@ -29,8 +29,8 @@ class AsyncAnswerMethodCommObjectRequest : public AsyncAnswerMethod<T_RETURN> {
                                      bool blockingEnabled,
                                      UA_Client *client,
                                      CommunicationObjects::Description::IDescription::shp_t requestDescription,
-                                     open62541::UA_NodeId methodNodeId);
-  void processAnswer(UA_StatusCode result, open62541::UA_ArrayOfVariant *outputs) override;
+                                     open62541Cpp::UA_NodeId methodNodeId);
+  void processAnswer(UA_StatusCode result, open62541Cpp::UA_ArrayOfVariant *outputs) override;
 
   virtual ~AsyncAnswerMethodCommObjectRequest() = default;
  protected:
@@ -43,14 +43,14 @@ AsyncAnswerMethodCommObjectRequest<T_RETURN>::AsyncAnswerMethodCommObjectRequest
     bool blockingEnabled,
     UA_Client *client,
     CommunicationObjects::Description::IDescription::shp_t requestDescription,
-    open62541::UA_NodeId methodNodeId) :
+    open62541Cpp::UA_NodeId methodNodeId) :
     AsyncAnswerMethod<T_RETURN>::AsyncAnswerMethod(
         instStorage,
         blockingEnabled,
         client,
-        open62541::UA_NodeId((UA_UInt16)0, (UA_UInt32) UA_NS0ID_OBJECTSFOLDER),
+        open62541Cpp::UA_NodeId((UA_UInt16)0, (UA_UInt32) UA_NS0ID_OBJECTSFOLDER),
         methodNodeId,
-        static_cast<open62541::UA_ArrayOfVariant> (
+        static_cast<open62541Cpp::UA_ArrayOfVariant> (
             Converter::CommObjectToUaVariantArray(requestDescription.get())
         )
     ) {
@@ -59,7 +59,7 @@ AsyncAnswerMethodCommObjectRequest<T_RETURN>::AsyncAnswerMethodCommObjectRequest
 
 template<typename T_RETURN>
 void AsyncAnswerMethodCommObjectRequest<T_RETURN>::processAnswer(
-    UA_StatusCode result, open62541::UA_ArrayOfVariant *outputs) {
+    UA_StatusCode result, open62541Cpp::UA_ArrayOfVariant *outputs) {
 
 
   ///\todo move check to AsyncAnswerMethod?
@@ -76,7 +76,7 @@ void AsyncAnswerMethodCommObjectRequest<T_RETURN>::processAnswer(
 
 template<>
 SERONETSDK_EXPORT void AsyncAnswerMethodCommObjectRequest<void *>::processAnswer(
-    UA_StatusCode result, open62541::UA_ArrayOfVariant *outputs);
+    UA_StatusCode result, open62541Cpp::UA_ArrayOfVariant *outputs);
 
 }
 }

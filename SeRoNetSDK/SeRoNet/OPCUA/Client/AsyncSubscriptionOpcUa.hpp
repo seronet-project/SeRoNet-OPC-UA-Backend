@@ -45,9 +45,9 @@ class AsyncSubscriptionOpcUa : public AsyncSubscriptionArrayBuffer<T_DATATYPE> {
   bool isSubscribed() { return m_subId != 0; }
 
   struct monItemInfo_t {
-    open62541::UA_NodeId nodeId;
+    open62541Cpp::UA_NodeId nodeId;
     ///TODO use std::optional instead of std::shared_ptr
-    std::shared_ptr<open62541::UA_DataValue> value;
+    std::shared_ptr<open62541Cpp::UA_DataValue> value;
   };
 
 
@@ -159,7 +159,7 @@ inline UA_StatusCode AsyncSubscriptionOpcUa<T_DATATYPE>::subscribe(std::vector<U
     m_monitoredItemsIdorder.push_back(monItemResponse.monitoredItemId);
 
     monItemInfo_t info;
-    info.nodeId = open62541::UA_NodeId(nodeId);
+    info.nodeId = open62541Cpp::UA_NodeId(nodeId);
     m_monItems.insert(typename monItems_t::value_type(monItemResponse.monitoredItemId, info));
   }
 
@@ -236,7 +236,7 @@ inline void AsyncSubscriptionOpcUa<T_DATATYPE>::valueChanged(UA_UInt32 monId, UA
       std::cout << "Override previous value" << std::endl;
     }
 
-    itValue->second.value.reset(new open62541::UA_DataValue(value));
+    itValue->second.value.reset(new open62541Cpp::UA_DataValue(value));
 
     if (m_valuesSet == m_monItems.size()) {
 

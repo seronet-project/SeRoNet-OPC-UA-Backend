@@ -35,11 +35,11 @@ class AsyncSubscriptionWithCommObject : public AsyncSubscriptionOpcUa<T_DATATYPE
   using AsyncSubscriptionOpcUa<T_DATATYPE>::AsyncSubscriptionOpcUa;
   /// Subscribe based on an CommunicationObject description
   /// \return UA_GOOD in case of no error
-  virtual UA_StatusCode subscribe(open62541::UA_NodeId nodeId);
+  virtual UA_StatusCode subscribe(open62541Cpp::UA_NodeId nodeId);
 };
 
 template<typename T_DATATYPE>
-UA_StatusCode AsyncSubscriptionWithCommObject<T_DATATYPE>::subscribe(open62541::UA_NodeId nodeId) {
+UA_StatusCode AsyncSubscriptionWithCommObject<T_DATATYPE>::subscribe(open62541Cpp::UA_NodeId nodeId) {
   T_DATATYPE data; // Dummy Data instance to get the description
   std::unique_lock<decltype(m_pUaClientWithMutex->opcuaMutex)> lock(m_pUaClientWithMutex->opcuaMutex);
 
@@ -98,7 +98,7 @@ UA_StatusCode AsyncSubscriptionWithCommObject<T_DATATYPE>::subscribe(open62541::
 template<typename T_DATATYPE>
 void AsyncSubscriptionWithCommObject<T_DATATYPE>::processValues(
     typename AsyncSubscriptionOpcUa<T_DATATYPE>::listOfNodeIdValue_t listOfNodeIdvalues) {
-  open62541::UA_ArrayOfVariant variantArray(listOfNodeIdvalues.size());
+  open62541Cpp::UA_ArrayOfVariant variantArray(listOfNodeIdvalues.size());
   std::size_t i = 0;
   for(auto &nodeIdAndValue: listOfNodeIdvalues){
     UA_Variant_copy(&(nodeIdAndValue.value->DataValue->value), &(variantArray.Variants[i]));

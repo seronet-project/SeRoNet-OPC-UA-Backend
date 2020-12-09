@@ -21,7 +21,7 @@
 class ToCommObjectVisitor : public ::SeRoNet::CommunicationObjects::Description::IVisitorDescription {
  public:
   ToCommObjectVisitor(
-      open62541::UA_ArrayOfVariant srcVariantArray
+      open62541Cpp::UA_ArrayOfVariant srcVariantArray
   ):
   m_srcVariants(srcVariantArray) {
 
@@ -185,7 +185,7 @@ class ToCommObjectVisitor : public ::SeRoNet::CommunicationObjects::Description:
       std::cout << "ERROR: Wrong Type." << std::endl;
       return;
     }
-    open62541::UA_String tmp = open62541::UA_String(nextData.getDataAs<UA_String>());
+    open62541Cpp::UA_String tmp = open62541Cpp::UA_String(nextData.getDataAs<UA_String>());
 
     el->set(static_cast<std::string>(tmp));
   }
@@ -197,7 +197,7 @@ class ToCommObjectVisitor : public ::SeRoNet::CommunicationObjects::Description:
     ++m_nextIndex;
   }
 
-  open62541::UA_ArrayOfVariant m_srcVariants;
+  open62541Cpp::UA_ArrayOfVariant m_srcVariants;
   std::size_t m_nextIndex = 0;
 };
 
@@ -206,7 +206,7 @@ namespace OPCUA {
 namespace Converter {
 
 UaVariantArrayToCommObject::UaVariantArrayToCommObject(
-    open62541::UA_ArrayOfVariant src,
+    open62541Cpp::UA_ArrayOfVariant src,
     CommunicationObjects::Description::IVisitableDescription *target) {
 
   ToCommObjectVisitor visitor(src);

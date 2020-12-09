@@ -29,14 +29,14 @@ class ToUaArgumentArrayVisitor :
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<bool> *el) override {
-    open62541::UA_Argument newEl;
+    open62541Cpp::UA_Argument newEl;
     newEl.argument->name = UA_STRING_ALLOC(el->getName().c_str());
     newEl.argument->dataType = UA_TYPES[UA_TYPES_BOOLEAN].typeId;
     newEl.argument->valueRank = -1;
     arguments.push_back(newEl);
   }
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<float> *el) override {
-    open62541::UA_Argument newEl;
+    open62541Cpp::UA_Argument newEl;
     newEl.argument->name = UA_STRING_ALLOC(el->getName().c_str());
     newEl.argument->dataType = UA_TYPES[UA_TYPES_FLOAT].typeId;
     newEl.argument->valueRank = -1;
@@ -44,7 +44,7 @@ class ToUaArgumentArrayVisitor :
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<double> *el) override {
-    open62541::UA_Argument newEl;
+    open62541Cpp::UA_Argument newEl;
     newEl.argument->name = UA_STRING_ALLOC(el->getName().c_str());
     newEl.argument->dataType = UA_TYPES[UA_TYPES_DOUBLE].typeId;
     newEl.argument->valueRank = -1;
@@ -52,7 +52,7 @@ class ToUaArgumentArrayVisitor :
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<int8_t> *el) override {
-    open62541::UA_Argument newEl;
+    open62541Cpp::UA_Argument newEl;
     newEl.argument->name = UA_STRING_ALLOC(el->getName().c_str());
     newEl.argument->dataType = UA_TYPES[UA_TYPES_BYTE].typeId;
     newEl.argument->valueRank = -1;
@@ -60,7 +60,7 @@ class ToUaArgumentArrayVisitor :
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<int16_t> *el) override {
-    open62541::UA_Argument newEl;
+    open62541Cpp::UA_Argument newEl;
     newEl.argument->name = UA_STRING_ALLOC(el->getName().c_str());
     newEl.argument->dataType = UA_TYPES[UA_TYPES_INT16].typeId;
     newEl.argument->valueRank = -1;
@@ -68,7 +68,7 @@ class ToUaArgumentArrayVisitor :
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<int32_t> *el) override {
-    open62541::UA_Argument newEl;
+    open62541Cpp::UA_Argument newEl;
     newEl.argument->name = UA_STRING_ALLOC(el->getName().c_str());
     newEl.argument->dataType = UA_TYPES[UA_TYPES_INT32].typeId;
     newEl.argument->valueRank = -1;
@@ -76,7 +76,7 @@ class ToUaArgumentArrayVisitor :
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<int64_t> *el) override {
-    open62541::UA_Argument newEl;
+    open62541Cpp::UA_Argument newEl;
     newEl.argument->name = UA_STRING_ALLOC(el->getName().c_str());
     newEl.argument->dataType = UA_TYPES[UA_TYPES_INT64].typeId;
     newEl.argument->valueRank = -1;
@@ -84,7 +84,7 @@ class ToUaArgumentArrayVisitor :
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<uint8_t> *el) override {
-    open62541::UA_Argument newEl;
+    open62541Cpp::UA_Argument newEl;
     newEl.argument->name = UA_STRING_ALLOC(el->getName().c_str());
     newEl.argument->dataType = UA_TYPES[UA_TYPES_BYTE].typeId;
     newEl.argument->valueRank = -1;
@@ -92,7 +92,7 @@ class ToUaArgumentArrayVisitor :
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<uint16_t> *el) override {
-    open62541::UA_Argument newEl;
+    open62541Cpp::UA_Argument newEl;
     newEl.argument->name = UA_STRING_ALLOC(el->getName().c_str());
     newEl.argument->dataType = UA_TYPES[UA_TYPES_UINT16].typeId;
     newEl.argument->valueRank = -1;
@@ -100,7 +100,7 @@ class ToUaArgumentArrayVisitor :
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<uint32_t> *el) override {
-    open62541::UA_Argument newEl;
+    open62541Cpp::UA_Argument newEl;
     newEl.argument->name = UA_STRING_ALLOC(el->getName().c_str());
     newEl.argument->dataType = UA_TYPES[UA_TYPES_UINT32].typeId;
     newEl.argument->valueRank = -1;
@@ -108,14 +108,14 @@ class ToUaArgumentArrayVisitor :
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<uint64_t> *el) override {
-    open62541::UA_Argument newEl;
+    open62541Cpp::UA_Argument newEl;
     newEl.argument->name = UA_STRING_ALLOC(el->getName().c_str());
     newEl.argument->dataType = UA_TYPES[UA_TYPES_UINT64].typeId;
     newEl.argument->valueRank = -1;
     arguments.push_back(newEl);
   }
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<std::string> *el) override {
-    open62541::UA_Argument newEl;
+    open62541Cpp::UA_Argument newEl;
     newEl.argument->name = UA_STRING_ALLOC(el->getName().c_str());
     newEl.argument->dataType = UA_TYPES[UA_TYPES_STRING].typeId;
     newEl.argument->valueRank = -1;
@@ -125,14 +125,14 @@ class ToUaArgumentArrayVisitor :
   void visit(SeRoNet::CommunicationObjects::Description::ElementArray *elementArray) override {
     auto tmpEl = elementArray->getNewElement();
     SeRoNet::OPCUA::Converter::CommObjArrayToTypeIndex commObjToTypeIndex(tmpEl->getDescription().get());
-    open62541::UA_Argument newEl;
+    open62541Cpp::UA_Argument newEl;
     newEl.argument->name = UA_STRING_ALLOC(elementArray->getName().c_str());
     newEl.argument->dataType = UA_TYPES[commObjToTypeIndex.Id()].typeId;
     newEl.argument->valueRank = 1;
     arguments.push_back(newEl);
   }
 
-  std::list<open62541::UA_Argument> arguments;
+  std::list<open62541Cpp::UA_Argument> arguments;
 };
 
 namespace SeRoNet {

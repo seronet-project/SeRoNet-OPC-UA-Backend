@@ -25,7 +25,7 @@ class SERONETSDK_EXPORT PushServerEnabler {
   PushServerEnabler(
       std::shared_ptr<SeRoNet::OPCUA::Server::OpcUaServer> pOpcUaServer,
       CommunicationObjects::Description::IVisitableDescription *description,
-                    const OPEN_65241_CPP_NAMESPACE::UA_NodeId &parent);
+                    const open62541Cpp::UA_NodeId &parent);
 
   virtual ~PushServerEnabler() = default;
 };

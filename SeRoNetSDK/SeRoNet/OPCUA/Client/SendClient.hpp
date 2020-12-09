@@ -57,8 +57,8 @@ class SendClient :
   WiringHandler<SendClient> m_wiringHandler;
   SeRoNet::OPCUA::Client::UaClientWithMutex_t::shpType m_pUaClientWithMutex;
   std::shared_ptr<SeRoNet::OPCUA::Client::NamingServiceOpcUa> m_namingService;
-  open62541::UA_NodeId m_methodNodeId;
-  open62541::UA_NodeId m_objNodeId;
+  open62541Cpp::UA_NodeId m_methodNodeId;
+  open62541Cpp::UA_NodeId m_objNodeId;
   std::shared_ptr<AsyncAnswerFactoryWithCommObject<void *, DataType>> m_Factory;
 };
 

@@ -32,11 +32,11 @@ class DisableOpcuaServerVisitor :
     public ::SeRoNet::CommunicationObjects::Description::IVisitorDescription {
  public:
 
-  explicit DisableOpcuaServerVisitor(std::shared_ptr<SeRoNet::OPCUA::Server::OpcUaServer> pOpcUaServerm, const open62541::UA_NodeId &parent)
+  explicit DisableOpcuaServerVisitor(std::shared_ptr<SeRoNet::OPCUA::Server::OpcUaServer> pOpcUaServerm, const open62541Cpp::UA_NodeId &parent)
       : m_parent(parent), m_pOpcUaServer(pOpcUaServerm) {}
 
   void visit(SeRoNet::CommunicationObjects::Description::ComplexType *complexObject) override {
-    open62541::UA_NodeId ownNodeId = generateNodeId(complexObject);
+    open62541Cpp::UA_NodeId ownNodeId = generateNodeId(complexObject);
 
     DisableOpcuaServerVisitor visitor(m_pOpcUaServer, ownNodeId);
     for (auto &el: *complexObject) {
@@ -49,7 +49,7 @@ class DisableOpcuaServerVisitor :
     auto myNodeId = generateNodeId(el);
     retVal =
         UA_Server_writeAccessLevel(m_pOpcUaServer->getServer(), *myNodeId.NodeId, 0);
-    if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
+    if (retVal != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retVal);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<int8_t> *el) override {
@@ -57,7 +57,7 @@ class DisableOpcuaServerVisitor :
     auto myNodeId = generateNodeId(el);
     retVal =
         UA_Server_writeAccessLevel(m_pOpcUaServer->getServer(), *myNodeId.NodeId, 0);
-    if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
+    if (retVal != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retVal);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<int16_t> *el) override {
@@ -65,7 +65,7 @@ class DisableOpcuaServerVisitor :
     auto myNodeId = generateNodeId(el);
     retVal =
         UA_Server_writeAccessLevel(m_pOpcUaServer->getServer(), *myNodeId.NodeId, 0);
-    if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
+    if (retVal != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retVal);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<std::int32_t> *el) override {
@@ -73,7 +73,7 @@ class DisableOpcuaServerVisitor :
     auto myNodeId = generateNodeId(el);
     retVal =
         UA_Server_writeAccessLevel(m_pOpcUaServer->getServer(), *myNodeId.NodeId, 0);
-    if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
+    if (retVal != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retVal);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<int64_t> *el) override {
@@ -81,7 +81,7 @@ class DisableOpcuaServerVisitor :
     auto myNodeId = generateNodeId(el);
     retVal =
         UA_Server_writeAccessLevel(m_pOpcUaServer->getServer(), *myNodeId.NodeId, 0);
-    if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
+    if (retVal != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retVal);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<uint8_t> *el) override {
@@ -89,7 +89,7 @@ class DisableOpcuaServerVisitor :
     auto myNodeId = generateNodeId(el);
     retVal =
         UA_Server_writeAccessLevel(m_pOpcUaServer->getServer(), *myNodeId.NodeId, 0);
-    if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
+    if (retVal != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retVal);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<uint16_t> *el) override {
@@ -97,7 +97,7 @@ class DisableOpcuaServerVisitor :
     auto myNodeId = generateNodeId(el);
     retVal =
         UA_Server_writeAccessLevel(m_pOpcUaServer->getServer(), *myNodeId.NodeId, 0);
-    if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
+    if (retVal != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retVal);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<uint32_t> *el) override {
@@ -105,7 +105,7 @@ class DisableOpcuaServerVisitor :
     auto myNodeId = generateNodeId(el);
     retVal =
         UA_Server_writeAccessLevel(m_pOpcUaServer->getServer(), *myNodeId.NodeId, 0);
-    if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
+    if (retVal != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retVal);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<uint64_t> *el) override {
@@ -113,7 +113,7 @@ class DisableOpcuaServerVisitor :
     auto myNodeId = generateNodeId(el);
     retVal =
         UA_Server_writeAccessLevel(m_pOpcUaServer->getServer(), *myNodeId.NodeId, 0);
-    if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
+    if (retVal != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retVal);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<float> *el) override {
@@ -121,7 +121,7 @@ class DisableOpcuaServerVisitor :
     auto myNodeId = generateNodeId(el);
     retVal =
         UA_Server_writeAccessLevel(m_pOpcUaServer->getServer(), *myNodeId.NodeId, 0);
-    if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
+    if (retVal != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retVal);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<double> *el) override {
@@ -129,7 +129,7 @@ class DisableOpcuaServerVisitor :
     auto myNodeId = generateNodeId(el);
     retVal =
         UA_Server_writeAccessLevel(m_pOpcUaServer->getServer(), *myNodeId.NodeId, 0);
-    if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
+    if (retVal != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retVal);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementPrimitive<std::string> *el) override {
@@ -137,7 +137,7 @@ class DisableOpcuaServerVisitor :
     auto myNodeId = generateNodeId(el);
     retVal =
         UA_Server_writeAccessLevel(m_pOpcUaServer->getServer(), *myNodeId.NodeId, 0);
-    if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
+    if (retVal != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retVal);
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementArray *elementArray) override {
@@ -146,26 +146,26 @@ class DisableOpcuaServerVisitor :
 
  private:
 
-  open62541::UA_NodeId generateNodeId(const SeRoNet::CommunicationObjects::Description::IDescription *description)
+  open62541Cpp::UA_NodeId generateNodeId(const SeRoNet::CommunicationObjects::Description::IDescription *description)
   const {
     std::stringstream ss;
     switch (m_parent.NodeId->identifierType) {
       case UA_NODEIDTYPE_NUMERIC:ss << m_parent.NodeId->identifier.numeric << ".";
         break;
-      case UA_NODEIDTYPE_STRING:ss << open62541::UA_String(&m_parent.NodeId->identifier.string) << ".";
+      case UA_NODEIDTYPE_STRING:ss << open62541Cpp::UA_String(&m_parent.NodeId->identifier.string) << ".";
         break;
       case UA_NODEIDTYPE_BYTESTRING: throw SeRoNet::Exceptions::NotImplementedException(__FUNCTION__);
       case UA_NODEIDTYPE_GUID: throw SeRoNet::Exceptions::NotImplementedException(__FUNCTION__);
     }
 
     ss << description->getName();
-    open62541::UA_NodeId
-        ownNodeId = open62541::UA_NodeId(m_pOpcUaServer->getNsIndex1(), ss.str());
+    open62541Cpp::UA_NodeId
+        ownNodeId = open62541Cpp::UA_NodeId(m_pOpcUaServer->getNsIndex1(), ss.str());
     return ownNodeId;
   }
 
   std::shared_ptr<SeRoNet::OPCUA::Server::OpcUaServer> m_pOpcUaServer;
-  open62541::UA_NodeId m_parent;
+  open62541Cpp::UA_NodeId m_parent;
 };
 
 namespace SeRoNet {
@@ -176,7 +176,7 @@ namespace Server {
 PushServerDisabler::PushServerDisabler(
     std::shared_ptr<SeRoNet::OPCUA::Server::OpcUaServer> pOpcUaServer,
     CommunicationObjects::Description::IVisitableDescription *description,
-    const open62541::UA_NodeId &parent) {
+    const open62541Cpp::UA_NodeId &parent) {
   DisableOpcuaServerVisitor visitor(pOpcUaServer, parent);
   description->accept(&visitor);
 }

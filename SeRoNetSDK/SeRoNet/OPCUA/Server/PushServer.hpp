@@ -96,7 +96,7 @@ inline PushServer<T_AnswerType>::PushServer(SeRoNet::Utils::Component *component
                                             const std::string &serviceName) :
     Smart::IPushServerPattern<T_AnswerType>::IPushServerPattern(component, serviceName),
     m_service(serviceName), m_pComponent(component) {
-  OPEN_65241_CPP_NAMESPACE::UA_NodeId
+  open62541Cpp::UA_NodeId
       objectsFolderNodeId(m_pComponent->getOpcUaServer()->getNsIndex0(), UA_NS0ID_OBJECTSFOLDER);
 
   T_AnswerType CommObject;
@@ -111,7 +111,7 @@ inline PushServer<T_AnswerType>::PushServer(SeRoNet::Utils::Component *component
 template<class T_AnswerType>
 Smart::StatusCode PushServer<T_AnswerType>::put(const T_AnswerType &d) {
   T_AnswerType a(d);
-  OPEN_65241_CPP_NAMESPACE::UA_NodeId
+  open62541Cpp::UA_NodeId
       objectsFolderNodeId(m_pComponent->getOpcUaServer()->getNsIndex0(), UA_NS0ID_OBJECTSFOLDER);
 
   if (m_FirstTimePut) {

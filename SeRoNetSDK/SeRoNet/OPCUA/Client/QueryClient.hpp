@@ -40,7 +40,7 @@ class QueryClient :
   std::shared_ptr<SeRoNet::OPCUA::Client::NamingServiceOpcUa> m_namingService;
   SeRoNet::OPCUA::Client::UaClientWithMutex_t::shpType m_pUaClientWithMutex;
 
-  open62541::UA_NodeId m_methodNodeId;
+  open62541Cpp::UA_NodeId m_methodNodeId;
 };
 
 template<class RequestType, class AnswerType>

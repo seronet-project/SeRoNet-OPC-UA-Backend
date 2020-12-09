@@ -23,7 +23,7 @@ namespace Server {
 class SERONETSDK_EXPORT PushServerUpdater {
  public:
   PushServerUpdater(std::shared_ptr<SeRoNet::OPCUA::Server::OpcUaServer> pOpcUaServer, CommunicationObjects::Description::IVisitableDescription *description,
-                    const OPEN_65241_CPP_NAMESPACE::UA_NodeId &parent);
+                    const open62541Cpp::UA_NodeId &parent);
   virtual ~PushServerUpdater() = default;
 };
 

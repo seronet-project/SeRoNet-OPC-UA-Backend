@@ -36,7 +36,7 @@ namespace Server {
 template<class T_ParameterType>
 struct EventInfo {
   T_ParameterType param;
-  open62541::UA_NodeId nodeId;
+  open62541Cpp::UA_NodeId nodeId;
   EventInfo() {};
 };**/
 
@@ -75,14 +75,14 @@ class EventServer :
                                           size_t outputSize, UA_Variant *output);
 **/
   //node Id of the object node
-  open62541::UA_NodeId m_objNodeId;
+  open62541Cpp::UA_NodeId m_objNodeId;
  private:
   /// management class of the component
   /// name of service
   std::string m_service;
 
   //for organizing the activations of the event
-  std::map<open62541::UA_NodeId, T_ParameterType> m_EventInfos;
+  std::map<open62541Cpp::UA_NodeId, T_ParameterType> m_EventInfos;
  public:
 
   using IEventServerBase = Smart::IEventServerPattern<T_ParameterType,T_ResultType,T_StatusType>;
@@ -131,7 +131,7 @@ UA_StatusCode EventServer<T_ParameterType, T_ResultType, T_StatusType>::activate
       static_cast<EventServer<T_ParameterType, T_ResultType, T_StatusType> *>(methodContext);
 
   /// \todo check for valid obj NodeId!!
-  //auto callobjNodeId = open62541::UA_NodeId::FromConstNodeId(objectId);
+  //auto callobjNodeId = open62541Cpp::UA_NodeId::FromConstNodeId(objectId);
 
   //Create the Opc Node
 
@@ -144,7 +144,7 @@ UA_StatusCode EventServer<T_ParameterType, T_ResultType, T_StatusType>::activate
   actvAtrr.displayName = UA_LOCALIZEDTEXT_ALLOC("en-Us", "Activation");
 
   //return the value of the assigned Id to store it and identify the activation later
-  open62541::UA_NodeId m_NodeId;
+  open62541Cpp::UA_NodeId m_NodeId;
   UA_Server_addObjectNode(server,
                           UA_NODEID_NULL,
                           *objectId,
@@ -162,15 +162,15 @@ UA_StatusCode EventServer<T_ParameterType, T_ResultType, T_StatusType>::activate
   T_ParameterType m_param;
 
   SeRoNet::OPCUA::Converter::UaVariantArrayToCommObject
-      UaVariantArrayToCommObject(open62541::UA_ArrayOfVariant(input, inputSize),
+      UaVariantArrayToCommObject(open62541Cpp::UA_ArrayOfVariant(input, inputSize),
                                  CommunicationObjects::Description::SelfDescription(&m_param, "").get());
 
-  std::pair<open62541::UA_NodeId, T_ParameterType> m_eventPair = std::make_pair(m_NodeId, m_param);
+  std::pair<open62541Cpp::UA_NodeId, T_ParameterType> m_eventPair = std::make_pair(m_NodeId, m_param);
   friendThis->m_EventInfos.insert(m_eventPair);
   std::stringstream ss;
   ss <<m_NodeId.NodeId->identifier.numeric <<"." <<friendThis->serviceName;
   ///\todo determine general namespace index (might not be always 2)
-  open62541::UA_NodeId retNodeId(2, ss.str());
+  open62541Cpp::UA_NodeId retNodeId(2, ss.str());
   UA_StatusCode retval = UA_Variant_setScalarCopy(output, retNodeId.NodeId, &UA_TYPES[UA_TYPES_NODEID]);
   return retval;
 };
@@ -193,7 +193,7 @@ UA_StatusCode EventServer<T_ParameterType, T_ResultType, T_StatusType, T_Identif
   EventServer<T_ParameterType, T_ResultType, T_StatusType, T_IdentificationType> *friendThis =
       static_cast<EventServer<T_ParameterType, T_ResultType, T_StatusType, T_IdentificationType> *>(methodContext);
 
-  const open62541::UA_NodeId inputId = *static_cast<open62541::UA_NodeId*>(input->data); //check
+  const open62541Cpp::UA_NodeId inputId = *static_cast<open62541Cpp::UA_NodeId*>(input->data); //check
 
   std::map::size_type count = friendThis->m_EventInfos.erase(inputId);
   if (count != 1){
@@ -237,7 +237,7 @@ inline EventServer<T_ParameterType,
 //add a method node for the activation
   T_ParameterType *inputCommObject = new T_ParameterType;
   //have a communication object as input parameter
-  OPEN_65241_CPP_NAMESPACE::UA_ArrayOfArgument
+  open62541Cpp::UA_ArrayOfArgument
       actInputArguments =
       Converter::CommObjectToUaArgumentArray(CommunicationObjects::Description::SelfDescription(inputCommObject, "input").get());
 
@@ -302,7 +302,7 @@ put(const T_StatusType &newState) {
       UA_Server *server = m_pComponent->getOpcUaServer()->getServer();
       T_ResultType result;
       T_StatusType s(newState);
-      open62541::UA_NodeId m_NodeId = it->first;
+      open62541Cpp::UA_NodeId m_NodeId = it->first;
       T_ParameterType m_param = it->second;
 
       if (IEventServerBase::testEvent(m_param, result, s)) {

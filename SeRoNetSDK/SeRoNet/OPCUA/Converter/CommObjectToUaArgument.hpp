@@ -23,12 +23,12 @@ class SERONETSDK_EXPORT CommObjectToUaArgumentArray {
  public:
   CommObjectToUaArgumentArray(CommunicationObjects::Description::IVisitableDescription *description);
   virtual ~CommObjectToUaArgumentArray() = default;
-  typedef open62541::UA_ArrayOfArgument ConvTarget_t;
+  typedef open62541Cpp::UA_ArrayOfArgument ConvTarget_t;
   inline  operator ConvTarget_t() { return getValue(); }
   inline ConvTarget_t getValue() { return m_convertedValue; }
 
  private:
-  open62541::UA_ArrayOfArgument m_convertedValue;
+  open62541Cpp::UA_ArrayOfArgument m_convertedValue;
 };
 
 } //  namespace Converter

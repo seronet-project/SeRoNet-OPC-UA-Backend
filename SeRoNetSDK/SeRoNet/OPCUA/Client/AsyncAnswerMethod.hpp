@@ -32,10 +32,10 @@ class AsyncAnswerMethod : public AsyncAnswer<T_RETURN> {
  public:
   /// Do method call on the server
   AsyncAnswerMethod(IBlocking::instanceStorage_t *, bool blockingEnabled, UA_Client *client,
-                    open62541::UA_NodeId objectId, open62541::UA_NodeId methodId,
-                    const open62541::UA_ArrayOfVariant &inputs);
+                    open62541Cpp::UA_NodeId objectId, open62541Cpp::UA_NodeId methodId,
+                    const open62541Cpp::UA_ArrayOfVariant &inputs);
 
-  virtual void processAnswer(UA_StatusCode result, open62541::UA_ArrayOfVariant *outputs) = 0;
+  virtual void processAnswer(UA_StatusCode result, open62541Cpp::UA_ArrayOfVariant *outputs) = 0;
 
   ~AsyncAnswerMethod() override = default;
  protected:
@@ -66,8 +66,8 @@ static void methodCalledCallback(UA_Client *client, void *userdata, UA_UInt32 re
 template<typename T_RETURN>
 inline AsyncAnswerMethod<T_RETURN>::AsyncAnswerMethod(
     IBlocking::instanceStorage_t *instStorage, bool blockingEnabled, UA_Client *client,
-    open62541::UA_NodeId objectId, open62541::UA_NodeId methodId,
-    const open62541::UA_ArrayOfVariant &inputs)
+    open62541Cpp::UA_NodeId objectId, open62541Cpp::UA_NodeId methodId,
+    const open62541Cpp::UA_ArrayOfVariant &inputs)
     : AsyncAnswer<T_RETURN>(instStorage, blockingEnabled) {
 
   UA_StatusCode retVal =
@@ -81,7 +81,7 @@ inline AsyncAnswerMethod<T_RETURN>::AsyncAnswerMethod(
           this,
           &m_requestId
       );
-  if (retVal != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retVal);
+  if (retVal != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retVal);
 
 }
 
@@ -100,12 +100,12 @@ inline void AsyncAnswerMethod<T_RETURN>::methodCalled_callback(
 
   UA_StatusCode resultCode = callResponse->responseHeader.serviceResult;
 
-  std::shared_ptr<open62541::UA_ArrayOfVariant> outArgs = std::make_shared<::open62541::UA_ArrayOfVariant>(nullptr, 0);
+  std::shared_ptr<open62541Cpp::UA_ArrayOfVariant> outArgs = std::make_shared<::open62541Cpp::UA_ArrayOfVariant>(nullptr, 0);
   ///@todo Check ReturnCode of the output arguments
   if (callResponse->resultsSize > 0) {
     resultCode = callResponse->results[0].statusCode;
     if (callResponse->results[0].outputArgumentsSize > 0) {
-      outArgs.reset(new open62541::UA_ArrayOfVariant(callResponse->results[0].outputArguments,
+      outArgs.reset(new open62541Cpp::UA_ArrayOfVariant(callResponse->results[0].outputArguments,
                                                      callResponse->results[0].outputArgumentsSize));
     } else {
       std::cerr <<"Receive Empty Method Call Response without output arguments." <<std::endl;

@@ -19,7 +19,7 @@ namespace Converter {
 
 class SERONETSDK_EXPORT UaVariantArrayToCommObject {
  public:
-  UaVariantArrayToCommObject(open62541::UA_ArrayOfVariant src, CommunicationObjects::Description::IVisitableDescription *target);
+  UaVariantArrayToCommObject(open62541Cpp::UA_ArrayOfVariant src, CommunicationObjects::Description::IVisitableDescription *target);
   virtual ~UaVariantArrayToCommObject() = default;
  private:
 

@@ -46,22 +46,22 @@ INamingService::ConnectionAndNodeid NamingServiceOpcUa::getConnectionAndNodeIdBy
 UA_UInt16 NamingServiceOpcUa::getNsIndexFromServer(const std::string &serverName,
                                                    UaClientWithMutex_t::shpType aConnection) {
   const UA_NodeId nodeId = UA_NODEID_NUMERIC(0, UA_NS0ID_SERVER_NAMESPACEARRAY);
-  const open62541::UA_String searchNamespace{"http://seronet-projekt.de/"};
+  const open62541Cpp::UA_String searchNamespace{"http://seronet-projekt.de/"};
   UA_StatusCode retval;
-  open62541::UA_ArrayOfVariant nsArray(1);
+  open62541Cpp::UA_ArrayOfVariant nsArray(1);
 
   std::unique_lock<decltype(aConnection.get()->opcuaMutex)> lock(aConnection.get()->opcuaMutex);
   retval = UA_Client_readValueAttribute(aConnection.get()->pClient.get(), nodeId, nsArray.Variants);
-  if (retval != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retval);
+  if (retval != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retval);
 
-  open62541::UA_Variant returnValue = nsArray[0];
+  open62541Cpp::UA_Variant returnValue = nsArray[0];
   if (!UA_Variant_hasArrayType(returnValue.Variant,
                                &UA_TYPES[UA_TYPES_STRING]))
     throw SeRoNet::Exceptions::InvalidConversion("NamespaceArray is not a Array");
 
   for (int i = 0; i < returnValue.Variant->arrayLength; i++) {
     auto element = (UA_String *) returnValue.Variant->data;
-    open62541::UA_String currentNamespace = open62541::UA_String(&element[i]);
+    open62541Cpp::UA_String currentNamespace = open62541Cpp::UA_String(&element[i]);
     if (currentNamespace == searchNamespace) {
       std::cout << "Namespace Index of " << currentNamespace << " : " << (UA_UInt16) i << std::endl;
       return (UA_UInt16) i;
@@ -280,13 +280,13 @@ std::string NamingServiceOpcUa::getServerUrlFromMdnsLDS(const std::string &serve
                                           &serverOnNetwork);
 
   if (retval != UA_STATUSCODE_GOOD) {
-    open62541::Exceptions::OpcUaErrorException(retval, "in function UA_Client_findServersOnNetwork");
+    open62541Cpp::Exceptions::OpcUaErrorException(retval, "in function UA_Client_findServersOnNetwork");
   }
 
   for (int i = 0; i < serverOnNetworkSize; ++i) {
     std::string foundServerName = getServerNameFromServerOnNetworkElement(&(serverOnNetwork[i]));
     std::cout << "ServerName: " << foundServerName << std::endl;
-    std::string discoveryEndpoint = static_cast<std::string>(open62541::UA_String(&(serverOnNetwork[i].discoveryUrl)));
+    std::string discoveryEndpoint = static_cast<std::string>(open62541Cpp::UA_String(&(serverOnNetwork[i].discoveryUrl)));
     discoveryEndpointsByServerName.insert(std::make_pair(foundServerName, discoveryEndpoint));
   }
 
@@ -304,14 +304,14 @@ std::string NamingServiceOpcUa::getServerUrlFromMdnsLDS(const std::string &serve
                                  &pAppDescription);
 
   if (retval != UA_STATUSCODE_GOOD) {
-    open62541::Exceptions::OpcUaErrorException(retval, "in function UA_Client_findServers");
+    open62541Cpp::Exceptions::OpcUaErrorException(retval, "in function UA_Client_findServers");
   }
 
   for (int i = 0; i < registeredServerSize; ++i) {
-    std::string appName = static_cast<std::string>(open62541::UA_String(&(pAppDescription[i].applicationName.text)));
+    std::string appName = static_cast<std::string>(open62541Cpp::UA_String(&(pAppDescription[i].applicationName.text)));
     for(int iDiscoUrl = 0; iDiscoUrl < pAppDescription[i].discoveryUrlsSize; ++iDiscoUrl)
     {
-      std::string discoveryEndpoint = static_cast<std::string>(open62541::UA_String(&(pAppDescription[i].discoveryUrls[iDiscoUrl])));
+      std::string discoveryEndpoint = static_cast<std::string>(open62541Cpp::UA_String(&(pAppDescription[i].discoveryUrls[iDiscoUrl])));
       discoveryEndpointsByServerName.insert(std::make_pair(appName, discoveryEndpoint));
     }
   }
@@ -340,7 +340,7 @@ std::string NamingServiceOpcUa::findServerUrlFromServerOnNetwork(const std::stri
       if (!serverUrl.empty()) {
         return serverUrl;
       }
-    } catch (const open62541::Exceptions::OpcUaErrorException &e) {
+    } catch (const open62541Cpp::Exceptions::OpcUaErrorException &e) {
       if (e.StatusCode == UA_STATUSCODE_BADCONNECTIONCLOSED || e.StatusCode == UA_STATUSCODE_GOODNONCRITICALTIMEOUT) {
         //@todo remove url from Array of LDS
         std::cout << "Server  coud not conntected: " << e.what() << std::endl;
@@ -362,7 +362,7 @@ std::string NamingServiceOpcUa::getServerNameFromServerOnNetworkElement(const UA
   /// \TODO handle case when hostname contains a '-'
   /// \TODO check specification for correct format, known formats: 'UaServerCpp@vmc-a07', 'Test_26NamingService_connect_Test_Server-localhost'
   auto tmpServerName =
-      static_cast<std::string>(open62541::UA_String(&Element->serverName));
+      static_cast<std::string>(open62541Cpp::UA_String(&Element->serverName));
   auto pos_split = tmpServerName.find_last_of("-");
   tmpServerName = tmpServerName.substr(0, pos_split);
   return tmpServerName;
@@ -375,16 +375,16 @@ std::string NamingServiceOpcUa::getSessionEndpointUrlFromDiscoveryEndpointUrl(co
   size_t endpointArraySize = 0;
   UA_StatusCode
       retval = UA_Client_getEndpoints(pClient.get(), discoveryUrl.c_str(), &endpointArraySize, &endpointArray);
-  if (retval != UA_STATUSCODE_GOOD) throw open62541::Exceptions::OpcUaErrorException(retval);
+  if (retval != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retval);
 
   if (endpointArraySize) {
-    serverUrl = static_cast<std::string>(open62541::UA_String(&endpointArray[0].endpointUrl));
+    serverUrl = static_cast<std::string>(open62541Cpp::UA_String(&endpointArray[0].endpointUrl));
   }
   /// \TODO Select best endpoint (e.g. by security)
   for (size_t j = 0; j < endpointArraySize; j++) {
-    //serverUrl = static_cast<std::string>(open62541::UA_String(&endpointArray[j].endpointUrl));
+    //serverUrl = static_cast<std::string>(open62541Cpp::UA_String(&endpointArray[j].endpointUrl));
     std::cout << "Found endpoint: "
-              << static_cast<std::string>(open62541::UA_String(&endpointArray[j].endpointUrl)) << std::endl;
+              << static_cast<std::string>(open62541Cpp::UA_String(&endpointArray[j].endpointUrl)) << std::endl;
   }
 
   UA_Array_delete(endpointArray, endpointArraySize, &UA_TYPES[UA_TYPES_ENDPOINTDESCRIPTION]);
@@ -403,10 +403,10 @@ void NamingServiceOpcUa::changeLocalHostname(std::string &discoveryUrl) const {/
   }
 }
 
-open62541::UA_NodeId NamingServiceOpcUa::createNodeId(const std::string &service, UA_UInt16 nsIndex) {
+open62541Cpp::UA_NodeId NamingServiceOpcUa::createNodeId(const std::string &service, UA_UInt16 nsIndex) {
   std::stringstream ss;
   ss << "85." << service;
-  return open62541::UA_NodeId(nsIndex, ss.str());
+  return open62541Cpp::UA_NodeId(nsIndex, ss.str());
 }
 
 NamingServiceOpcUa::NamingServiceOpcUa(std::shared_ptr<SeRoNet::OPCUA::Server::OpcUaServer> pOpcUaServer)

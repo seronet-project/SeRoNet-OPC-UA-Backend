@@ -150,7 +150,7 @@ void serverOnNetworkCallback(const UA_ServerOnNetwork *serverOnNetwork, UA_Boole
   // LDS. We will ignore this for now
   //std::cout << ( "Another server announced itself on %.*s",
   //            (int)serverOnNetwork->discoveryUrl.length, serverOnNetwork->discoveryUrl.data);
-  open62541::UA_String tmp = open62541::UA_String(&serverOnNetwork->discoveryUrl);
+  open62541Cpp::UA_String tmp = open62541Cpp::UA_String(&serverOnNetwork->discoveryUrl);
   ((OpcUaServer *) data)->addDiscoveryServerEndpoint(static_cast<std::string>(tmp)); // todo setMethode implemntieren
 }
 
