@@ -127,7 +127,8 @@ inline Smart::StatusCode QClientOPCUA<RequestType,
   catch (SeRoNet::Exceptions::ResultErrorException &ex) {
     std::cout << "SeRoNet::Exceptions::ResultErrorException: " << ex.what() << std::endl;
     /// \todo correct return code?
-    return Smart::StatusCode::SMART_ERROR;
+    //return Smart::StatusCode::SMART_ERROR;
+    return Smart::StatusCode::SMART_DISCONNECTED;
   }
 
   this->queryDiscard(id);

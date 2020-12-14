@@ -11,6 +11,7 @@
 
 #include <memory>
 #include <open62541/client.h>
+#include <open62541/client_highlevel.h>
 #include <Open62541Cpp/UA_NodeId.hpp>
 
 #include "AsyncAnswer.hpp"
@@ -34,6 +35,8 @@ class AsyncAnswerFactory {
   void disableBlocking();
   void enableBlocking();
   bool isBlockingEnabled() { return m_blockingEnabled; }
+  /// Check if the client is connected and method is available
+  bool isAvailable();
  protected:
   std::shared_ptr<UA_Client> m_pClient;
   std::mutex &m_opcuaThreadMutex;
@@ -73,6 +76,21 @@ void AsyncAnswerFactory<T_RETURN, T_CAll_ARGS...>::enableBlocking() {
   auto callb = [](IBlocking *blocking) -> void { blocking->enableBlocking(); };
   m_activeInstances.foreach(callb);
 }
+
+template<typename T_RETURN, typename... T_CAll_ARGS>
+bool AsyncAnswerFactory<T_RETURN, T_CAll_ARGS...>::isAvailable() {
+  if(!m_pClient)
+  {
+    return false;
+  }
+  {
+    std::unique_lock<std::mutex> l_opcUA(this->m_opcuaThreadMutex);
+    UA_Boolean executeable;
+    UA_StatusCode status = UA_Client_readExecutableAttribute(m_pClient.get(), *m_methodNodeId.NodeId, &executeable);
+    return status == UA_STATUSCODE_GOOD;
+  }
+}
+
 
 }//  namespace Client
 }//  namespace OPCUA

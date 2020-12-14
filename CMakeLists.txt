@@ -91,6 +91,13 @@ if(BUILD_SHARED_LIBS)
 			$<TARGET_FILE_DIR:SeRoNetSDK>
 			COMMENT "Copy open62541 shared library to bin"
 			)
+
+	add_custom_command(TARGET SeRoNetSDK POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy_if_different
+			$<TARGET_FILE:Open62541Cpp::Open62541Cpp>
+			$<TARGET_FILE_DIR:SeRoNetSDK>
+			COMMENT "Copy open62541 shared library to bin"
+			)
 endif()
 
 
@@ -143,19 +150,3 @@ install(EXPORT SeRoNetSDKTargets
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/cmake/SeRoNetSDKConfig.cmake"
 		"${CMAKE_CURRENT_BINARY_DIR}/SeRoNetSDKConfigVersion.cmake"
 		DESTINATION "${cmake_configfile_install}")
-
-
-# Modify default MSVC options of CMake
-if (MSVC)
-	set(CompilerFlags
-			CMAKE_CXX_FLAGS
-			CMAKE_CXX_FLAGS_DEBUG
-			CMAKE_CXX_FLAGS_RELEASE
-			CMAKE_C_FLAGS
-			CMAKE_C_FLAGS_DEBUG
-			CMAKE_C_FLAGS_RELEASE
-			)
-	foreach (CompilerFlag ${CompilerFlags})
-		string(REPLACE "/MD" "/MT" ${CompilerFlag} "${${CompilerFlag}}")
-	endforeach ()
-endif (MSVC)

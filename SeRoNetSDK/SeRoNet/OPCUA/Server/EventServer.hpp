@@ -130,6 +130,10 @@ UA_StatusCode EventServer<T_ParameterType, T_ResultType, T_StatusType>::activate
   EventServer<T_ParameterType, T_ResultType, T_StatusType> *friendThis =
       static_cast<EventServer<T_ParameterType, T_ResultType, T_StatusType> *>(methodContext);
 
+  if(!friendThis->m_pComponent)
+  {
+    return UA_STATUSCODE_BADINVALIDSTATE;
+  }
   /// \todo check for valid obj NodeId!!
   //auto callobjNodeId = open62541Cpp::UA_NodeId::FromConstNodeId(objectId);
 

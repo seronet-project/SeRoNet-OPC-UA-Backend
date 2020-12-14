@@ -53,6 +53,7 @@ class QueryServer :
   Utils::Component *m_component;
   /// name of service
   std::string m_service;
+  open62541Cpp::UA_NodeId m_methodNodeId;
 
   std::map<Smart::NumericCorrelationId, T_ANSWER> m_answers;
 
@@ -90,7 +91,7 @@ class QueryServer :
   *  such that all pending queries are handled correctly at client side
   *  even when the service provider disappears during pending queries.
   */
-  virtual ~QueryServer() noexcept = default;
+  virtual ~QueryServer();
 
   /** Provide answer to be sent back to the requestor.
   *
@@ -193,7 +194,7 @@ inline QueryServer<T_REQUEST, T_ANSWER>::QueryServer(
       outputArguments.arraySize,
       outputArguments.arguments,
       this,
-      NULL);
+      m_methodNodeId.NodeId);
 
   UA_QualifiedName_clear(&qualifiedName);
   UA_MethodAttributes_clear(&helloAttr);
@@ -208,6 +209,16 @@ Smart::StatusCode QueryServer<T_REQUEST, T_ANSWER>::answer(const Smart::QueryIdP
   std::pair<Smart::NumericCorrelationId, T_ANSWER> answer_pair(*numeric_id_ptr, answer);
   m_answers.insert(answer_pair);
   return Smart::StatusCode::SMART_OK;
+}
+
+template<typename T_REQUEST, typename T_ANSWER>
+QueryServer<T_REQUEST, T_ANSWER>::~QueryServer() {
+  UA_Server *pServer = m_component->getOpcUaServer()->getServer();
+  if(!UA_NodeId_isNull(m_methodNodeId.NodeId) && pServer)
+  {
+    UA_Server_deleteNode(pServer, *m_methodNodeId.NodeId, UA_TRUE);
+    m_methodNodeId = UA_NODEID_NULL;
+  }
 }
 
 }  // namespace Server
