@@ -31,7 +31,7 @@ set(PRJ_FILES
         SeRoNetSDK/SeRoNet/DefaultCommObjects/Description/ParameterResponseIdlDescription.cpp
         SeRoNetSDK/SeRoNet/DefaultCommObjects/Description/WiringCommObjectDescription.cpp
 
-		SeRoNetSDK/SeRoNet/OPCUA/Client/IBlocking.cpp
+		SeRoNetSDK/SeRoNet/OPCUA/Client/IAnswerState.cpp
         SeRoNetSDK/SeRoNet/OPCUA/Converter/CommObjectToUaVariantArray.cpp
         SeRoNetSDK/SeRoNet/OPCUA/Converter/UaVariantArrayToCommObject.cpp
         SeRoNetSDK/SeRoNet/OPCUA/Converter/CommObjectToListOfPrimitivDescriptions.cpp

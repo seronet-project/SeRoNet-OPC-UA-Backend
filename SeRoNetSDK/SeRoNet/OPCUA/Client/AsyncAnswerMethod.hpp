@@ -31,7 +31,7 @@ template<typename T_RETURN>
 class AsyncAnswerMethod : public AsyncAnswer<T_RETURN> {
  public:
   /// Do method call on the server
-  AsyncAnswerMethod(IBlocking::instanceStorage_t *, bool blockingEnabled, UA_Client *pClient,
+  AsyncAnswerMethod(IAnswerState::instanceStorage_t *, bool blockingEnabled, std::shared_ptr<UA_Client> pClient,
                     open62541Cpp::UA_NodeId objectId, open62541Cpp::UA_NodeId methodId,
                     const open62541Cpp::UA_ArrayOfVariant &inputs);
 
@@ -40,7 +40,7 @@ class AsyncAnswerMethod : public AsyncAnswer<T_RETURN> {
   ~AsyncAnswerMethod() override;
  protected:
   UA_UInt32 m_requestId = 0;
-  UA_Client *m_pClient = nullptr;
+  std::shared_ptr<UA_Client> m_pClient;
  private:
   friend void methodCalledCallback<T_RETURN>(UA_Client *pClient,
                                              void *userdata,
@@ -64,14 +64,14 @@ static void methodCalledCallback(UA_Client *pClient, void *userdata, UA_UInt32 r
 
 template<typename T_RETURN>
 inline AsyncAnswerMethod<T_RETURN>::AsyncAnswerMethod(
-    IBlocking::instanceStorage_t *instStorage, bool blockingEnabled, UA_Client *pClient,
+    IAnswerState::instanceStorage_t *instStorage, bool blockingEnabled, std::shared_ptr<UA_Client> pClient,
     open62541Cpp::UA_NodeId objectId, open62541Cpp::UA_NodeId methodId,
     const open62541Cpp::UA_ArrayOfVariant &inputs)
     : m_pClient(pClient), AsyncAnswer<T_RETURN>(instStorage, blockingEnabled) {
 
   UA_StatusCode retVal =
       UA_Client_call_async(
-          pClient,
+          pClient.get(),
           *objectId.NodeId,
           *methodId.NodeId,
           inputs.VariantsSize,
@@ -89,7 +89,7 @@ inline AsyncAnswerMethod<T_RETURN>::~AsyncAnswerMethod() {
   if(!this->hasAnswer())
   {
     // Make sure, that the callback is not called anymore.
-    UA_Client_modifyAsyncCallback(m_pClient, m_requestId, nullptr, nullptr);
+    UA_Client_modifyAsyncCallback(m_pClient.get(), m_requestId, nullptr, nullptr);
   }
 }
 

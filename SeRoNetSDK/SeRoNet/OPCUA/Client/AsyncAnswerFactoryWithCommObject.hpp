@@ -29,7 +29,7 @@ class AsyncAnswerFactoryWithCommObject :
         new AsyncAnswerMethodCommObjectRequest<T_RETURN>
             (&this->m_activeInstances,
              this->m_blockingEnabled,
-             this->m_pClient.get(),
+             this->m_pClient,
              CommunicationObjects::Description::SelfDescription(&arg, ""),
              this->m_methodNodeId));
   }

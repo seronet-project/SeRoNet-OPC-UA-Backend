@@ -7,33 +7,49 @@
  *  \author Sebastian Friedl - ISW, University of Stuttgart
  **/
 
-#include "IBlocking.hpp"
+#include "IAnswerState.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
 namespace Client {
-IBlocking::IBlocking(instanceStorage_t *instStorage, bool blockingEnabled)
+IAnswerState::IAnswerState(instanceStorage_t *instStorage, bool blockingEnabled)
     : m_pInstStorage(instStorage), m_it(instStorage->add(this)),
-      BlockingEnabled(m_blockingEnabled), m_blockingEnabled(blockingEnabled) {
+      BlockingEnabled(m_blockingEnabled), Disconnected(m_disconnected), m_blockingEnabled(blockingEnabled) {
 }
 
-IBlocking::~IBlocking() {
-  m_pInstStorage->remove(m_it);
+IAnswerState::~IAnswerState() {
+  if(m_pInstStorage)
+  {
+    m_pInstStorage->remove(m_it);
+  }
 }
 
-bool IBlocking::enableBlocking() {
+bool IAnswerState::enableBlocking() {
   // Use atomic exchange to prevent race conditions
   bool ret = m_blockingEnabled.exchange(true);
   this->blockingChanged();
   return ret;
 }
 
-bool IBlocking::disableBlocking() {
+bool IAnswerState::disableBlocking() {
   // Use atomic exchange to prevent race conditions
   bool ret = m_blockingEnabled.exchange(false);
   this->blockingChanged();
   return ret;
 }
+
+void IAnswerState::detach()
+{
+  m_pInstStorage = nullptr;
+}
+
+void IAnswerState::disconnect()
+{
+  m_disconnected = true;
+  // Release all remaining calls.
+  disableBlocking();
+}
+
 }
 }
 }

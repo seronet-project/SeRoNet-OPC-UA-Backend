@@ -16,7 +16,7 @@
 
 #include "AsyncAnswer.hpp"
 #include "InstanceStorage.hpp"
-#include "IBlocking.hpp"
+#include "IAnswerState.hpp"
 
 namespace SeRoNet {
 namespace OPCUA {
@@ -40,10 +40,10 @@ class AsyncAnswerFactory {
  protected:
   std::shared_ptr<UA_Client> m_pClient;
   std::mutex &m_opcuaThreadMutex;
-  InstanceStorage<IBlocking> m_activeInstances;
+  InstanceStorage<IAnswerState> m_activeInstances;
   open62541Cpp::UA_NodeId m_methodNodeId;
 
-  /// Store the blocking state for newly created Instances
+  /// Store the answerState state for newly created Instances
   /// \todo move m_activeInstances, m_blockingEnabled, disableBlocking and enableBlocking to base class
   std::atomic_bool m_blockingEnabled = {true};
 };
@@ -60,20 +60,22 @@ inline AsyncAnswerFactory<T_RETURN, T_CAll_ARGS...>::~AsyncAnswerFactory() {
   /// \todo Assert instead of output
   if (!m_activeInstances.empty()) {
     printf("ERROR: Instance Storage is not empty : %s", __FUNCTION__);
+    auto callb = [](IAnswerState *answerState) -> void { answerState->disconnect(); answerState->detach(); };
+    m_activeInstances.foreach(callb);
   }
 }
 
 template<typename T_RETURN, typename... T_CAll_ARGS>
 void AsyncAnswerFactory<T_RETURN, T_CAll_ARGS...>::disableBlocking() {
   m_blockingEnabled = false;
-  auto callb = [](IBlocking *blocking) -> void { blocking->disableBlocking(); };
+  auto callb = [](IAnswerState *answerState) -> void { answerState->disableBlocking(); };
   m_activeInstances.foreach(callb);
 }
 
 template<typename T_RETURN, typename... T_CAll_ARGS>
 void AsyncAnswerFactory<T_RETURN, T_CAll_ARGS...>::enableBlocking() {
   m_blockingEnabled = true;
-  auto callb = [](IBlocking *blocking) -> void { blocking->enableBlocking(); };
+  auto callb = [](IAnswerState *answerState) -> void { answerState->enableBlocking(); };
   m_activeInstances.foreach(callb);
 }
 

@@ -37,7 +37,8 @@ class InstanceStorage {
   bool empty() { return m_instances.empty(); }
  protected:
   Instance_Container_t m_instances;
-  std::mutex m_accessMutex;
+  // Allow calling foreach in foreach
+  std::recursive_mutex m_accessMutex;
 };
 
 template<typename INSTANCE_TYPE_T>
@@ -61,6 +62,7 @@ inline int InstanceStorage<INSTANCE_TYPE_T>::foreach(foreach_callback_t callb) {
   }
   return m_instances.size();
 }
+
 }
 }
 }

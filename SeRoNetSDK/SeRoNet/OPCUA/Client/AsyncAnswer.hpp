@@ -13,8 +13,9 @@
 #include <mutex>
 #include <atomic>
 #include <condition_variable>
-#include "IBlocking.hpp"
+#include "IAnswerState.hpp"
 #include "../../Exceptions/BlockingDisabledException.hpp"
+#include "../../Exceptions/DisconnectedException.hpp"
 #include "../../Exceptions/ResultErrorException.hpp"
 #include <string>
 
@@ -23,7 +24,7 @@ namespace OPCUA {
 namespace Client {
 
 template<typename T_RETURN>
-class AsyncAnswer : IBlocking {
+class AsyncAnswer : IAnswerState {
  public:
   AsyncAnswer(instanceStorage_t *instStorage, bool blockingEnabled);
 
@@ -55,7 +56,7 @@ class AsyncAnswer : IBlocking {
 
 template<typename T_RETURN>
 inline AsyncAnswer<T_RETURN>::AsyncAnswer(instanceStorage_t *instStorage, bool blockingEnabled):
-    IBlocking(instStorage, blockingEnabled) {
+    IAnswerState(instStorage, blockingEnabled) {
 }
 
 template<typename T_RETURN>
@@ -67,6 +68,11 @@ inline T_RETURN AsyncAnswer<T_RETURN>::waitForAnswer() {
   std::mutex cv_m;
   std::unique_lock<decltype(cv_m)> cv_ml(cv_m);
   m_cv_hasAnswer.wait(cv_ml, [&]() -> bool { return this->m_hasAnswer || !BlockingEnabled; });
+
+  if(this->Disconnected)
+  {
+    throw SeRoNet::Exceptions::DisconnectedException("Disconnected AsyncAnswer");
+  }
 
   if (!this->hasAnswer()) {
     throw SeRoNet::Exceptions::BlockingDisabledException("No AsyncAnswer available.");

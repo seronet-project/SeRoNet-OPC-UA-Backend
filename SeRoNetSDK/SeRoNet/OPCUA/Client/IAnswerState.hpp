@@ -18,11 +18,13 @@
 namespace SeRoNet {
 namespace OPCUA {
 namespace Client {
-class SERONETSDK_EXPORT IBlocking {
+class SERONETSDK_EXPORT IAnswerState {
  public:
-  typedef InstanceStorage<IBlocking> instanceStorage_t;
+  typedef InstanceStorage<IAnswerState> instanceStorage_t;
   ///@TODO use shared ptr?! for instStorage
-  explicit IBlocking(instanceStorage_t *instStorage, bool blockingEnabled);
+  explicit IAnswerState(instanceStorage_t *instStorage, bool blockingEnabled);
+
+  void disconnect();
 
   ///@return old value of blockingEnabled
   bool enableBlocking();
@@ -32,14 +34,19 @@ class SERONETSDK_EXPORT IBlocking {
 
   bool isBlockingEnabled() { return m_blockingEnabled; };
 
-  virtual ~IBlocking();
+  virtual ~IAnswerState();
+
+  // Detach the instance from the instace storage
+  void detach();
  protected:
   /// Called when the value of BlockingEnabled is changed
   virtual void blockingChanged() = 0;
   /// ReadOnly m_blockingEnabled
   const std::atomic_bool &BlockingEnabled;
+  const std::atomic_bool &Disconnected;
  private:
   std::atomic_bool m_blockingEnabled = {true};
+  std::atomic_bool m_disconnected = {false};
   instanceStorage_t *m_pInstStorage;
   instanceStorage_t::Instance_Container_Iterator_t m_it;
 };

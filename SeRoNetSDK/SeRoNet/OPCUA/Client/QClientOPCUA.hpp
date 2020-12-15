@@ -124,6 +124,9 @@ inline Smart::StatusCode QClientOPCUA<RequestType,
   catch (SeRoNet::Exceptions::BlockingDisabledException &ex) {
     return Smart::StatusCode::SMART_CANCELLED;
   }
+  catch (SeRoNet::Exceptions::DisconnectedException &ex) {
+    return Smart::StatusCode::SMART_DISCONNECTED;
+  }
   catch (SeRoNet::Exceptions::ResultErrorException &ex) {
     std::cout << "SeRoNet::Exceptions::ResultErrorException: " << ex.what() << std::endl;
     /// \todo correct return code?

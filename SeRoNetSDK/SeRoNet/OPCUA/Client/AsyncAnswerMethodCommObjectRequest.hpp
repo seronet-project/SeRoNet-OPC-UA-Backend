@@ -25,9 +25,9 @@ namespace Client {
 template<typename T_RETURN>
 class AsyncAnswerMethodCommObjectRequest : public AsyncAnswerMethod<T_RETURN> {
  public:
-  AsyncAnswerMethodCommObjectRequest(SeRoNet::OPCUA::Client::IBlocking::instanceStorage_t *instStorage,
+  AsyncAnswerMethodCommObjectRequest(SeRoNet::OPCUA::Client::IAnswerState::instanceStorage_t *instStorage,
                                      bool blockingEnabled,
-                                     UA_Client *client,
+                                     std::shared_ptr<UA_Client> client,
                                      CommunicationObjects::Description::IDescription::shp_t requestDescription,
                                      open62541Cpp::UA_NodeId methodNodeId);
   void processAnswer(UA_StatusCode result, open62541Cpp::UA_ArrayOfVariant *outputs) override;
@@ -39,9 +39,9 @@ class AsyncAnswerMethodCommObjectRequest : public AsyncAnswerMethod<T_RETURN> {
 };
 template<typename T_RETURN>
 AsyncAnswerMethodCommObjectRequest<T_RETURN>::AsyncAnswerMethodCommObjectRequest(
-    SeRoNet::OPCUA::Client::IBlocking::instanceStorage_t *instStorage,
+    SeRoNet::OPCUA::Client::IAnswerState::instanceStorage_t *instStorage,
     bool blockingEnabled,
-    UA_Client *client,
+    std::shared_ptr<UA_Client> client,
     CommunicationObjects::Description::IDescription::shp_t requestDescription,
     open62541Cpp::UA_NodeId methodNodeId) :
     AsyncAnswerMethod<T_RETURN>::AsyncAnswerMethod(
