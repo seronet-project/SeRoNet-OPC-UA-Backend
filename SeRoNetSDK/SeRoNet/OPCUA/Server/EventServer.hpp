@@ -76,6 +76,7 @@ class EventServer :
 **/
   //node Id of the object node
   open62541Cpp::UA_NodeId m_objNodeId;
+  open62541Cpp::UA_NodeId m_methodNodeId;
  private:
   /// management class of the component
   /// name of service
@@ -106,7 +107,7 @@ class EventServer :
      *  such that all pending queries are handled correctly at client side
      *  even when the service provider disappears during pending queries.
      */
-  virtual ~EventServer() = default;
+  virtual ~EventServer();
 
   Smart::StatusCode put(const T_StatusType &newState) override;
 
@@ -156,7 +157,7 @@ UA_StatusCode EventServer<T_ParameterType, T_ResultType, T_StatusType>::activate
                           UA_QUALIFIEDNAME_ALLOC(1, "Activation"),
                           UA_NODEID_NUMERIC(0, UA_NS0ID_BASEOBJECTTYPE),
                           actvAtrr, nullptr, m_NodeId.NodeId);
-
+  UA_ObjectAttributes_clear(&actvAtrr);
   Converter::CommObjectToPushModel(
       friendThis->m_pComponent->getOpcUaServer(),
       CommunicationObjects::Description::SelfDescription(ResultObj, friendThis->serviceName).get(),
@@ -231,14 +232,22 @@ inline EventServer<T_ParameterType,
   m_attr.displayName = UA_LOCALIZEDTEXT_ALLOC("", this->m_service.c_str());
   /// \FIXME generate NodeId by nameservice
   m_objNodeId = UA_NODEID_STRING_ALLOC(nsIndex, ("85." + serviceName).c_str());
-  UA_Server_addObjectNode(server,
+  UA_NodeId newNodeId = UA_NODEID_NULL;
+  auto addObjectResult = UA_Server_addObjectNode(server,
                           *m_objNodeId.NodeId,
                           objectsFolderNodeId,
                           UA_NODEID_NUMERIC(0, UA_NS0ID_ORGANIZES),
                           UA_QUALIFIEDNAME_ALLOC(1, this->m_service.c_str()),
-                          UA_NODEID_NUMERIC(0, UA_NS0ID_BASEOBJECTTYPE), m_attr, nullptr, nullptr);
-
-//add a method node for the activation
+                          UA_NODEID_NUMERIC(0, UA_NS0ID_BASEOBJECTTYPE), m_attr, nullptr, &newNodeId);
+  UA_ObjectAttributes_clear(&m_attr);
+  if(addObjectResult != UA_STATUSCODE_GOOD || !UA_NodeId_equal(m_objNodeId.NodeId, &newNodeId))
+  {
+    UA_NodeId_clear(&newNodeId);
+    std::cerr << "EventServer, Adding Object failed. Status Code:" << UA_StatusCode_name(addObjectResult) << std::endl;
+    throw std::runtime_error("EventServer, Adding Object failed.");
+  }
+  UA_NodeId_clear(&newNodeId);
+  //add a method node for the activation
   T_ParameterType *inputCommObject = new T_ParameterType;
   //have a communication object as input parameter
   open62541Cpp::UA_ArrayOfArgument
@@ -258,7 +267,7 @@ inline EventServer<T_ParameterType,
   activateAttr.displayName = UA_LOCALIZEDTEXT_ALLOC("en-US", "Activation method");
   activateAttr.executable = true;
   activateAttr.userExecutable = true;
-  UA_Server_addMethodNode(server,
+  auto addMethodResult = UA_Server_addMethodNode(server,
                           UA_NODEID_STRING_ALLOC(nsIndex, "Activation method"),
                           *m_objNodeId.NodeId,
                           UA_NODEID_NUMERIC(0, UA_NS0ID_HASCOMPONENT),
@@ -266,7 +275,13 @@ inline EventServer<T_ParameterType,
                           activateAttr,
                           &activateCallback, actInputArguments.arraySize,
                           actInputArguments.arguments, 1,
-                          &outputArgument, this, nullptr);
+                          &outputArgument, this, m_methodNodeId.NodeId);
+  UA_MethodAttributes_clear(&activateAttr);
+  if(addObjectResult != UA_STATUSCODE_GOOD)
+  {
+    std::cerr << "EventServer, Adding Method failed. Status Code:" << UA_StatusCode_name(addObjectResult) << std::endl;
+    throw std::runtime_error("EventServer, Adding Method failed.");
+  }
   /**
   //add a method node for deactivation
   //take the id of the activation as input parameter
@@ -296,6 +311,21 @@ inline EventServer<T_ParameterType,
                           nullptr, nullptr, nullptr);
 **/
 };
+
+template<class T_ParameterType, class T_ResultType, class T_StatusType>
+EventServer<T_ParameterType, T_ResultType, T_StatusType>::~EventServer() {
+  UA_Server *server = m_pComponent->getOpcUaServer()->getServer();
+  auto delMethodStatus = UA_Server_deleteNode(server, *m_methodNodeId.NodeId, UA_TRUE);
+  if(delMethodStatus != UA_STATUSCODE_GOOD)
+  {
+    std::cerr << "EventServer, Delete Method failed. Status Code:" << UA_StatusCode_name(delMethodStatus) << std::endl;
+  }
+  auto delObjStatus = UA_Server_deleteNode(server, *m_objNodeId.NodeId, UA_TRUE);
+  if(delObjStatus != UA_STATUSCODE_GOOD)
+  {
+    std::cerr << "EventServer, Delete Object failed. Status Code:" << UA_StatusCode_name(delObjStatus) << std::endl;
+  }
+}
 
 template<class T_ParameterType, class T_ResultType, class T_StatusType>
 Smart::StatusCode EventServer<T_ParameterType, T_ResultType, T_StatusType>::

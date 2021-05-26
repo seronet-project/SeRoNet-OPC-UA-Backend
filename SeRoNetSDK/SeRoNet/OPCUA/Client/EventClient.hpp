@@ -205,11 +205,14 @@ Smart::StatusCode EventClient<ActivationType, EventType>::deactivate(const Smart
 template<typename ActivationType, typename EventType>
 Smart::StatusCode EventClient<ActivationType, EventType>::tryEvent(const Smart::EventIdPtr id) {
   auto internal_id = std::dynamic_pointer_cast<Event::Id_t<ActivationType,EventType>>(id);
-  if(!internal_id || internal_id->invalid)
+  if(!internal_id )
+  {
+    return Smart::SMART_WRONGID;
+  }else if(internal_id->invalid)
   {
     return Smart::SMART_NOTACTIVATED;
   }
-  return internal_id->pSubscriptionReader->hasData()? Smart::SMART_OK : Smart::SMART_ERROR;
+  return internal_id->pSubscriptionReader->hasData()? Smart::SMART_OK : Smart::SMART_ACTIVE;
 }
 
 template<typename ActivationType, typename EventType>
@@ -218,7 +221,10 @@ Smart::StatusCode EventClient<ActivationType, EventType>::getEvent(
     EventType &event,
     const Smart::Duration &timeout) {
   auto internal_id = std::dynamic_pointer_cast<Event::Id_t<ActivationType,EventType>>(id);
-  if(!internal_id || internal_id->invalid)
+  if(!internal_id )
+  {
+    return Smart::SMART_WRONGID;
+  }else if(internal_id->invalid)
   {
     return Smart::SMART_NOTACTIVATED;
   }
@@ -233,7 +239,10 @@ Smart::StatusCode EventClient<ActivationType, EventType>::getNextEvent(
     EventType &event,
     const Smart::Duration &timeout) {
   auto internal_id = std::dynamic_pointer_cast<Event::Id_t<ActivationType,EventType>>(id);
-  if(!internal_id || internal_id->invalid)
+  if(!internal_id )
+  {
+    return Smart::SMART_WRONGID;
+  }else if(internal_id->invalid)
   {
     return Smart::SMART_NOTACTIVATED;
   }
