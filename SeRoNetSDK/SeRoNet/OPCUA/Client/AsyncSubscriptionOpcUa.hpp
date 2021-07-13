@@ -213,7 +213,7 @@ inline void AsyncSubscriptionOpcUa<T_DATATYPE>::processValues() {
 template<typename T_DATATYPE>
 inline void AsyncSubscriptionOpcUa<T_DATATYPE>::valueChanged(UA_UInt32 monId, UA_DataValue *value) {
   if (value->hasStatus && value->status != UA_STATUSCODE_GOOD){
-    std::cout << "status invalid" << std::endl;
+    std::cout << "status invalid: " << UA_StatusCode_name(value->status) <<std::endl;
     return;
   }
 

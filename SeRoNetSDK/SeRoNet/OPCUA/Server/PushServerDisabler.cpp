@@ -25,6 +25,7 @@
 #include "../../Exceptions/NotImplementedException.hpp"
 #include "../../CommunicationObjects/Description/ComplexType.hpp"
 #include "../../CommunicationObjects/Description/ElementPrimitives.hpp"
+#include "../../CommunicationObjects/Description/ElementArray.hpp"
 #include "OpcuaServer.hpp"
 
 /// Internal Class
@@ -141,7 +142,10 @@ class DisableOpcuaServerVisitor :
   }
 
   void visit(SeRoNet::CommunicationObjects::Description::ElementArray *elementArray) override {
-    throw SeRoNet::Exceptions::NotImplementedException(__FUNCTION__);
+    UA_StatusCode retVal;
+    auto myNodeId = generateNodeId(elementArray);
+    retVal = UA_Server_writeAccessLevel(m_pOpcUaServer->getServer(), *myNodeId.NodeId, 0);
+    if (retVal != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retVal);
   }
 
  private:

@@ -92,6 +92,7 @@ class EventClient : public Smart::IEventClientPattern<ActivationType, EventType>
   std::shared_ptr<SeRoNet::OPCUA::Client::INamingService> m_namingService;
   SeRoNet::OPCUA::Client::UaClientWithMutex_t::shpType m_pUaClientWithMutex;
   open62541Cpp::UA_NodeId m_nodeId;
+  bool serviceIsAvailable();
 };
 
 template<typename ActivationType, typename EventType>
@@ -105,7 +106,15 @@ Smart::StatusCode EventClient<ActivationType, EventType>::connect(
   if (!m_pUaClientWithMutex || !m_pUaClientWithMutex->pClient) {
     std::cout <<"No valid m_pUaClientWithMutex. " <<__FILE__ <<":" <<__LINE__ <<std::endl;
   }
-  return m_pUaClientWithMutex->pClient != nullptr ? Smart::SMART_OK : Smart::SMART_ERROR;
+  if(!m_pUaClientWithMutex->pClient)
+  {
+    return Smart::SMART_ERROR;
+  }
+  if(!this->serviceIsAvailable())
+  {
+    return Smart::SMART_SERVICEUNAVAILABLE;
+  }
+  return Smart::SMART_OK;
 }
 
 template<typename ActivationType, typename EventType>
@@ -216,15 +225,41 @@ Smart::StatusCode EventClient<ActivationType, EventType>::tryEvent(const Smart::
 }
 
 template<typename ActivationType, typename EventType>
+bool EventClient<ActivationType, EventType>::serviceIsAvailable()
+{
+    if(!m_pUaClientWithMutex)
+    {
+      return false;
+    }
+
+    UA_NodeClass tmpOut;
+    UA_StatusCode status;
+    {
+      std::unique_lock<decltype(m_pUaClientWithMutex->opcuaMutex)> lock(m_pUaClientWithMutex->opcuaMutex);
+      status = UA_Client_readNodeClassAttribute(m_pUaClientWithMutex->pClient.get(), *this->m_nodeId.NodeId, &tmpOut);
+    }
+    if( status != UA_STATUSCODE_GOOD)
+    {
+      m_pUaClientWithMutex.reset();
+      return false;
+    }
+    return true;
+  }
+template<typename ActivationType, typename EventType>
 Smart::StatusCode EventClient<ActivationType, EventType>::getEvent(
     const Smart::EventIdPtr id,
     EventType &event,
     const Smart::Duration &timeout) {
   auto internal_id = std::dynamic_pointer_cast<Event::Id_t<ActivationType,EventType>>(id);
+  if(!this->serviceIsAvailable())
+  {
+    return Smart::SMART_DISCONNECTED;
+  }
   if(!internal_id )
   {
     return Smart::SMART_WRONGID;
-  }else if(internal_id->invalid)
+  }
+  if(internal_id->invalid)
   {
     return Smart::SMART_NOTACTIVATED;
   }
