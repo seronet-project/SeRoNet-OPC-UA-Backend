@@ -10,7 +10,7 @@
 #pragma once
 
 #include "../../../Definitions.hpp"
-#include "../../CommunicationObjects/Description/IVisitableDescription.hpp"
+#include "../../CommunicationObjects/Description/IDescription.hpp"
 #include <Open62541Cpp/UA_ArrayOfArgument.hpp>
 #include "../../OPCUA/Server/OpcuaServer.hpp"
 #include <Open62541Cpp/UA_NodeId.hpp>
@@ -24,12 +24,15 @@ class SERONETSDK_EXPORT CommObjectToPushModel {
  public:
   CommObjectToPushModel(
       std::shared_ptr<SeRoNet::OPCUA::Server::OpcUaServer> pServer,
-      CommunicationObjects::Description::IVisitableDescription *description,
+      CommunicationObjects::Description::IDescription *description,
       const open62541Cpp::UA_NodeId &parent);
   virtual ~CommObjectToPushModel() = default;
 
+  open62541Cpp::UA_NodeId GetRootNodeId() const;
+
  private:
   std::shared_ptr<SeRoNet::OPCUA::Server::OpcUaServer> m_pServer;
+  open62541Cpp::UA_NodeId m_rootNodeId;
 };
 
 } //  namespace Converter

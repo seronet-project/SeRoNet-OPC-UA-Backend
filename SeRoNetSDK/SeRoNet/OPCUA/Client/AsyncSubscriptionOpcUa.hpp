@@ -35,11 +35,11 @@ template<typename T_DATATYPE>
 class AsyncSubscriptionOpcUa : public AsyncSubscriptionArrayBuffer<T_DATATYPE> {
  public:
   ///@todo rework with Client connection pool
-  AsyncSubscriptionOpcUa(UaClientWithMutex_t::shpType pUaClientwithMutex);
+  AsyncSubscriptionOpcUa(UaClientWithMutex_t::shpType pUaClientwithMutex, std::size_t queueSize = 8);
 
   ///\todo rework to take iterators
   virtual UA_StatusCode subscribe(std::vector<UA_NodeId> nodeIds);
-  void unsubscribe();
+  void unsubscribe() override;
   virtual ~AsyncSubscriptionOpcUa();
 
   bool isSubscribed() { return m_subId != 0; }
@@ -94,8 +94,8 @@ class AsyncSubscriptionOpcUa : public AsyncSubscriptionArrayBuffer<T_DATATYPE> {
 };
 
 template<typename T_DATATYPE>
-inline AsyncSubscriptionOpcUa<T_DATATYPE>::AsyncSubscriptionOpcUa(UaClientWithMutex_t::shpType pUaClientwithMutex)
-    : m_pUaClientWithMutex(pUaClientwithMutex) {
+inline AsyncSubscriptionOpcUa<T_DATATYPE>::AsyncSubscriptionOpcUa(UaClientWithMutex_t::shpType pUaClientwithMutex, std::size_t queueSize)
+    : AsyncSubscriptionArrayBuffer<T_DATATYPE>(queueSize), m_pUaClientWithMutex(pUaClientwithMutex) {
 
 }
 
@@ -162,7 +162,7 @@ inline UA_StatusCode AsyncSubscriptionOpcUa<T_DATATYPE>::subscribe(std::vector<U
     info.nodeId = open62541Cpp::UA_NodeId(nodeId);
     m_monItems.insert(typename monItems_t::value_type(monItemResponse.monitoredItemId, info));
   }
-
+  AsyncSubscriptionArrayBuffer<T_DATATYPE>::subscribe();
   return ret;
 }
 
@@ -182,6 +182,7 @@ inline void AsyncSubscriptionOpcUa<T_DATATYPE>::unsubscribe() {
 
   m_monItems.clear();
   m_valuesSet = 0;
+  AsyncSubscriptionArrayBuffer<T_DATATYPE>::unsubscribe();
 }
 
 template<typename T_DATATYPE>

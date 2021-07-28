@@ -227,24 +227,25 @@ Smart::StatusCode EventClient<ActivationType, EventType>::tryEvent(const Smart::
 template<typename ActivationType, typename EventType>
 bool EventClient<ActivationType, EventType>::serviceIsAvailable()
 {
-    if(!m_pUaClientWithMutex)
-    {
-      return false;
-    }
-
-    UA_NodeClass tmpOut;
-    UA_StatusCode status;
-    {
-      std::unique_lock<decltype(m_pUaClientWithMutex->opcuaMutex)> lock(m_pUaClientWithMutex->opcuaMutex);
-      status = UA_Client_readNodeClassAttribute(m_pUaClientWithMutex->pClient.get(), *this->m_nodeId.NodeId, &tmpOut);
-    }
-    if( status != UA_STATUSCODE_GOOD)
-    {
-      m_pUaClientWithMutex.reset();
-      return false;
-    }
-    return true;
+  if(!m_pUaClientWithMutex)
+  {
+    return false;
   }
+
+  UA_NodeClass tmpOut;
+  UA_StatusCode status;
+  {
+    std::unique_lock<decltype(m_pUaClientWithMutex->opcuaMutex)> lock(m_pUaClientWithMutex->opcuaMutex);
+    status = UA_Client_readNodeClassAttribute(m_pUaClientWithMutex->pClient.get(), *this->m_nodeId.NodeId, &tmpOut);
+  }
+  if( status != UA_STATUSCODE_GOOD)
+  {
+    m_pUaClientWithMutex.reset();
+    return false;
+  }
+  return true;
+}
+
 template<typename ActivationType, typename EventType>
 Smart::StatusCode EventClient<ActivationType, EventType>::getEvent(
     const Smart::EventIdPtr id,

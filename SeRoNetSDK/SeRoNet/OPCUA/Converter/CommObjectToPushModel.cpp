@@ -159,17 +159,6 @@ class ToPushModellVisitor :
     disableElement(elementArray);
   }
 
- private:
-
-  void disableElement(const SeRoNet::CommunicationObjects::Description::IDescription *el) const {
-    UA_StatusCode retVal;
-    auto myNodeId = generateNodeId(el);
-    retVal = UA_Server_writeAccessLevel(m_pServer->getServer(),
-                                        *myNodeId.NodeId,
-                                        0);
-    if (retVal != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retVal);
-  }
-
   open62541Cpp::UA_NodeId generateNodeId(const SeRoNet::CommunicationObjects::Description::IDescription *description)
   const {
     std::stringstream ss;
@@ -188,6 +177,17 @@ class ToPushModellVisitor :
     return ownNodeId;
   }
 
+ private:
+
+  void disableElement(const SeRoNet::CommunicationObjects::Description::IDescription *el) const {
+    UA_StatusCode retVal;
+    auto myNodeId = generateNodeId(el);
+    retVal = UA_Server_writeAccessLevel(m_pServer->getServer(),
+                                        *myNodeId.NodeId,
+                                        0);
+    if (retVal != UA_STATUSCODE_GOOD) throw open62541Cpp::Exceptions::OpcUaErrorException(retVal);
+  }
+
   std::shared_ptr<SeRoNet::OPCUA::Server::OpcUaServer> m_pServer;
   open62541Cpp::UA_NodeId m_parent;
 };
@@ -198,10 +198,15 @@ namespace Converter {
 
 CommObjectToPushModel::CommObjectToPushModel(
     std::shared_ptr<SeRoNet::OPCUA::Server::OpcUaServer> pServer,
-    CommunicationObjects::Description::IVisitableDescription *description,
+    CommunicationObjects::Description::IDescription *description,
     const open62541Cpp::UA_NodeId &parent) : m_pServer(pServer) {
   ToPushModellVisitor visitor(pServer, parent);
+  m_rootNodeId = visitor.generateNodeId(description);
   description->accept(&visitor);
+}
+
+open62541Cpp::UA_NodeId CommObjectToPushModel::GetRootNodeId() const {
+  return m_rootNodeId;
 }
 
 }  // namespace Converter

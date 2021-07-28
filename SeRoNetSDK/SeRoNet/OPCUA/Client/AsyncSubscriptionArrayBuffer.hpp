@@ -10,6 +10,7 @@
 #pragma once
 
 #include "AsyncSubscription.hpp"
+#include "../../Exceptions/UnsubscribedException.hpp"
 #include <memory>
 #include <mutex>
 #include <shared_mutex>
@@ -53,9 +54,19 @@ class AsyncSubscriptionArrayBuffer :
     m_cv_hasData.notify_all();
   }
 
+  void subscribe() override {
+    m_subscribed = true;
+  }
+
+  void unsubscribe() override {
+    m_subscribed = false;
+    m_cv_hasData.notify_all();
+  }
+
  private:
   T_DATATYPE *m_dataBuffer;
   std::shared_timed_mutex m_dataBufferLock;
+  std::atomic_bool m_subscribed;
   const std::size_t m_bufferSize;
 
   typename AsyncSubscription<T_DATATYPE>::atomic_counter_t m_dataCounter = {0};
@@ -86,8 +97,13 @@ T_DATATYPE AsyncSubscriptionArrayBuffer<T_DATATYPE>::getData(
     lock.unlock();  // Unlock so new values are possible
     std::mutex cv_m;
     std::unique_lock<decltype(cv_m)> cv_ml(cv_m);
-    m_cv_hasData.wait(cv_ml, [&]() -> bool { return this->hasData(dataCounter); });
+    m_cv_hasData.wait(cv_ml, [&]() -> bool { return !this->m_subscribed || this->hasData(dataCounter); });
     lock.lock();
+  }
+
+  if(!m_subscribed)
+  {
+    throw SeRoNet::Exceptions::UnsubscribedException("Unsubscribed AsyncSubscripption.");
   }
 
   /// \todo assert datacounter <m_dataCounter

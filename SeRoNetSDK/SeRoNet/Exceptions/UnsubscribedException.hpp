@@ -13,7 +13,7 @@
 
 namespace SeRoNet {
 namespace Exceptions {
-class DisconnectedException : public SeRoNetSDKException {
+class UnsubscribedException : public SeRoNetSDKException {
  public:
   using SeRoNetSDKException::SeRoNetSDKException;
 };

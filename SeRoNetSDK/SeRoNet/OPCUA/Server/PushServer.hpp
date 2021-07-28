@@ -52,7 +52,7 @@ class PushServer :
   *  such that all connected and subscribed clients are unsubscribed and
   *  disconnected properly.
   */
-  virtual ~PushServer() = default;
+  virtual ~PushServer();
 
   /** Provide new data which is sent to all subscribed clients
   *  taking into account their individual update cycles. Update
@@ -89,6 +89,7 @@ class PushServer :
   Utils::Component * m_pComponent;
   void serverInitiatedDisconnect() override;
   bool m_FirstTimePut = {true};
+  open62541Cpp::UA_NodeId m_NodeId;
 };
 
 template<class T_AnswerType>
@@ -101,11 +102,21 @@ inline PushServer<T_AnswerType>::PushServer(SeRoNet::Utils::Component *component
 
   T_AnswerType CommObject;
 
-  Converter::CommObjectToPushModel(
+  m_NodeId = Converter::CommObjectToPushModel(
       m_pComponent->getOpcUaServer(),
       CommunicationObjects::Description::SelfDescription(&CommObject, serviceName).get(),
-      objectsFolderNodeId);
+      objectsFolderNodeId).GetRootNodeId();
+}
 
+template<class T_AnswerType>
+PushServer<T_AnswerType>::~PushServer(){
+  UA_Server *server = m_pComponent->getOpcUaServer()->getServer();
+  
+  auto delObjStatus = UA_Server_deleteNode(server, *m_NodeId.NodeId, UA_TRUE);
+  if(delObjStatus != UA_STATUSCODE_GOOD)
+  {
+    std::cerr << "PushServer, Delete Object failed. Status Code:" << UA_StatusCode_name(delObjStatus) << std::endl;
+  }
 }
 
 template<class T_AnswerType>

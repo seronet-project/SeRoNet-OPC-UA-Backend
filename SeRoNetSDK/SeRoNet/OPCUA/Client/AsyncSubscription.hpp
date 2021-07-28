@@ -41,6 +41,8 @@ class AsyncSubscription {
   virtual bool empty() = 0;
  protected:
   virtual void addData(const T_DATATYPE &newData) = 0;
+  virtual void subscribe() = 0;
+  virtual void unsubscribe() = 0;
 };
 
 template<typename T_DATATYPE>
